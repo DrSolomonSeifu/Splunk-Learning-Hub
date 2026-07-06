@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Splunk Learning Hub</title>
+<meta name="description" content="A dashboard-style learning hub for the Splunk Core User course — eight lessons, 48 hands-on labs, global search, and integrated web search." />
+<meta name="theme-color" content="#0B1220" />
+<meta name="color-scheme" content="dark light" />
+
+<!-- PWA / installability -->
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Splunk Hub" />
+<meta name="mobile-web-app-capable" content="yes" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================ TOKENS ============================ */
+:root{
+  --bg:#0B1220; --bg-2:#0E1626; --sidebar:#0C1424;
+  --panel:#141C2E; --panel-2:#172136; --panel-3:#1B2740;
+  --line:#243149; --line-soft:#1B2740;
+  --text:#E7ECF6; --dim:#94A2BD; --dim-2:#6C7B99;
+  --pink:#F6296B; --orange:#FF7A18; --teal:#33E6C0; --violet:#8B7CFF; --amber:#FFB454;
+  --grad:linear-gradient(100deg,#F6296B 0%,#FF7A18 100%);
+  --grad-2:linear-gradient(100deg,#FF4D8D 0%,#FF9A3D 100%);
+  --ring:rgba(246,41,107,.55);
+  --shadow:0 18px 46px -22px rgba(0,0,0,.72);
+  --shadow-sm:0 8px 22px -14px rgba(0,0,0,.7);
+  --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --sidebar-w:270px; --bar-h:66px;
+  --focus:0 0 0 3px rgba(51,230,192,.55);
+}
+html[data-theme="light"]{
+  --bg:#EEF2F9; --bg-2:#FFFFFF; --sidebar:#FFFFFF;
+  --panel:#FFFFFF; --panel-2:#F6F8FC; --panel-3:#EEF2FA;
+  --line:#DEE5F0; --line-soft:#E8EDF6;
+  --text:#132033; --dim:#5A6B85; --dim-2:#8695AD;
+  --teal:#0FB39A;
+  --shadow:0 20px 44px -26px rgba(20,40,80,.32);
+  --shadow-sm:0 10px 24px -18px rgba(20,40,80,.30);
+  --ring:rgba(246,41,107,.30);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased; line-height:1.55;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:'Space Grotesk','Inter',sans-serif; margin:0; line-height:1.15; letter-spacing:-.01em;}
+a{color:inherit; text-decoration:none;}
+.mono{font-family:'JetBrains Mono',monospace;}
+::selection{background:rgba(246,41,107,.32);}
+:focus-visible{outline:none; box-shadow:var(--focus); border-radius:8px;}
+
+/* Ambient dashboard glow */
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(680px 380px at 82% -6%, rgba(246,41,107,.16), transparent 60%),
+    radial-gradient(720px 420px at 12% 108%, rgba(255,122,24,.12), transparent 62%),
+    radial-gradient(560px 360px at 60% 40%, rgba(139,124,255,.07), transparent 70%);
+}
+html[data-theme="light"] body::before{opacity:.5;}
+html[data-theme="light"] .hero h1{background:none; -webkit-text-fill-color:var(--text); color:var(--text);}
+
+.skip-link{position:fixed; left:12px; top:-60px; z-index:200; background:var(--panel);
+  border:1px solid var(--line); padding:10px 16px; border-radius:10px; transition:top .2s;}
+.skip-link:focus{top:12px;}
+
+/* ============================ APP BAR ============================ */
+.appbar{
+  position:sticky; top:0; z-index:60; height:var(--bar-h);
+  display:flex; align-items:center; gap:16px; padding:0 20px;
+  background:color-mix(in srgb, var(--bg-2) 86%, transparent);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+}
+.brand{display:flex; align-items:center; gap:12px; min-width:0;}
+.brand-mark{
+  width:38px; height:38px; border-radius:11px; flex:none; position:relative;
+  background:var(--grad); box-shadow:0 6px 18px -6px var(--ring);
+  display:grid; place-items:center;
+}
+.brand-mark svg{width:21px; height:21px;}
+.brand-txt{display:flex; flex-direction:column; min-width:0;}
+.brand-txt b{font-family:'Space Grotesk',sans-serif; font-size:.98rem; font-weight:700; letter-spacing:-.02em; white-space:nowrap;}
+.brand-txt span{font-size:.63rem; letter-spacing:.22em; color:var(--dim); text-transform:uppercase; white-space:nowrap;}
+
+.searchwrap{flex:1; max-width:560px; margin:0 auto; position:relative;}
+.searchbox{
+  display:flex; align-items:center; gap:10px; height:42px; padding:0 14px;
+  background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  transition:border-color .18s, box-shadow .18s;
+}
+.searchbox:focus-within{border-color:var(--pink); box-shadow:0 0 0 3px var(--ring);}
+.searchbox .prompt{color:var(--pink); font-weight:700; font-size:.9rem;}
+.searchbox input{
+  flex:1; background:none; border:none; color:var(--text); font-size:.9rem;
+  font-family:'Inter',sans-serif; outline:none; min-width:0;
+}
+.searchbox input::placeholder{color:var(--dim-2);}
+.kbd{font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--dim);
+  border:1px solid var(--line); border-radius:6px; padding:2px 7px; background:var(--panel-2);}
+.results{
+  position:absolute; top:52px; left:0; right:0; z-index:70;
+  background:var(--panel-2); border:1px solid var(--line); border-radius:14px;
+  box-shadow:var(--shadow); overflow:hidden; display:none;
+}
+.results.show{display:block; animation:pop .16s ease;}
+.result{display:flex; align-items:center; gap:12px; padding:11px 14px; cursor:pointer; border-bottom:1px solid var(--line-soft);}
+.result:last-child{border-bottom:none;}
+.result:hover,.result[aria-selected="true"]{background:var(--panel-3);}
+.result .rc{font-family:'JetBrains Mono',monospace; font-size:.68rem; font-weight:700; padding:3px 8px; border-radius:7px;
+  background:rgba(246,41,107,.14); color:#ff6b9d; flex:none;}
+.result .rt{font-size:.86rem; font-weight:600;}
+.result .rk{font-size:.72rem; color:var(--dim); margin-left:auto; white-space:nowrap;}
+.result-empty{padding:16px; color:var(--dim); font-size:.85rem;}
+
+.bar-actions{display:flex; align-items:center; gap:8px;}
+.btn{
+  display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 15px;
+  border-radius:11px; border:1px solid var(--line); background:var(--panel);
+  color:var(--text); font-size:.84rem; font-weight:600; cursor:pointer;
+  font-family:'Inter',sans-serif; transition:transform .12s, border-color .18s, background .18s;
+}
+.btn:hover{transform:translateY(-1px); border-color:var(--dim-2);}
+.btn svg{width:16px; height:16px;}
+.btn-grad{background:var(--grad); border:none; color:#fff; box-shadow:0 8px 20px -10px var(--ring);}
+.btn-grad:hover{filter:brightness(1.06);}
+.icon-btn{width:40px; height:40px; padding:0; justify-content:center;}
+.hide-install{display:none !important;}
+.menu-btn{display:none;}
+
+/* ============================ LAYOUT ============================ */
+.layout{display:grid; grid-template-columns:var(--sidebar-w) 1fr; position:relative; z-index:1;}
+.sidebar{
+  position:sticky; top:var(--bar-h); align-self:start;
+  height:calc(100vh - var(--bar-h)); overflow-y:auto;
+  background:var(--sidebar); border-right:1px solid var(--line-soft);
+  padding:20px 14px 32px;
+}
+.side-group{margin-bottom:22px;}
+.side-label{font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim-2);
+  padding:0 12px; margin-bottom:10px; font-weight:700;}
+.nav-item{
+  display:flex; align-items:center; gap:11px; padding:9px 12px; border-radius:10px;
+  color:var(--dim); font-size:.87rem; font-weight:500; cursor:pointer;
+  transition:background .15s, color .15s; margin-bottom:2px;
+}
+.nav-item:hover{background:var(--panel); color:var(--text);}
+.nav-item.active{background:var(--panel-2); color:var(--text);}
+.nav-item .ni-ic{width:18px; height:18px; flex:none; color:currentColor; opacity:.9;}
+.nav-item .ni-code{font-family:'JetBrains Mono',monospace; font-size:.7rem; font-weight:700;
+  width:26px; height:22px; border-radius:6px; display:grid; place-items:center;
+  background:var(--panel-3); color:var(--dim); flex:none;}
+.nav-item.active .ni-code, .nav-item:hover .ni-code{color:var(--text);}
+.nav-item .dot{width:7px; height:7px; border-radius:50%; margin-left:auto; flex:none;}
+.dot-done{background:var(--teal);}
+.dot-prog{background:var(--amber);}
+.side-foot{padding:14px 12px 0; border-top:1px solid var(--line-soft); margin-top:8px;}
+.side-prog-track{height:7px; border-radius:20px; background:var(--panel-3); overflow:hidden; margin-top:8px;}
+.side-prog-fill{height:100%; width:0%; background:var(--grad); border-radius:20px; transition:width .6s cubic-bezier(.2,.7,.2,1);}
+.side-prog-txt{font-size:.72rem; color:var(--dim); margin-top:8px;}
+
+/* ============================ MAIN ============================ */
+.main{padding:34px clamp(18px,4vw,48px) 60px; max-width:1280px; margin:0 auto; width:100%;}
+.eyebrow{font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--pink); font-weight:700; margin-bottom:14px;}
+.section-head{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin:0 0 20px;}
+.hub-section{scroll-margin-top:calc(var(--bar-h) + 20px);}
+
+/* Hero */
+.hero{margin-bottom:30px;}
+.hero h1{font-size:clamp(2rem,4.3vw,3.05rem); font-weight:700; max-width:15ch;
+  background:linear-gradient(120deg,var(--text) 40%, #ffd0b0 130%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+.hero p.lede{color:var(--dim); font-size:1.05rem; max-width:58ch; margin:16px 0 0;}
+
+.hero-grid{display:grid; grid-template-columns:1.5fr 1fr; gap:18px; margin-top:26px;}
+.card{background:var(--panel); border:1px solid var(--line); border-radius:var(--r-lg);
+  box-shadow:var(--shadow-sm);}
+
+/* Resume panel */
+.resume{position:relative; overflow:hidden; padding:26px; display:flex; flex-direction:column; justify-content:space-between;
+  background:linear-gradient(150deg, var(--panel) 0%, var(--panel-2) 100%);}
+.resume::after{content:""; position:absolute; right:-40px; top:-40px; width:230px; height:230px;
+  background:radial-gradient(circle at center, rgba(246,41,107,.22), transparent 65%); pointer-events:none;}
+.resume .kicker{font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); font-weight:700;}
+.resume h3{font-size:1.5rem; margin:10px 0 4px; max-width:20ch; position:relative;}
+.resume .rmeta{color:var(--dim); font-size:.85rem;}
+.resume .rprog{height:8px; border-radius:20px; background:var(--panel-3); overflow:hidden; margin:20px 0; position:relative;}
+.resume .rprog i{display:block; height:100%; background:var(--grad); border-radius:20px; width:0%; transition:width .7s cubic-bezier(.2,.7,.2,1);}
+.resume .btn-grad{align-self:flex-start; position:relative; height:44px;}
+
+/* Stats panel */
+.stats{padding:24px; display:flex; align-items:center; gap:22px;}
+.ring{width:118px; height:118px; flex:none; position:relative;}
+.ring svg{transform:rotate(-90deg);}
+.ring .rlabel{position:absolute; inset:0; display:grid; place-items:center; text-align:center;}
+.ring .rlabel b{font-family:'Space Grotesk',sans-serif; font-size:1.6rem; display:block; line-height:1;}
+.ring .rlabel span{font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--dim);}
+.stat-list{display:flex; flex-direction:column; gap:12px; flex:1;}
+.stat-row{display:flex; align-items:center; gap:11px; font-size:.86rem;}
+.stat-row b{font-family:'Space Grotesk',sans-serif; font-size:1.15rem; min-width:26px;}
+.stat-row .sdot{width:9px; height:9px; border-radius:50%; flex:none;}
+.stat-row span{color:var(--dim);}
+.spark{margin-top:16px; width:100%; height:34px; display:block; opacity:.9;}
+
+/* Toolbar above modules */
+.toolbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:38px 0 8px;}
+.toolbar h2{font-size:1.35rem; margin-right:auto;}
+.chip-btn{display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 13px; border-radius:20px;
+  border:1px solid var(--line); background:var(--panel); color:var(--dim); font-size:.78rem; font-weight:600;
+  cursor:pointer; transition:.15s;}
+.chip-btn:hover{color:var(--text); border-color:var(--dim-2);}
+.chip-btn.on{background:var(--grad); color:#fff; border-color:transparent;}
+.chip-btn svg{width:14px; height:14px;}
+
+/* Module */
+.module{margin-top:30px;}
+.module-head{display:flex; align-items:center; gap:14px; margin-bottom:16px;}
+.module-no{font-family:'JetBrains Mono',monospace; font-size:.72rem; font-weight:700; letter-spacing:.1em;
+  padding:5px 10px; border-radius:8px; color:#fff;}
+.acc-pink{background:linear-gradient(100deg,#F6296B,#ff5c88);}
+.acc-orange{background:linear-gradient(100deg,#FF7A18,#ffab5c);}
+.acc-violet{background:linear-gradient(100deg,#8B7CFF,#b3a6ff);}
+.module-head h3{font-size:1.15rem;}
+.module-head .mcount{font-size:.78rem; color:var(--dim); margin-left:2px;}
+.module-bar{flex:1; height:5px; border-radius:20px; background:var(--panel-3); overflow:hidden; max-width:180px; margin-left:auto;}
+.module-bar i{display:block; height:100%; border-radius:20px; width:0%; transition:width .6s;}
+
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(288px,1fr)); gap:16px;}
+
+/* Lesson card */
+.lcard{
+  position:relative; background:var(--panel); border:1px solid var(--line); border-radius:var(--r-md);
+  padding:18px; display:flex; flex-direction:column; gap:12px; transition:transform .16s, border-color .18s, box-shadow .18s;
+  box-shadow:var(--shadow-sm); overflow:hidden;
+}
+.lcard::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--grad); opacity:0; transition:opacity .2s;}
+.lcard:hover{transform:translateY(-3px); border-color:var(--dim-2); box-shadow:var(--shadow);}
+.lcard:hover::before{opacity:1;}
+.lcard.is-done::before{opacity:1; background:linear-gradient(var(--teal),var(--teal));}
+.lc-top{display:flex; align-items:center; gap:10px;}
+.lc-code{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:.72rem; color:#fff;
+  padding:5px 9px; border-radius:8px; background:var(--grad);}
+.badge{margin-left:auto; font-size:.68rem; font-weight:700; padding:4px 10px; border-radius:20px; letter-spacing:.02em;
+  display:inline-flex; align-items:center; gap:6px;}
+.badge .bd{width:6px; height:6px; border-radius:50%;}
+.badge-new{background:var(--panel-3); color:var(--dim);}
+.badge-prog{background:rgba(255,180,84,.15); color:var(--amber);}
+.badge-done{background:rgba(51,230,192,.15); color:var(--teal);}
+.star{background:none; border:none; cursor:pointer; color:var(--dim-2); padding:4px; border-radius:8px; transition:.15s; line-height:0;}
+.star:hover{color:var(--amber);}
+.star.on{color:var(--amber);}
+.star svg{width:17px; height:17px;}
+.lc-title{font-size:1.05rem; font-weight:700; font-family:'Space Grotesk',sans-serif;}
+.lc-desc{font-size:.84rem; color:var(--dim); flex:1;}
+.lc-combo{font-size:.7rem; color:var(--dim-2); font-family:'JetBrains Mono',monospace;}
+.lc-foot{display:flex; align-items:center; gap:8px; margin-top:2px;}
+.lc-open{display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 14px; border-radius:10px;
+  background:var(--grad); color:#fff; font-size:.82rem; font-weight:700; box-shadow:0 8px 18px -12px var(--ring); transition:.14s;}
+.lc-open:hover{filter:brightness(1.07); transform:translateY(-1px);}
+.lc-open svg{width:15px; height:15px;}
+.lc-done{margin-left:auto; background:none; border:none; cursor:pointer; color:var(--dim); font-size:.74rem; font-weight:600;
+  display:inline-flex; align-items:center; gap:6px; padding:6px; border-radius:8px; transition:.15s;}
+.lc-done:hover{color:var(--teal);}
+.lc-done .chk{width:17px; height:17px; border-radius:6px; border:1.6px solid var(--dim-2); display:grid; place-items:center; transition:.15s;}
+.lc-done.on .chk{background:var(--teal); border-color:var(--teal);}
+.lc-done.on .chk svg{opacity:1;}
+.lc-done .chk svg{width:11px; height:11px; opacity:0; color:#04201a;}
+.lc-done.on{color:var(--teal);}
+
+/* Labs feature card */
+.labs{margin-top:34px; position:relative; overflow:hidden; padding:30px;
+  background:linear-gradient(120deg, var(--panel) 0%, var(--panel-2) 60%);
+  border:1px solid var(--line); border-radius:var(--r-lg); display:grid;
+  grid-template-columns:1fr auto; gap:24px; align-items:center; box-shadow:var(--shadow-sm);}
+.labs::after{content:""; position:absolute; right:-30px; bottom:-60px; width:280px; height:280px;
+  background:radial-gradient(circle, rgba(51,230,192,.18), transparent 62%); pointer-events:none;}
+.labs .lb-tag{display:inline-flex; align-items:center; gap:8px; font-size:.68rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--teal); font-weight:700; margin-bottom:12px;}
+.labs h3{font-size:1.7rem; margin-bottom:8px;}
+.labs p{color:var(--dim); max-width:52ch; font-size:.92rem;}
+.labs .lb-stat{position:relative; text-align:center; padding:0 6px;}
+.labs .lb-stat b{font-family:'Space Grotesk',sans-serif; font-size:3.2rem; line-height:1; display:block;
+  background:linear-gradient(120deg,var(--teal),#8ef2dc); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+.labs .lb-stat span{font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--dim);}
+.labs-cta{margin-top:18px;}
+.labs-cta .lc-open{background:linear-gradient(100deg,var(--teal),#28c9a9); color:#04201a; box-shadow:0 10px 22px -12px rgba(51,230,192,.6);}
+
+/* Generic content panels (web search / resources / about) */
+.panel-lg{margin-top:16px; padding:28px; background:var(--panel); border:1px solid var(--line);
+  border-radius:var(--r-lg); box-shadow:var(--shadow-sm);}
+.web-form{display:flex; gap:10px; margin:6px 0 18px; flex-wrap:wrap;}
+.web-input{flex:1; min-width:220px; display:flex; align-items:center; gap:10px; height:48px; padding:0 16px;
+  background:var(--panel-2); border:1px solid var(--line); border-radius:12px;}
+.web-input:focus-within{border-color:var(--pink); box-shadow:0 0 0 3px var(--ring);}
+.web-input .prompt{color:var(--pink); font-weight:700;}
+.web-input input{flex:1; background:none; border:none; outline:none; color:var(--text); font-size:.95rem; min-width:0; font-family:'Inter',sans-serif;}
+.web-note{font-size:.8rem; color:var(--dim-2); margin-top:-6px;}
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;}
+.chips .lbl{width:100%; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim-2); font-weight:700; margin-bottom:2px;}
+.chip{display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 13px; border-radius:20px;
+  border:1px solid var(--line); background:var(--panel-2); color:var(--dim); font-size:.8rem; font-weight:600;
+  cursor:pointer; transition:.15s; font-family:'Inter',sans-serif;}
+.chip:hover{color:var(--text); border-color:var(--pink);}
+.chip svg{width:13px; height:13px; opacity:.7;}
+
+.link-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin-top:8px;}
+.link-card{display:flex; align-items:flex-start; gap:12px; padding:15px; border:1px solid var(--line);
+  border-radius:var(--r-md); background:var(--panel-2); transition:.16s;}
+.link-card:hover{transform:translateY(-2px); border-color:var(--dim-2); box-shadow:var(--shadow-sm);}
+.link-card .lk-ic{width:38px; height:38px; border-radius:10px; flex:none; display:grid; place-items:center;
+  background:rgba(246,41,107,.12); color:var(--pink);}
+.link-card .lk-ic svg{width:19px; height:19px;}
+.link-card h4{font-size:.92rem; font-family:'Space Grotesk',sans-serif;}
+.link-card p{font-size:.77rem; color:var(--dim); margin:3px 0 0;}
+
+.about-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; margin-top:6px;}
+.about-item h4{font-size:.98rem; margin-bottom:6px; display:flex; align-items:center; gap:8px;}
+.about-item h4 svg{width:17px; height:17px; color:var(--teal);}
+.about-item p{font-size:.85rem; color:var(--dim); margin:0;}
+.about-item code{font-family:'JetBrains Mono',monospace; font-size:.8rem; background:var(--panel-2);
+  padding:2px 7px; border-radius:6px; border:1px solid var(--line);}
+
+/* Footer / credits */
+.credits{margin-top:46px; padding:26px clamp(18px,4vw,48px); border-top:1px solid var(--line-soft);
+  display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
+  max-width:1280px; margin-left:auto; margin-right:auto; position:relative; z-index:1;}
+.credits .cl{display:flex; align-items:center; gap:13px;}
+.credits .cl .brand-mark{width:34px; height:34px;}
+.credits b{font-family:'Space Grotesk',sans-serif; font-size:.92rem;}
+.credits .role{font-size:.76rem; color:var(--dim);}
+.credits .cr{font-size:.74rem; color:var(--dim-2); font-family:'JetBrains Mono',monospace;}
+
+/* Mobile drawer scrim + bottom bar */
+.scrim{position:fixed; inset:0; background:rgba(3,7,15,.6); backdrop-filter:blur(2px); z-index:55; opacity:0; visibility:hidden; transition:.2s;}
+.scrim.show{opacity:1; visibility:visible;}
+.botbar{display:none;}
+
+@keyframes pop{from{opacity:0; transform:translateY(-6px);}to{opacity:1; transform:none;}}
+@keyframes fadeUp{from{opacity:0; transform:translateY(14px);}to{opacity:1; transform:none;}}
+.reveal{opacity:0; animation:fadeUp .5s cubic-bezier(.2,.7,.2,1) forwards;}
+@keyframes dash{to{stroke-dashoffset:0;}}
+
+/* ============================ RESPONSIVE ============================ */
+@media (max-width:1000px){
+  :root{--sidebar-w:0px;}
+  .layout{grid-template-columns:1fr;}
+  .sidebar{
+    position:fixed; top:0; left:0; height:100dvh; width:280px; z-index:80;
+    transform:translateX(-100%); transition:transform .24s cubic-bezier(.2,.7,.2,1);
+    padding-top:20px; box-shadow:var(--shadow);
+  }
+  .sidebar.open{transform:none;}
+  .menu-btn{display:inline-flex;}
+  .hero-grid{grid-template-columns:1fr;}
+  .searchwrap{max-width:none;}
+  .kbd{display:none;}
+}
+@media (max-width:720px){
+  .appbar{gap:10px; padding:0 14px;}
+  .brand-txt span{display:none;}
+  .install-txt{display:none;}
+  .btn-grad.install-btn{width:40px; padding:0; justify-content:center;}
+  .searchwrap{order:3; flex-basis:100%; max-width:none;}
+  .appbar{height:auto; flex-wrap:wrap; padding-top:10px; padding-bottom:10px; gap:10px;}
+  .sidebar{top:0;}
+  .main{padding-top:24px;}
+  .hero h1{font-size:2rem;}
+  .stats{flex-direction:row;}
+  .labs{grid-template-columns:1fr;}
+  .labs .lb-stat{text-align:left;}
+  .credits{flex-direction:column; align-items:flex-start;}
+  /* bottom quick bar */
+  .botbar{
+    display:flex; position:sticky; bottom:0; z-index:50;
+    background:color-mix(in srgb,var(--bg-2) 92%, transparent); backdrop-filter:blur(12px);
+    border-top:1px solid var(--line-soft); padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+    justify-content:space-around;
+  }
+  .botbar a{display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 12px; color:var(--dim); font-size:.62rem; font-weight:600;}
+  .botbar a svg{width:20px; height:20px;}
+  .botbar a.active{color:var(--pink);}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important; scroll-behavior:auto !important;}
+  .reveal{opacity:1;}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============================ APP BAR ============================ -->
+<header class="appbar">
+  <button class="btn icon-btn menu-btn" id="menuBtn" aria-label="Open navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a class="brand" href="#top" aria-label="Splunk Learning Hub home">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="13" width="4" height="8" rx="1.4" fill="#fff"/><rect x="10" y="8" width="4" height="13" rx="1.4" fill="#fff"/><rect x="17" y="3" width="4" height="18" rx="1.4" fill="#fff" opacity=".92"/></svg>
+    </span>
+    <span class="brand-txt"><b>Splunk Learning Hub</b><span>Core User · Fundamentals track</span></span>
+  </a>
+
+  <div class="searchwrap" role="search">
+    <div class="searchbox">
+      <span class="prompt mono" aria-hidden="true">&gt;</span>
+      <input id="search" type="text" autocomplete="off" spellcheck="false"
+        placeholder="Search lessons, topics, and concepts…" aria-label="Search lessons, topics, and concepts" aria-expanded="false" aria-controls="results" />
+      <span class="kbd" aria-hidden="true">/</span>
+    </div>
+    <div class="results" id="results" role="listbox" aria-label="Search results"></div>
+  </div>
+
+  <div class="bar-actions">
+    <button class="btn btn-grad install-btn hide-install" id="installBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      <span class="install-txt">Install app</span>
+    </button>
+    <button class="btn icon-btn" id="themeBtn" aria-label="Toggle light and dark theme">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<!-- ============================ LAYOUT ============================ -->
+<div class="layout" id="top">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+    <div class="side-group">
+      <div class="nav-item active" data-scroll="home" role="button" tabindex="0">
+        <svg class="ni-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        Home
+      </div>
+      <div class="nav-item" data-scroll="labs" role="button" tabindex="0">
+        <svg class="ni-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v6l-5 8.5A2 2 0 0 0 5.7 21h12.6a2 2 0 0 0 1.7-3.5L15 9V3"/><path d="M8 3h8"/></svg>
+        Practical Labs
+      </div>
+      <div class="nav-item" data-scroll="websearch" role="button" tabindex="0">
+        <svg class="ni-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/></svg>
+        Web Search
+      </div>
+      <div class="nav-item" data-scroll="resources" role="button" tabindex="0">
+        <svg class="ni-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h9v18H6a2 2 0 0 0-2 2z"/><path d="M15 3h3a2 2 0 0 1 2 2v16"/></svg>
+        Resources
+      </div>
+      <div class="nav-item" data-scroll="about" role="button" tabindex="0">
+        <svg class="ni-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r="1" fill="currentColor" stroke="none"/></svg>
+        About
+      </div>
+    </div>
+
+    <div class="side-group">
+      <div class="side-label">Lessons</div>
+      <div id="sideLessons"></div>
+    </div>
+
+    <div class="side-foot">
+      <div class="side-prog-txt" id="sideProgTxt">0 of 8 lessons complete</div>
+      <div class="side-prog-track"><div class="side-prog-fill" id="sideProgFill"></div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+    <!-- HERO -->
+    <section class="hero hub-section reveal" id="home" style="animation-delay:.02s">
+      <div class="eyebrow">Splunk Core User · your study hub</div>
+      <h1>Your command center for learning Splunk</h1>
+      <p class="lede">Eight lessons and forty-eight hands-on labs, from your first search to automated alerting. Your progress saves on this device as you move through the course.</p>
+
+      <div class="hero-grid">
+        <div class="card resume">
+          <div>
+            <div class="kicker">Pick up where you left off</div>
+            <h3 id="resumeTitle">Lesson 1 · Splunk Basics</h3>
+            <div class="rmeta" id="resumeMeta">Start the course and build your foundation.</div>
+          </div>
+          <div class="rprog"><i id="resumeBar"></i></div>
+          <a class="btn-grad" id="resumeBtn" href="student_guide_200_1.html">
+            <span id="resumeBtnTxt">Start Lesson 1</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        <div class="card stats">
+          <div class="ring" aria-hidden="true">
+            <svg width="118" height="118" viewBox="0 0 118 118">
+              <circle cx="59" cy="59" r="50" fill="none" stroke="var(--panel-3)" stroke-width="11"/>
+              <circle id="ringFill" cx="59" cy="59" r="50" fill="none" stroke="url(#rg)" stroke-width="11" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16"/>
+              <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6296B"/><stop offset="1" stop-color="#FF7A18"/></linearGradient></defs>
+            </svg>
+            <div class="rlabel"><span style="display:block"><b id="ringPct">0%</b><span>complete</span></span></div>
+          </div>
+          <div class="stat-list">
+            <div class="stat-row"><span class="sdot" style="background:var(--teal)"></span><b id="stDone">0</b><span>lessons done</span></div>
+            <div class="stat-row"><span class="sdot" style="background:var(--amber)"></span><b id="stProg">0</b><span>in progress</span></div>
+            <div class="stat-row"><span class="sdot" style="background:var(--dim-2)"></span><b>8</b><span>total lessons</span></div>
+            <svg class="spark" viewBox="0 0 300 34" preserveAspectRatio="none" aria-hidden="true">
+              <polyline id="sparkLine" fill="none" stroke="url(#rg)" stroke-width="2"
+                points="0,26 24,20 48,24 72,12 96,18 120,8 144,16 168,6 192,14 216,4 240,12 264,7 300,10"
+                stroke-dasharray="900" stroke-dashoffset="900" style="animation:dash 1.6s ease forwards .3s"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODULES / LESSONS -->
+    <div class="toolbar">
+      <h2>Course lessons</h2>
+      <button class="chip-btn" id="bookmarkFilter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg>
+        <span id="bmFilterTxt">Bookmarks</span>
+      </button>
+      <button class="chip-btn" id="resetProg" title="Clear saved progress on this device">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset progress
+      </button>
+    </div>
+
+    <div id="modules"></div>
+    <div id="noMatches" class="result-empty" style="display:none; text-align:center; padding:40px;">No lessons match that search. Try a different keyword, or search the web below.</div>
+
+    <!-- LABS -->
+    <section class="labs hub-section reveal" id="labs">
+      <div>
+        <div class="lb-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M9 3v6l-5 8.5A2 2 0 0 0 5.7 21h12.6a2 2 0 0 0 1.7-3.5L15 9V3"/><path d="M8 3h8"/></svg>
+          Hands-on practice
+        </div>
+        <h3>Practice Labs</h3>
+        <p>Forty-eight progressive, hands-on exercises spanning all eight lessons — from your very first search to lookups, dashboards, and automated alerting. Build the muscle memory that makes the concepts stick.</p>
+        <div class="labs-cta">
+          <a class="lc-open" href="splunk_lab_portal.html" data-open="labs">
+            Open Practice Labs
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="lb-stat"><b>48</b><span>guided exercises</span></div>
+    </section>
+
+    <!-- WEB SEARCH -->
+    <section class="hub-section reveal" id="websearch">
+      <div class="toolbar"><h2>Search the web for Splunk topics</h2></div>
+      <div class="panel-lg">
+        <p style="color:var(--dim); margin-top:0; max-width:64ch; font-size:.92rem">Need something beyond the course? Look up Splunk documentation, tutorials, or technical concepts without losing your place. Your search opens in a new tab, scoped to Splunk.</p>
+        <div class="web-form">
+          <label class="web-input">
+            <span class="prompt mono" aria-hidden="true">&gt;</span>
+            <input id="webInput" type="text" placeholder="e.g. stats command syntax, regex field extraction, tstats…" aria-label="Search the web for Splunk topics" />
+          </label>
+          <button class="btn btn-grad" id="webBtn" style="height:48px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            Search the web
+          </button>
+        </div>
+        <p class="web-note">Searches are prefixed with “Splunk” to keep results on-topic.</p>
+        <div class="chips" style="margin-top:16px">
+          <span class="lbl">Popular topics</span>
+          <button class="chip" data-topic="SPL search syntax">SPL syntax</button>
+          <button class="chip" data-topic="stats command examples">stats command</button>
+          <button class="chip" data-topic="regex field extraction rex">Field extraction</button>
+          <button class="chip" data-topic="lookups CSV automatic">Lookups</button>
+          <button class="chip" data-topic="dashboard studio">Dashboards</button>
+          <button class="chip" data-topic="alerts throttling trigger conditions">Alerts</button>
+          <button class="chip" data-topic="eval functions cheat sheet">eval functions</button>
+          <button class="chip" data-topic="time modifiers earliest latest">Time modifiers</button>
+        </div>
+        <div class="chips" style="margin-top:18px">
+          <span class="lbl">Go straight to</span>
+          <a class="chip" href="https://docs.splunk.com" target="_blank" rel="noopener">Splunk Docs <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          <a class="chip" href="https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/WhatsInThisManual" target="_blank" rel="noopener">SPL Search Reference <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          <a class="chip" href="https://community.splunk.com" target="_blank" rel="noopener">Splunk Community <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          <a class="chip" href="https://splunkbase.splunk.com" target="_blank" rel="noopener">Splunkbase <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESOURCES -->
+    <section class="hub-section reveal" id="resources">
+      <div class="toolbar"><h2>Resources</h2></div>
+      <div class="panel-lg">
+        <div class="link-grid" id="resourceGrid"></div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="hub-section reveal" id="about">
+      <div class="toolbar"><h2>About this hub</h2></div>
+      <div class="panel-lg">
+        <p style="margin-top:0; color:var(--dim); max-width:70ch">The Splunk Learning Hub gathers the full Splunk Core User course — eight lessons and a hands-on lab portal — into one installable dashboard, so everything works from a single, searchable home.</p>
+        <div class="about-grid">
+          <div class="about-item">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6m0 0V4m0 10 4-4m-4 4-4-4"/></svg>Install it</h4>
+            <p>On desktop Chrome or Edge, use <b>Install app</b> in the top bar. On iPhone, tap Share then <code>Add to Home Screen</code>. It then opens full-screen like a native app.</p>
+          </div>
+          <div class="about-item">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Track progress</h4>
+            <p>Opening a lesson marks it <b>in progress</b>; use the check to mark it <b>done</b>. Your status and bookmarks are saved on this device only.</p>
+          </div>
+          <div class="about-item">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M4 5v14"/></svg>Works offline</h4>
+            <p>Pages you have already opened stay available without a connection, so you can review on the go.</p>
+          </div>
+          <div class="about-item">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search everything</h4>
+            <p>Use the top search to jump to any lesson by title, topic, or concept. Use Web Search for anything beyond the course.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- CREDITS -->
+<footer class="credits">
+  <div class="cl">
+    <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="13" width="4" height="8" rx="1.4" fill="#fff"/><rect x="10" y="8" width="4" height="13" rx="1.4" fill="#fff"/><rect x="17" y="3" width="4" height="18" rx="1.4" fill="#fff" opacity=".92"/></svg></span>
+    <div>
+      <b>Designed &amp; Authored by Dr. Solomon Seifu</b>
+      <div class="role">Lead Technical Instructor</div>
+    </div>
+  </div>
+  <div class="cr">© <span id="year">2026</span> Dr. Solomon Seifu · Splunk Learning Hub</div>
+</footer>
+
+<!-- MOBILE BOTTOM BAR -->
+<nav class="botbar" aria-label="Quick navigation">
+  <a data-scroll="home" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</a>
+  <a data-scroll="labs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v6l-5 8.5A2 2 0 0 0 5.7 21h12.6a2 2 0 0 0 1.7-3.5L15 9V3"/><path d="M8 3h8"/></svg>Labs</a>
+  <a data-scroll="websearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/></svg>Web</a>
+  <a data-scroll="resources"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h9v18H6a2 2 0 0 0-2 2z"/><path d="M15 3h3a2 2 0 0 1 2 2v16"/></svg>Docs</a>
+</nav>
+
+<script>
+/* ============================ DATA ============================ */
+const MODULES = [
+  { id:'m1', no:'Module 01', title:'Splunk Foundations', accent:'pink', lessons:[
+    { id:'l1', code:'L1', title:'Splunk Basics',
+      desc:'Machine data, the Splunk platform and its five core functions, components, apps, deployment types, and first navigation.',
+      topics:['machine data','indexer','forwarder','search head','apps','add-ons','splunkbase','deployment','port 8000','user roles','buckets'],
+      student:'student_guide_200_1.html' },
+    { id:'l2', code:'L2', title:'Basic Searching in Splunk',
+      desc:'Search machine data with SPL — basic queries, key–value pairs, time modifiers, managing search jobs, and saving results.',
+      topics:['SPL','search','key value pairs','time range','time modifiers','search job','save search','fields','pipeline'],
+      student:'student_guide_200_2.html' },
+    { id:'l3', code:'L3', title:'Using Fields in Searches',
+      desc:'How Splunk fields work — index-time defaults versus search-time extraction — plus filters, comparison operators, and the table command.',
+      topics:['fields','field extraction','index time','search time','comparison operators','table command','filtering'],
+      student:'student_guide_200_3.html' }
+  ]},
+  { id:'m2', no:'Module 02', title:'SPL & Transforming Data', accent:'orange', lessons:[
+    { id:'l4', code:'L4', title:'SPL Fundamentals',
+      desc:'The search pipeline and essential SPL commands — fields, dedup, sort, and eval — to shape and clean your results.',
+      topics:['search pipeline','pipe','fields command','dedup','sort','eval','commands'],
+      student:'student_guide_200_4_5.html', combo:'Lessons 4 & 5 · combined portal' },
+    { id:'l5', code:'L5', title:'Transforming Commands',
+      desc:'Turn raw events into structured insight with top, rare, and stats — the workhorse transforming commands.',
+      topics:['top','rare','stats','transforming commands','by clause','dc','distinct count','aggregation'],
+      student:'student_guide_200_4_5.html', combo:'Lessons 4 & 5 · combined portal' }
+  ]},
+  { id:'m3', no:'Module 03', title:'Reporting & Automation', accent:'violet', lessons:[
+    { id:'l6', code:'L6', title:'Creating Reports & Dashboards',
+      desc:'Save searches as reusable reports, build visualizations, and organize panels into interactive dashboards for stakeholders.',
+      topics:['reports','dashboards','panels','visualizations','charts','scheduling','stakeholders'],
+      student:'student_guide_200_6.html' },
+    { id:'l7', code:'L7', title:'Lookups',
+      desc:'Enrich events with external context using lookups — CSV lookups, the lookup command, and automatic lookups.',
+      topics:['lookups','csv lookup','automatic lookup','lookup command','enrichment','context'],
+      student:'student_guide_200_7_8.html', combo:'Lessons 7 & 8 · combined portal' },
+    { id:'l8', code:'L8', title:'Scheduled Reports & Alerts',
+      desc:'Automate monitoring with scheduled reports and alerts — alert types, trigger conditions, throttling, and alert actions.',
+      topics:['alerts','scheduled reports','alert types','throttling','trigger conditions','alert actions','monitoring'],
+      student:'student_guide_200_7_8.html', combo:'Lessons 7 & 8 · combined portal' }
+  ]}
+];
+const ALL_LESSONS = MODULES.flatMap(m => m.lessons);
+
+const RESOURCES = [
+  { t:'Splunk Docs', d:'Official product documentation for every Splunk version.', u:'https://docs.splunk.com', ic:'book' },
+  { t:'SPL Search Reference', d:'Every search command, with syntax and examples.', u:'https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/WhatsInThisManual', ic:'code' },
+  { t:'Splunk Community', d:'Ask questions and search thousands of answers.', u:'https://community.splunk.com', ic:'chat' },
+  { t:'Splunkbase', d:'Apps and add-ons that extend Splunk.', u:'https://splunkbase.splunk.com', ic:'box' },
+  { t:'Splunk Free Training', d:'Free, self-paced courses from Splunk.', u:'https://www.splunk.com/en_us/training.html', ic:'cap' },
+  { t:'Search Tutorial', d:'Splunk’s official hands-on search tutorial.', u:'https://docs.splunk.com/Documentation/Splunk/latest/SearchTutorial/WelcometotheSearchTutorial', ic:'play' }
+];
+const RES_ICONS = {
+  book:'<path d="M4 5a2 2 0 0 1 2-2h9v18H6a2 2 0 0 0-2 2z"/><path d="M15 3h3a2 2 0 0 1 2 2v16"/>',
+  code:'<path d="m8 8-4 4 4 4M16 8l4 4-4 4M13 6l-2 12"/>',
+  chat:'<path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/>',
+  box:'<path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3Z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/>',
+  cap:'<path d="M12 4 2 9l10 5 10-5-10-5Z"/><path d="M6 11v5c0 1 3 3 6 3s6-2 6-3v-5"/>',
+  play:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5 16 12l-6 3.5z" fill="currentColor" stroke="none"/>'
+};
+
+/* ============================ STATE ============================ */
+const LS_PROG='splunkHub.progress.v1', LS_BM='splunkHub.bookmarks.v1', LS_THEME='splunkHub.theme.v1';
+function load(k,f){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):f; }catch(e){ return f; } }
+function save(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+let progress = load(LS_PROG,{});     // { l1:'progress'|'done', ... }
+let bookmarks = load(LS_BM,{});      // { l1:true }
+let bmOnly = false;
+let activeQuery = '';
+
+/* ============================ RENDER ============================ */
+const $ = s => document.querySelector(s);
+const modulesEl = $('#modules');
+const sideLessonsEl = $('#sideLessons');
+
+function statusOf(id){ return progress[id] || 'new'; }
+function badgeFor(id){
+  const s=statusOf(id);
+  if(s==='done') return '<span class="badge badge-done"><span class="bd" style="background:var(--teal)"></span>Done</span>';
+  if(s==='progress') return '<span class="badge badge-prog"><span class="bd" style="background:var(--amber)"></span>In progress</span>';
+  return '<span class="badge badge-new"><span class="bd" style="background:var(--dim-2)"></span>Not started</span>';
+}
+
+function lessonCard(les){
+  const done = statusOf(les.id)==='done';
+  const bm = !!bookmarks[les.id];
+  return `<article class="lcard ${done?'is-done':''}" data-id="${les.id}" data-search="${(les.title+' '+les.desc+' '+les.topics.join(' ')+' '+les.code).toLowerCase()}">
+    <div class="lc-top">
+      <span class="lc-code">${les.code}</span>
+      ${badgeFor(les.id)}
+      <button class="star ${bm?'on':''}" data-star="${les.id}" aria-label="${bm?'Remove bookmark':'Bookmark this lesson'}" aria-pressed="${bm}">
+        <svg viewBox="0 0 24 24" fill="${bm?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg>
+      </button>
+    </div>
+    <div class="lc-title">${les.title}</div>
+    <div class="lc-desc">${les.desc}</div>
+    ${les.combo?`<div class="lc-combo">${les.combo}</div>`:''}
+    <div class="lc-foot">
+      <a class="lc-open" href="${les.student}" data-open="${les.id}">Open lesson
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+      </a>
+      <button class="lc-done ${done?'on':''}" data-done="${les.id}" aria-pressed="${done}">
+        <span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 7"/></svg></span>
+        ${done?'Done':'Mark done'}
+      </button>
+    </div>
+  </article>`;
+}
+
+function accClass(a){ return a==='pink'?'acc-pink':a==='orange'?'acc-orange':'acc-violet'; }
+function accColor(a){ return a==='pink'?'var(--pink)':a==='orange'?'var(--orange)':'var(--violet)'; }
+
+function renderModules(){
+  modulesEl.innerHTML = MODULES.map(m=>{
+    const done = m.lessons.filter(l=>statusOf(l.id)==='done').length;
+    const pct = Math.round(done/m.lessons.length*100);
+    return `<section class="module" data-module="${m.id}">
+      <div class="module-head">
+        <span class="module-no ${accClass(m.accent)}">${m.no}</span>
+        <h3>${m.title}</h3>
+        <span class="mcount">${done}/${m.lessons.length} complete</span>
+        <div class="module-bar"><i style="width:${pct}%; background:${accColor(m.accent)}"></i></div>
+      </div>
+      <div class="grid">${m.lessons.map(lessonCard).join('')}</div>
+    </section>`;
+  }).join('');
+  applyFilter();
+}
+
+function renderSide(){
+  sideLessonsEl.innerHTML = ALL_LESSONS.map(l=>{
+    const s=statusOf(l.id);
+    const dot = s==='done'?'<span class="dot dot-done"></span>':s==='progress'?'<span class="dot dot-prog"></span>':'';
+    return `<div class="nav-item" data-goto="${l.id}" role="button" tabindex="0" title="${l.title}">
+      <span class="ni-code">${l.code}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.title}</span>${dot}</div>`;
+  }).join('');
+}
+
+function renderResources(){
+  $('#resourceGrid').innerHTML = RESOURCES.map(r=>`
+    <a class="link-card" href="${r.u}" target="_blank" rel="noopener">
+      <span class="lk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${RES_ICONS[r.ic]}</svg></span>
+      <div><h4>${r.t}</h4><p>${r.d}</p></div>
+    </a>`).join('');
+}
+
+/* ============================ PROGRESS / STATS ============================ */
+function updateStats(){
+  const done = ALL_LESSONS.filter(l=>statusOf(l.id)==='done').length;
+  const prog = ALL_LESSONS.filter(l=>statusOf(l.id)==='progress').length;
+  const total = ALL_LESSONS.length;
+  const pct = Math.round(done/total*100);
+  $('#ringPct').textContent = pct+'%';
+  $('#stDone').textContent = done;
+  $('#stProg').textContent = prog;
+  const circ = 2*Math.PI*50;
+  $('#ringFill').style.strokeDashoffset = circ*(1-pct/100);
+  $('#sideProgFill').style.width = pct+'%';
+  $('#sideProgTxt').textContent = `${done} of ${total} lessons complete`;
+
+  // resume target: first in-progress, else first not-done, else all done
+  let target = ALL_LESSONS.find(l=>statusOf(l.id)==='progress')
+            || ALL_LESSONS.find(l=>statusOf(l.id)==='new');
+  const rt=$('#resumeTitle'), rm=$('#resumeMeta'), rb=$('#resumeBtn'), rbt=$('#resumeBtnTxt'), bar=$('#resumeBar');
+  if(!target){
+    rt.textContent='Course complete 🎉';
+    rm.textContent='You have finished all eight lessons. Revisit any lesson or dive into the labs.';
+    rb.href='splunk_lab_portal.html'; rbt.textContent='Go to Practice Labs'; bar.style.width='100%';
+  } else {
+    const n = ALL_LESSONS.indexOf(target)+1;
+    rt.textContent = `Lesson ${n} · ${target.title}`;
+    rm.textContent = statusOf(target.id)==='progress' ? 'Continue where you left off.' : target.desc;
+    rb.href = target.student; rb.dataset.open = target.id;
+    rbt.textContent = statusOf(target.id)==='progress' ? `Resume Lesson ${n}` : `Start Lesson ${n}`;
+    bar.style.width = Math.round((n-1)/total*100)+'%';
+  }
+}
+
+function setStatus(id,st){ if(st==='new') delete progress[id]; else progress[id]=st; save(LS_PROG,progress); renderModules(); renderSide(); updateStats(); }
+function markProgress(id){ if(statusOf(id)==='new') setStatus(id,'progress'); }
+function toggleDone(id){ setStatus(id, statusOf(id)==='done'?'progress':'done'); }
+function toggleStar(id){ if(bookmarks[id]) delete bookmarks[id]; else bookmarks[id]=true; save(LS_BM,bookmarks); renderModules(); applyFilter(); }
+
+/* ============================ FILTER / SEARCH ============================ */
+function applyFilter(){
+  const q=activeQuery.trim().toLowerCase();
+  let anyVisible=false;
+  document.querySelectorAll('.module').forEach(mod=>{
+    let visibleInMod=0;
+    mod.querySelectorAll('.lcard').forEach(card=>{
+      const id=card.dataset.id;
+      const matchQ = !q || card.dataset.search.includes(q);
+      const matchBm = !bmOnly || bookmarks[id];
+      const show = matchQ && matchBm;
+      card.style.display = show?'':'none';
+      if(show){visibleInMod++; anyVisible=true;}
+    });
+    mod.style.display = visibleInMod? '' : 'none';
+  });
+  $('#noMatches').style.display = anyVisible? 'none':'block';
+}
+
+const searchEl=$('#search'), resultsEl=$('#results');
+function buildResults(q){
+  q=q.trim().toLowerCase();
+  if(!q){ resultsEl.classList.remove('show'); searchEl.setAttribute('aria-expanded','false'); return; }
+  const hits=[];
+  ALL_LESSONS.forEach(l=>{
+    const hay=(l.title+' '+l.desc+' '+l.topics.join(' ')+' '+l.code).toLowerCase();
+    if(hay.includes(q)){
+      const topic=l.topics.find(t=>t.includes(q));
+      hits.push({code:l.code,title:l.title,url:l.student,kv:topic&&!l.title.toLowerCase().includes(q)?topic:''});
+    }
+  });
+  if('practice labs 48 exercises hands-on'.includes(q) || 'labs'.includes(q)){
+    hits.push({code:'LAB',title:'Practice Labs — 48 exercises',url:'splunk_lab_portal.html',kv:''});
+  }
+  if(!hits.length){
+    resultsEl.innerHTML='<div class="result-empty">No lessons match “'+q+'”. Press Enter to search the web instead.</div>';
+  } else {
+    resultsEl.innerHTML=hits.slice(0,7).map((h,i)=>`<div class="result" role="option" data-url="${h.url}" data-i="${i}">
+      <span class="rc">${h.code}</span><span class="rt">${h.title}</span>${h.kv?`<span class="rk">${h.kv}</span>`:''}</div>`).join('');
+  }
+  resultsEl.classList.add('show'); searchEl.setAttribute('aria-expanded','true');
+}
+
+searchEl.addEventListener('input',e=>{ activeQuery=e.target.value; buildResults(activeQuery); applyFilter(); });
+searchEl.addEventListener('keydown',e=>{
+  const opts=[...resultsEl.querySelectorAll('.result')];
+  let idx=opts.findIndex(o=>o.getAttribute('aria-selected')==='true');
+  if(e.key==='ArrowDown'){e.preventDefault(); idx=Math.min(idx+1,opts.length-1);}
+  else if(e.key==='ArrowUp'){e.preventDefault(); idx=Math.max(idx-1,0);}
+  else if(e.key==='Enter'){
+    if(idx>=0&&opts[idx]) openLessonUrl(opts[idx].dataset.url);
+    else if(activeQuery.trim()) runWebSearch(activeQuery);
+    return;
+  } else if(e.key==='Escape'){ searchEl.value=''; activeQuery=''; buildResults(''); applyFilter(); searchEl.blur(); return; }
+  else return;
+  opts.forEach(o=>o.removeAttribute('aria-selected'));
+  if(opts[idx]){opts[idx].setAttribute('aria-selected','true'); opts[idx].scrollIntoView({block:'nearest'});}
+});
+resultsEl.addEventListener('click',e=>{ const r=e.target.closest('.result'); if(r&&r.dataset.url) openLessonUrl(r.dataset.url); });
+document.addEventListener('click',e=>{ if(!e.target.closest('.searchwrap')) resultsEl.classList.remove('show'); });
+
+function openLessonUrl(url){
+  const les=ALL_LESSONS.find(l=>l.student===url);
+  if(les) markProgress(les.id);
+  window.location.href=url;
+}
+
+/* ============================ WEB SEARCH ============================ */
+function runWebSearch(q){
+  q=(q||'').trim(); if(!q) { $('#webInput').focus(); return; }
+  const url='https://duckduckgo.com/?q='+encodeURIComponent('Splunk '+q);
+  window.open(url,'_blank','noopener');
+}
+$('#webBtn').addEventListener('click',()=>runWebSearch($('#webInput').value));
+$('#webInput').addEventListener('keydown',e=>{ if(e.key==='Enter') runWebSearch(e.target.value); });
+document.querySelectorAll('.chip[data-topic]').forEach(c=>c.addEventListener('click',()=>{ $('#webInput').value=c.dataset.topic; runWebSearch(c.dataset.topic); }));
+
+/* ============================ EVENT DELEGATION ============================ */
+document.addEventListener('click',e=>{
+  const star=e.target.closest('[data-star]'); if(star){ e.preventDefault(); toggleStar(star.dataset.star); return; }
+  const dn=e.target.closest('[data-done]'); if(dn){ e.preventDefault(); toggleDone(dn.dataset.done); return; }
+  const op=e.target.closest('[data-open]'); if(op){ const id=op.dataset.open; if(id!=='labs') markProgress(id); /* allow navigation */ }
+});
+
+/* ============================ NAV / DRAWER ============================ */
+const sidebar=$('#sidebar'), scrim=$('#scrim');
+function closeDrawer(){ sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+$('#menuBtn').addEventListener('click',()=>{ sidebar.classList.toggle('open'); scrim.classList.toggle('show'); });
+scrim.addEventListener('click',closeDrawer);
+
+function scrollToId(id){ const el=document.getElementById(id); if(el){ el.scrollIntoView({behavior:'smooth',block:'start'}); } closeDrawer(); }
+document.addEventListener('click',e=>{
+  const nav=e.target.closest('[data-scroll]'); if(nav){ scrollToId(nav.dataset.scroll); }
+  const goto=e.target.closest('[data-goto]'); if(goto){ const el=document.querySelector('.lcard[data-id="'+goto.dataset.goto+'"]'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.animate([{boxShadow:'0 0 0 2px var(--pink)'},{boxShadow:'var(--shadow-sm)'}],{duration:1200}); } closeDrawer(); }
+});
+document.querySelectorAll('[data-scroll],[data-goto]').forEach(el=>{
+  el.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); el.click(); } });
+});
+
+// scroll spy for sidebar + bottom bar
+const spyIds=['home','labs','websearch','resources','about'];
+const spyObs=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{ if(en.isIntersecting){
+    const id=en.target.id;
+    document.querySelectorAll('.nav-item[data-scroll]').forEach(n=>n.classList.toggle('active',n.dataset.scroll===id));
+    document.querySelectorAll('.botbar a[data-scroll]').forEach(n=>n.classList.toggle('active',n.dataset.scroll===id));
+  }});
+},{rootMargin:'-45% 0px -50% 0px'});
+spyIds.forEach(id=>{ const el=document.getElementById(id); if(el) spyObs.observe(el); });
+
+/* ============================ TOOLBAR ============================ */
+$('#bookmarkFilter').addEventListener('click',function(){
+  bmOnly=!bmOnly; this.classList.toggle('on',bmOnly);
+  const n=Object.keys(bookmarks).length;
+  $('#bmFilterTxt').textContent = bmOnly? `Bookmarks (${n})` : 'Bookmarks';
+  applyFilter();
+});
+$('#resetProg').addEventListener('click',()=>{
+  if(confirm('Clear saved progress and bookmarks on this device?')){
+    progress={}; bookmarks={}; save(LS_PROG,progress); save(LS_BM,bookmarks);
+    bmOnly=false; $('#bookmarkFilter').classList.remove('on'); $('#bmFilterTxt').textContent='Bookmarks';
+    renderModules(); renderSide(); updateStats();
+  }
+});
+
+/* ============================ THEME ============================ */
+const themeBtn=$('#themeBtn'), themeIcon=$('#themeIcon');
+const sunPath='<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/>';
+const moonPath='<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"/>';
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  themeIcon.innerHTML = t==='dark'? sunPath : moonPath;
+  document.querySelector('meta[name=theme-color]').setAttribute('content', t==='dark'?'#0B1220':'#EEF2F9');
+}
+let theme = load(LS_THEME,null) || (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+applyTheme(theme);
+themeBtn.addEventListener('click',()=>{ theme=theme==='dark'?'light':'dark'; applyTheme(theme); save(LS_THEME,theme); });
+
+/* ============================ KEYBOARD ============================ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='/' && document.activeElement!==searchEl && !/input|textarea/i.test(document.activeElement.tagName)){
+    e.preventDefault(); searchEl.focus();
+  }
+});
+
+/* ============================ INSTALL (PWA) ============================ */
+let deferredPrompt=null;
+const installBtn=$('#installBtn');
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredPrompt=e; installBtn.classList.remove('hide-install'); });
+installBtn.addEventListener('click',async()=>{
+  if(deferredPrompt){ deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.classList.add('hide-install'); }
+  else { scrollToId('about'); }
+});
+window.addEventListener('appinstalled',()=>{ installBtn.classList.add('hide-install'); });
+// iOS: no beforeinstallprompt — reveal button as a shortcut to install instructions
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+const standalone=window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+if(isIOS && !standalone){ installBtn.classList.remove('hide-install'); }
+
+/* ============================ SERVICE WORKER ============================ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); });
+}
+
+/* ============================ INIT ============================ */
+$('#year').textContent=new Date().getFullYear();
+renderModules(); renderSide(); renderResources(); updateStats();
+// staggered reveal for sections
+document.querySelectorAll('.hub-section').forEach((s,i)=>{ s.style.animationDelay=(i*0.05)+'s'; });
+</script>
+</body>
+</html>

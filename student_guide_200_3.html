@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 200.3 — Using Fields in Searches | Student Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg-dark:#0a0e17;--bg-card:#111827;--bg-card-alt:#1a2332;--bg-code:#0d1117;--accent-green:#00d084;--accent-green-dim:#00d08433;--accent-blue:#3b82f6;--accent-blue-dim:#3b82f620;--accent-orange:#f59e0b;--accent-orange-dim:#f59e0b20;--accent-red:#ef4444;--accent-red-dim:#ef444420;--accent-cyan:#22d3ee;--text-primary:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#1e293b;--border-light:#334155}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.7;font-size:16px}
+.hero{position:relative;padding:60px 40px 50px;background:linear-gradient(135deg,#0a0e17 0%,#111d2e 40%,#0f2027 100%);border-bottom:1px solid var(--border);overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;background:radial-gradient(circle,var(--accent-green-dim) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-green-dim);border:1px solid var(--accent-green);color:var(--accent-green);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:12px;background:linear-gradient(135deg,#e2e8f0 0%,var(--accent-green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .subtitle{font-size:1.1rem;color:var(--text-secondary);max-width:700px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:24px;margin-top:24px;font-size:13px;color:var(--text-muted)}
+.hero-meta span{display:flex;align-items:center;gap:6px}
+.hero-meta .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.hero-credits{margin-top:18px;font-size:13px;color:var(--text-muted)}
+.hero-credits strong{color:var(--text-secondary)}
+.guide-label{display:inline-block;background:var(--accent-blue);color:#fff;padding:4px 14px;border-radius:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.nav-bar{position:sticky;top:0;z-index:100;background:rgba(10,14,23,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;overflow-x:auto}
+.nav-bar::-webkit-scrollbar{height:0}
+.nav-inner{display:flex;gap:4px;max-width:1200px;margin:0 auto}
+.nav-inner a{color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;padding:14px 16px;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.2s}
+.nav-inner a:hover,.nav-inner a.active{color:var(--accent-green);border-bottom-color:var(--accent-green)}
+.objectives-strip{background:var(--bg-card);border-bottom:1px solid var(--border);padding:36px 40px}
+.obj-title{font-size:14px;font-weight:700;color:var(--accent-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.objectives-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.obj-item{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg-card-alt);font-size:14px;font-weight:500;transition:border-color 0.2s}
+.obj-item:hover{border-color:var(--accent-green)}
+.obj-num{background:var(--accent-green-dim);color:var(--accent-green);font-size:11px;font-weight:700;border-radius:6px;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.main{max-width:1200px;margin:0 auto;padding:40px}
+.section{margin-bottom:64px;scroll-margin-top:70px}
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.section-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.section-header h2{font-size:1.6rem;font-weight:800;line-height:1.3}
+.section-header .sec-tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}
+.content-block{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:20px}
+.content-block h3{font-size:1.15rem;font-weight:700;margin-bottom:12px}
+.content-block p{color:var(--text-secondary);margin-bottom:12px}
+.content-block p:last-child{margin-bottom:0}
+.content-block ul,.content-block ol{padding-left:20px;color:var(--text-secondary)}
+.content-block li{margin-bottom:6px}
+.key-concept{background:var(--accent-blue-dim);border-left:4px solid var(--accent-blue);border-radius:0 12px 12px 0;padding:20px 24px;margin:20px 0}
+.key-concept .kc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent-blue);margin-bottom:6px}
+.remember-box{background:#1a1028;border-left:4px solid #a78bfa;border-radius:0 12px 12px 0;padding:20px 24px;margin:20px 0}
+.remember-box .rb-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#a78bfa;margin-bottom:6px}
+.lab-exercise{background:linear-gradient(135deg,#071a12 0%,#0d1f18 100%);border:1px solid #1a3d2a;border-radius:14px;padding:28px;margin:24px 0;position:relative;overflow:hidden}
+.lab-exercise::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,var(--accent-green-dim) 0%,transparent 70%);pointer-events:none}
+.lab-tag{display:inline-flex;align-items:center;gap:6px;background:var(--accent-green-dim);border:1px solid var(--accent-green);color:var(--accent-green);padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.lab-exercise h4{font-size:1.1rem;font-weight:700;margin-bottom:14px}
+.lab-exercise ol,.lab-exercise ul{padding-left:20px;color:var(--text-secondary)}
+.lab-exercise li{margin-bottom:8px}
+.code-block{background:var(--bg-code);border:1px solid var(--border);border-radius:10px;padding:4px;margin:14px 0;overflow-x:auto}
+.code-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.code-bar .lang-dot{width:8px;height:8px;border-radius:50%;background:var(--accent-green);display:inline-block;margin-right:6px}
+pre{padding:16px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.6;color:var(--accent-green);overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+.cert-question{background:var(--accent-orange-dim);border:1px solid #f59e0b44;border-radius:14px;padding:28px;margin:24px 0}
+.cert-tag{display:inline-flex;align-items:center;gap:6px;background:#f59e0b22;border:1px solid var(--accent-orange);color:var(--accent-orange);padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.cert-question h4{font-size:1rem;font-weight:700;margin-bottom:16px}
+.cert-options{list-style:none;padding:0}
+.cert-options li{padding:10px 16px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;font-size:14px;color:var(--text-secondary);background:var(--bg-card)}
+.cert-options li:hover{border-color:var(--accent-orange);color:var(--text-primary)}
+.cert-options li.correct{border-color:var(--accent-green);background:var(--accent-green-dim);color:var(--accent-green);font-weight:600}
+.cert-options li.wrong{border-color:var(--accent-red);background:var(--accent-red-dim);color:var(--accent-red)}
+.cert-explanation{margin-top:14px;padding:14px 16px;background:var(--bg-card);border-radius:8px;font-size:14px;color:var(--text-secondary);display:none}
+.summary-box{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-card-alt) 100%);border:1px solid var(--border-light);border-radius:14px;padding:28px;margin:24px 0}
+.summary-box h4{font-size:1rem;font-weight:700;margin-bottom:14px;color:var(--accent-cyan)}
+.summary-box ul{padding-left:18px;color:var(--text-secondary)}
+.summary-box li{margin-bottom:6px}
+.comp-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.comp-table th{background:var(--bg-card-alt);color:var(--accent-green);padding:12px 16px;text-align:left;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--accent-green)}
+.comp-table td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text-secondary)}
+.comp-table tr:hover td{background:var(--bg-card-alt)}
+.collapsible{border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.collapsible-header{padding:16px 20px;background:var(--bg-card);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:15px;transition:background 0.2s;user-select:none}
+.collapsible-header:hover{background:var(--bg-card-alt)}
+.collapsible-header .arrow{transition:transform 0.3s;font-size:12px;color:var(--text-muted)}
+.collapsible-header.open .arrow{transform:rotate(180deg)}
+.collapsible-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;background:var(--bg-dark)}
+.collapsible-body-inner{padding:20px;color:var(--text-secondary)}
+.notes-area{background:var(--bg-card);border:1px dashed var(--border-light);border-radius:12px;padding:20px;margin:20px 0;min-height:80px}
+.notes-area .notes-label{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.notes-area textarea{width:100%;min-height:60px;background:transparent;border:none;color:var(--text-secondary);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;resize:vertical;outline:none;line-height:1.6}
+.lesson-footer{text-align:center;padding:48px 40px;border-top:1px solid var(--border);color:var(--text-muted);font-size:14px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent-green);z-index:9999;transition:width 0.1s}
+@media(max-width:768px){.hero,.main,.nav-bar,.objectives-strip{padding-left:20px;padding-right:20px}.objectives-grid{grid-template-columns:1fr}.content-block,.lab-exercise,.cert-question{padding:20px}}
+</style>
+</head>
+<body>
+
+<style id="slh-nav-style">
+.slh-nav{font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 24px;
+  background:#0b1220;box-sizing:border-box;}
+.slh-nav *{box-sizing:border-box;}
+.slh-nav.slh-top{border-bottom:1px solid #223052;}
+.slh-nav.slh-bottom{border-top:1px solid #223052;margin-top:48px;}
+.slh-dash{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:11px;
+  background:linear-gradient(100deg,#F6296B,#FF7A18);color:#fff;font-weight:700;font-size:14px;
+  text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 20px -12px rgba(246,41,107,.7);
+  line-height:1;transition:filter .15s,transform .12s;white-space:nowrap;}
+.slh-dash:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.slh-dash svg{width:16px;height:16px;flex:none;}
+.slh-side{display:flex;gap:8px;align-items:stretch;margin-left:auto;flex-wrap:wrap;}
+.slh-link{display:flex;align-items:center;gap:10px;padding:9px 15px;border:1px solid #2a3855;
+  border-radius:11px;color:#e2e8f0;text-decoration:none;background:#141c2e;line-height:1.2;
+  transition:border-color .15s,transform .12s,background .15s;min-width:0;}
+.slh-link:hover{border-color:#F6296B;transform:translateY(-1px);background:#172136;}
+.slh-link .slh-ar{font-size:17px;color:#8894ab;flex:none;}
+.slh-link:hover .slh-ar{color:#F6296B;}
+.slh-tt{display:flex;flex-direction:column;min-width:0;}
+.slh-tt small{color:#8894ab;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.slh-tt b{font-size:13px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.slh-next{text-align:right;}
+.slh-disabled{opacity:.3;pointer-events:none;}
+@media (max-width:640px){
+  .slh-nav{padding:10px 14px;gap:8px;}
+  .slh-side{width:100%;margin-left:0;}
+  .slh-link{flex:1;}
+  .slh-next{justify-content:flex-end;}
+  .slh-dash{width:100%;justify-content:center;}
+  .slh-tt b{white-space:normal;}
+}
+</style>
+
+<nav class="slh-nav slh-top" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_2.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lesson 2</b></span></a><a class="slh-link slh-next" href="student_guide_200_4_5.html"><span class="slh-tt"><small>Next</small><b>Lessons 4 & 5</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<header class="hero">
+  <div class="guide-label">📘 Student Guide</div>
+  <div class="hero-badge">📡 Per Scholas Security with AI Program</div>
+  <h1>Lesson 200.3<br>Using Fields in Searches</h1>
+  <p class="subtitle">Learn how Splunk fields work — from index-time defaults to search-time extraction — and how to use them to build precise, efficient searches with filters, comparison operators, and the table command.</p>
+  <div class="hero-meta">
+    <span><span class="dot" style="background:var(--accent-green)"></span> 10 Hands-On Labs</span>
+    <span><span class="dot" style="background:var(--accent-orange)"></span> Certification Practice Questions</span>
+    <span><span class="dot" style="background:var(--accent-blue)"></span> 4 Learning Objectives</span>
+  </div>
+  <div class="hero-credits">Lead Instructor &amp; Designer: <strong>Dr. Solomon Seifu</strong> &nbsp;|&nbsp; Co-Instructor: <strong>Naly Rosario</strong></div>
+</header>
+
+<nav class="nav-bar"><div class="nav-inner">
+  <a href="#s31">3.1 Explain Fields</a>
+  <a href="#s32">3.2 Fields Sidebar</a>
+  <a href="#s33">3.3 Fields in Searches</a>
+  <a href="#s34">3.4 Table Command</a>
+  <a href="#review">Review</a>
+</div></nav>
+
+<section class="objectives-strip">
+  <div class="obj-title">🎯 Learning Objectives</div>
+  <div class="objectives-grid">
+    <div class="obj-item"><span class="obj-num">1</span> Explain fields in Splunk</div>
+    <div class="obj-item"><span class="obj-num">2</span> Use the Fields Sidebar to explore and interact with data</div>
+    <div class="obj-item"><span class="obj-num">3</span> Use fields in searches to filter and refine results</div>
+    <div class="obj-item"><span class="obj-num">4</span> Preview the table and rename commands</div>
+  </div>
+</section>
+
+<main class="main">
+
+<!-- ==================== 3.1 EXPLAIN FIELDS ==================== -->
+<section class="section" id="s31">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">🏷️</div>
+    <div><div class="sec-tag">Section 3.1</div><h2>Explain Fields</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Are Fields?</h3>
+    <p>Fields are <strong>searchable name/value pairs</strong> in event data — they are knowledge objects that let you pinpoint specific pieces of information inside events. For example: <code>host=www2</code>, <code>status=200</code>, <code>user=admin</code>.</p>
+    <p>Searching with fields is <strong>more precise and more efficient</strong> than searching with keywords alone. Instead of hoping Splunk finds "200" somewhere in the raw text, you can say "give me events where the status field equals 200."</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Two Types of Fields</h3>
+    <table class="comp-table">
+      <thead><tr><th>Type</th><th>When Extracted</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Indexed Fields</strong> (Index-Time)</td><td>When data is ingested — stored in the index</td><td><code>host</code>, <code>source</code>, <code>sourcetype</code>, <code>index</code>, <code>linecount</code>, <code>punct</code>, <code>splunk_server</code>, <code>timestamp</code></td></tr>
+        <tr><td><strong>Search-Time Fields</strong></td><td>When you run a search — extracted on the fly</td><td><code>status</code>, <code>clientip</code>, <code>action</code>, <code>product_name</code>, <code>user</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Index-Time Fields</div>
+    <p>When data is indexed, Splunk automatically creates <strong>default fields</strong> for every event:</p>
+    <ul>
+      <li><code>host</code> — hostname or IP where the event originated</li>
+      <li><code>source</code> — the input source or file path</li>
+      <li><code>sourcetype</code> — the format/type of data</li>
+      <li><code>index</code> — which index stores the event</li>
+    </ul>
+    <p>These fields exist <em>before</em> you even search — they're part of the stored data.</p>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Search-Time Fields</div>
+    <p>At search time, Splunk looks for <strong>key=value patterns</strong> in the raw event data and automatically extracts them into field-value pairs. For example:</p>
+    <ul>
+      <li>If the raw data contains <code>action=purchase</code>, Splunk creates a field called <code>action</code> with value <code>purchase</code></li>
+      <li>Sourcetype definitions help Splunk recognize patterns even without explicit key=value format — for example, <code>access_combined</code> interprets <code>203.45.206.135</code> as <code>clientip=203.45.206.135</code></li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <h3>How Search Modes Affect Field Extraction</h3>
+    <p>The search mode determines <strong>which fields are extracted</strong> at search time:</p>
+    <table class="comp-table">
+      <thead><tr><th>Mode</th><th>Field Discovery</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Fast</strong></td><td>Disabled</td><td>Returns only default fields + fields explicitly in your search. With transforming commands, shows Statistics/Visualization only.</td></tr>
+        <tr><td><strong>Verbose</strong></td><td>Full</td><td>Extracts ALL fields from every event. Always shows Events tab + timeline. Slowest mode.</td></tr>
+        <tr><td><strong>Smart</strong> (default)</td><td>Adaptive</td><td>Non-transforming → behaves like Verbose. Transforming → behaves like Fast. Best of both worlds.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 1</div>
+    <h4>Compare Field Extraction Across Search Modes</h4>
+    <ol>
+      <li>Run this search in all three modes (switch mode using dropdown below search bar):
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd</pre></div>
+      </li>
+      <li>For each mode, count how many fields appear in the Fields Sidebar</li>
+      <li>Now run a transforming search in all three modes:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd | stats count by log_level</pre></div>
+      </li>
+      <li>In Fast and Smart mode — can you see the Events tab?</li>
+      <li>In Verbose mode — can you still see the Events tab?</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 Field counts per mode</div>
+      <textarea placeholder="Fast: ___ fields | Smart: ___ fields | Verbose: ___ fields"></textarea>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 3.1 Key Takeaways</h4>
+    <ul>
+      <li>Fields = searchable name/value pairs (knowledge objects)</li>
+      <li>Indexed fields (host, source, sourcetype, index) are created at index time</li>
+      <li>Search-time fields are extracted when you run a search</li>
+      <li>Search mode controls which fields are extracted: Fast (minimal), Verbose (all), Smart (adaptive)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 3.2 FIELDS SIDEBAR ==================== -->
+<section class="section" id="s32">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">📋</div>
+    <div><div class="sec-tag">Section 3.2</div><h2>Use the Fields Sidebar</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Is the Fields Sidebar?</h3>
+    <p>The Fields Sidebar is the panel on the <strong>left side</strong> of the search results. It lists all fields available in your current search results and lets you explore, filter, and interact with your data without writing additional SPL.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Three Sections of the Fields Sidebar</h3>
+    <table class="comp-table">
+      <thead><tr><th>Section</th><th>What It Shows</th><th>Details</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Selected Fields</strong></td><td>Fields displayed for every event</td><td>Default: <code>host</code>, <code>source</code>, <code>sourcetype</code>. You can add more.</td></tr>
+        <tr><td><strong>Interesting Fields</strong></td><td>Fields in at least 20% of events</td><td>Auto-detected. Shows field name + unique value count.</td></tr>
+        <tr><td><strong>All Fields</strong> (link)</td><td>Every field including rare ones</td><td>Click to open a window showing all fields, types, and statistics.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Field Type Symbols</h3>
+    <table class="comp-table">
+      <thead><tr><th>Symbol</th><th>Meaning</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>𝛼</strong> (alpha)</td><td>Alphanumeric (text) values</td><td><code>host</code>, <code>sourcetype</code>, <code>action</code></td></tr>
+        <tr><td><strong>#</strong> (hash)</td><td>Numeric values</td><td><code>status</code>, <code>bytes</code>, <code>price</code></td></tr>
+      </tbody>
+    </table>
+    <p>The <strong>number next to each field</strong> shows how many unique values exist for that field in the current results.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>The Field Window</h3>
+    <p>Clicking any field name in the sidebar opens the <strong>Field Window</strong>, which lets you:</p>
+    <ul>
+      <li>See the <strong>top values</strong> for that field</li>
+      <li><strong>Click a value</strong> to add it as a filter to your search</li>
+      <li>Create <strong>quick reports</strong> — Splunk adds transforming commands automatically</li>
+    </ul>
+    <p>Report options differ by field type: <strong>numeric fields</strong> offer average, min, max, etc. <strong>Alphanumeric fields</strong> offer top values and count by.</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 2</div>
+    <h4>Explore the Fields Sidebar</h4>
+    <ol>
+      <li>Run: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd</pre></div></li>
+      <li>In the sidebar, identify:
+        <ul>
+          <li>Which fields are in Selected Fields?</li>
+          <li>How many fields are in Interesting Fields?</li>
+          <li>Find a field with the <strong>𝛼</strong> symbol and one with <strong>#</strong></li>
+        </ul>
+      </li>
+      <li>Click on <code>log_level</code> (or any Interesting Field) — explore the Field Window</li>
+      <li>Click a value in the Field Window to add it to your search</li>
+      <li>Click the <strong>All Fields</strong> link — browse the full field list</li>
+      <li>Select an Interesting Field and move it to Selected Fields (check the checkbox)</li>
+    </ol>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 3</div>
+    <h4>Quick Reports from the Field Window</h4>
+    <ol>
+      <li>Run: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd</pre></div></li>
+      <li>Click <code>component</code> in the sidebar (alphanumeric field)</li>
+      <li>Click <strong>"Top values"</strong> — notice the SPL that Splunk auto-generates</li>
+      <li>Now click a <strong>numeric field</strong> (if available) and try a different report option</li>
+      <li>Observe: Splunk added a transforming command to your search automatically</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 What SPL command did Splunk auto-generate?</div>
+      <textarea placeholder="Write the command you see..."></textarea>
+    </div>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Best Practice — Always Specify an Index</div>
+    <p>If no index is specified in your search, Splunk returns data from <strong>all indexes accessible to your role</strong>. Always include an index to keep searches fast and focused.</p>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 3.2 Key Takeaways</h4>
+    <ul>
+      <li>Fields Sidebar: Selected Fields, Interesting Fields (20%+ of events), All Fields</li>
+      <li><strong>𝛼</strong> = alphanumeric, <strong>#</strong> = numeric</li>
+      <li>Click a field to open the Field Window — explore values & create quick reports</li>
+      <li>Reports auto-generate different options for text vs. numeric fields</li>
+      <li>Always specify an index in your searches</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 3.3 USE FIELDS IN SEARCHES ==================== -->
+<section class="section" id="s33">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🔎</div>
+    <div><div class="sec-tag">Section 3.3</div><h2>Use Fields in Searches</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Fields as Filters</h3>
+    <p>Including fields in your search lets you <strong>filter events precisely</strong>. Without a field name, Splunk searches the entire raw event — which can produce unexpected matches.</p>
+    <p><strong>Example problem:</strong> Searching for just <code>503</code> could match both <code>status=503</code> (HTTP error) AND <code>area_code=503</code> (Portland phone number). Use <code>status=503</code> to get only what you want.</p>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Case Sensitivity Reminder</div>
+    <p><strong>Field names ARE case-sensitive:</strong> <code>status</code> ≠ <code>Status</code></p>
+    <p><strong>Field values are NOT case-sensitive:</strong> <code>status=OK</code> = <code>status=ok</code></p>
+  </div>
+
+  <div class="content-block">
+    <h3>Quotation Marks for Phrases</h3>
+    <p>When searching for values that contain <strong>spaces or special characters</strong>, wrap them in double quotation marks:</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>product_name="Dream Crusher"    ← matches exact phrase
+product_name=Dream Crusher      ← WRONG: searches product_name=Dream AND keyword "Crusher"</pre></div>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 4</div>
+    <h4>Fields as Filters</h4>
+    <ol>
+      <li>Search <strong>without</strong> specifying a field:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal ERROR</pre></div>
+      </li>
+      <li>Now search <strong>with</strong> a field:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal log_level=ERROR</pre></div>
+      </li>
+      <li>Compare the event counts — which is more precise?</li>
+      <li>Test case sensitivity:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal log_level=ERROR
+index=_internal log_level=error</pre></div>
+        <p>Do both return the same results? (They should — values are case-insensitive)</p>
+      </li>
+    </ol>
+  </div>
+
+  <!-- Wildcards -->
+  <div class="content-block">
+    <h3>Wildcard Best Practices</h3>
+    <p>The asterisk (<code>*</code>) matches any number of characters, but <strong>how you use it matters</strong>:</p>
+    <table class="comp-table">
+      <thead><tr><th>Practice</th><th>Example</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>✅ <strong>End of term</strong> (best)</td><td><code>fail*</code></td><td>Efficient — Splunk scans forward</td></tr>
+        <tr><td>⚠️ <strong>Beginning of term</strong> (avoid)</td><td><code>*fail</code></td><td>Slow — must check every string</td></tr>
+        <tr><td>❌ <strong>Middle of term</strong> (avoid)</td><td><code>f*il</code></td><td>Inconsistent with punctuation indexing</td></tr>
+        <tr><td>❌ <strong>Matching punctuation</strong></td><td><code>/cart*</code></td><td>Unreliable — specify exact paths instead</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Rule of thumb:</strong> A specific search is always more efficient than one with wildcards.</p>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 CySA+ Practice</div>
+    <h4>According to Splunk best practices, which wildcard placement is most efficient?</h4>
+    <ul class="cert-options" data-correct="2">
+      <li onclick="checkAnswer(this, false)">A. <code>f*il</code></li>
+      <li onclick="checkAnswer(this, false)">B. <code>*fail</code></li>
+      <li onclick="checkAnswer(this, true)">C. <code>fail*</code></li>
+      <li onclick="checkAnswer(this, false)">D. <code>*fail*</code></li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: C</strong> — Wildcards at the end of a term are the most efficient. Prefix wildcards (*fail) must scan every string, dramatically slowing the search.</div>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 5</div>
+    <h4>Wildcard Efficiency</h4>
+    <ol>
+      <li>Try these and compare speed/results:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunk*
+index=_internal sourcetype=*splunk*
+index=_internal sourcetype=*splunkd</pre></div>
+      </li>
+      <li>Check Job Inspector (Job → Inspect Job) for each — which was fastest?</li>
+    </ol>
+  </div>
+
+  <!-- Comparison Operators -->
+  <div class="content-block">
+    <h3>Comparison Operators</h3>
+    <p>Beyond <code>=</code>, Splunk supports comparison operators to match ranges of values:</p>
+    <table class="comp-table">
+      <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>=</code></td><td>Equal to</td><td><code>status=200</code></td></tr>
+        <tr><td><code>!=</code></td><td>Not equal to</td><td><code>status!=200</code></td></tr>
+        <tr><td><code>&gt;</code></td><td>Greater than</td><td><code>bytes>1000</code></td></tr>
+        <tr><td><code>&lt;</code></td><td>Less than</td><td><code>bytes<500</code></td></tr>
+        <tr><td><code>&gt;=</code></td><td>Greater than or equal</td><td><code>status>=400</code></td></tr>
+        <tr><td><code>&lt;=</code></td><td>Less than or equal</td><td><code>status<=299</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 6</div>
+    <h4>Comparison Operators in Action</h4>
+    <ol>
+      <li>Find events where a numeric field exceeds a threshold:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal linecount>5</pre></div>
+      </li>
+      <li>Find events within a range:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal linecount>=3 linecount<=10</pre></div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- != vs NOT -->
+  <div class="content-block">
+    <h3>The Difference Between != and NOT</h3>
+    <p>Both exclude events, but they work differently:</p>
+    <table class="comp-table">
+      <thead><tr><th>Method</th><th>What It Returns</th><th>Important Difference</th></tr></thead>
+      <tbody>
+        <tr><td><code>status!=404</code></td><td>Events where status <strong>has a value</strong> that is NOT 404</td><td>Excludes events that <strong>don't have a status field at all</strong></td></tr>
+        <tr><td><code>NOT status=404</code></td><td>All events EXCEPT those with status=404</td><td>Includes events that <strong>don't have a status field</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Performance Tip</div>
+    <p>Using <code>!=</code> or <code>NOT</code> to exclude events is <strong>less efficient</strong> than including what you want. <strong>Inclusion is always better than exclusion.</strong> When possible, search for the values you want rather than excluding the ones you don't.</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 7</div>
+    <h4>!= vs NOT Comparison</h4>
+    <ol>
+      <li>Search with !=:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal log_level!=ERROR</pre></div>
+      </li>
+      <li>Search with NOT:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal NOT log_level=ERROR</pre></div>
+      </li>
+      <li>Compare event counts — which returned more? Why?</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 Which returned more events and why?</div>
+      <textarea placeholder="!= count: _____ | NOT count: _____ | Reason: ..."></textarea>
+    </div>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 CySA+ Practice</div>
+    <h4>What operator is implied between search terms unless otherwise specified?</h4>
+    <ul class="cert-options" data-correct="0">
+      <li onclick="checkAnswer(this, true)">A. AND</li>
+      <li onclick="checkAnswer(this, false)">B. OR</li>
+      <li onclick="checkAnswer(this, false)">C. NOT</li>
+      <li onclick="checkAnswer(this, false)">D. LIKE</li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: A</strong> — AND is the default operator. <code>error webserver</code> is the same as <code>error AND webserver</code>.</div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 3.3 Key Takeaways</h4>
+    <ul>
+      <li>Always use field names for precise filtering — avoid bare keywords</li>
+      <li>Wildcards at the <strong>end</strong> of a term = most efficient</li>
+      <li>Comparison operators: <code>=</code>, <code>!=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code></li>
+      <li><code>!=</code> excludes events without the field entirely; <code>NOT</code> includes them</li>
+      <li>Inclusion is more efficient than exclusion</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 3.4 TABLE COMMAND ==================== -->
+<section class="section" id="s34">
+  <div class="section-header">
+    <div class="section-icon" style="background:#22d3ee20;color:var(--accent-cyan);">📊</div>
+    <div><div class="sec-tag">Section 3.4</div><h2>Preview: The Table and Rename Commands</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>The Pipe Operator ( | )</h3>
+    <p>In Splunk, the vertical bar <code>|</code> is the <strong>pipe operator</strong>. It chains commands together in a <strong>search pipeline</strong> — the output of one command becomes the input for the next.</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>Format</span></div><pre>search command | transforming command | another command</pre></div>
+  </div>
+
+  <div class="content-block">
+    <h3>The table Command</h3>
+    <p>The <code>table</code> command displays specific fields in a clean <strong>tabular format</strong>. List the fields you want to see, separated by spaces:</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd | table _time host log_level component message</pre></div>
+    <p>This is a <strong>transforming command</strong> — results appear on the Statistics tab.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>The rename Command</h3>
+    <p>The <code>rename</code> command gives fields more readable names. Use the <code>as</code> keyword:</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>... | table clientip product_name price | rename clientip as "Client IP" product_name as "Product" price as "Price ($)"</pre></div>
+    <p>Use <strong>double quotes</strong> for names with spaces. The rename only lasts for the current search — it does <strong>not</strong> change the indexed data.</p>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Important</div>
+    <p>Once a field is renamed, you must use the <strong>new name</strong> for the rest of the search pipeline. The original field name no longer works after the rename command.</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 8</div>
+    <h4>Build a Table</h4>
+    <ol>
+      <li>Create a basic table:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd log_level=ERROR | table _time host component message</pre></div>
+      </li>
+      <li>Observe: results appear on the <strong>Statistics</strong> tab</li>
+      <li>Try adding/removing fields from the table command — how does the output change?</li>
+    </ol>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 9</div>
+    <h4>Rename Fields</h4>
+    <ol>
+      <li>Run a table with renamed fields:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd log_level=ERROR
+| table _time host component message
+| rename _time as "Timestamp" host as "Server" component as "Module" message as "Details"</pre></div>
+      </li>
+      <li>Notice: column headers now show the friendly names</li>
+      <li>Try adding a <code>sort</code> command after rename — use the <strong>new name</strong>:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>... | sort -"Timestamp"</pre></div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 10</div>
+    <h4>Real-World Scenario: Incident Summary Table</h4>
+    <p>Scenario: Your manager asks for a table showing recent errors with the server name, component, and description.</p>
+    <ol>
+      <li>Build the search:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal log_level=ERROR earliest=-1h
+| table _time host component message
+| rename _time as "Time" host as "Server" component as "Component" message as "Error Description"</pre></div>
+      </li>
+      <li>Click the <strong>paintbrush icon</strong> on the Statistics tab to format the table (column colors, number formatting)</li>
+      <li>Export the table as CSV</li>
+    </ol>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 3.4 Key Takeaways</h4>
+    <ul>
+      <li>The pipe <code>|</code> chains commands in a search pipeline</li>
+      <li><code>table</code> displays specific fields in tabular format (Statistics tab)</li>
+      <li><code>rename</code> gives fields friendly names using <code>as</code></li>
+      <li>Renamed fields must be referenced by their new name in subsequent commands</li>
+      <li>Renaming is temporary — it doesn't change indexed data</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== REVIEW ==================== -->
+<section class="section" id="review">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🎓</div>
+    <div><div class="sec-tag">Knowledge Check</div><h2>Lesson Review — Test Yourself</h2></div>
+  </div>
+  <p style="color:var(--text-secondary);margin-bottom:24px;">Click each question to reveal the answer.</p>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>1. What are fields in Splunk? Provide an example.</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>Fields are <strong>searchable name/value pairs</strong> in event data. Example: <code>status=200</code>, <code>host=webserver01</code></p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>2. What is the difference between indexed fields and search-time fields?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>Indexed fields</strong> are extracted when data is ingested (host, source, sourcetype). <strong>Search-time fields</strong> are extracted when you run a search from key=value patterns or sourcetype definitions.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>3. What are the three search modes and how do they differ?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>Fast</strong> = speed priority, minimal fields. <strong>Verbose</strong> = completeness priority, all fields. <strong>Smart</strong> (default) = adaptive — Verbose for basic searches, Fast for transforming searches.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>4. What does the 𝛼 symbol next to a field name indicate?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>The field contains <strong>alphanumeric (text) values</strong>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>5. What does the # symbol next to a field name indicate?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>The field contains <strong>numeric values</strong>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>6. What are the three default Selected Fields?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><code>host</code>, <code>source</code>, <code>sourcetype</code></p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>7. What character does Splunk use as a wildcard?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>The <strong>asterisk (*)</strong>. Best placed at the end of a term for efficiency.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>8. What operator is implied between search terms?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>AND</strong>. <code>error webserver</code> = <code>error AND webserver</code>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>9. After renaming a field, how long does the change exist?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>Only for the <strong>lifetime of the current search</strong>. No permanent change to indexed data.</p></div></div></div>
+</section>
+
+</main>
+
+<footer class="lesson-footer">
+  <p>🎯 You've completed <strong>Lesson 200.3 — Using Fields in Searches</strong></p>
+  <p>Practice building field-based searches and tables in your Splunk lab.</p>
+  <p style="margin-top:20px;font-size:12px;color:var(--text-muted);">Per Scholas Greater Boston · Security with AI Program</p>
+</footer>
+
+<script>
+function toggleCollapsible(h){h.classList.toggle('open');const b=h.nextElementSibling;if(b.style.maxHeight){b.style.maxHeight=null}else{b.style.maxHeight=b.scrollHeight+'px'}}
+function checkAnswer(li,c){const p=li.parentElement;if(p.dataset.answered)return;p.dataset.answered='true';if(c){li.classList.add('correct')}else{li.classList.add('wrong');p.children[parseInt(p.dataset.correct)].classList.add('correct')}const e=p.nextElementSibling;if(e&&e.classList.contains('cert-explanation')){e.style.display='block'}}
+window.addEventListener('scroll',()=>{const p=(document.documentElement.scrollTop/(document.documentElement.scrollHeight-document.documentElement.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'});
+</script>
+
+<nav class="slh-nav slh-bottom" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_2.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lesson 2</b></span></a><a class="slh-link slh-next" href="student_guide_200_4_5.html"><span class="slh-tt"><small>Next</small><b>Lessons 4 & 5</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+</body>
+</html>

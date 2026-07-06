@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 200.2 — Basic Searching in Splunk | Student Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-dark: #0a0e17;
+  --bg-card: #111827;
+  --bg-card-alt: #1a2332;
+  --bg-code: #0d1117;
+  --accent-green: #00d084;
+  --accent-green-dim: #00d08433;
+  --accent-blue: #3b82f6;
+  --accent-blue-dim: #3b82f620;
+  --accent-orange: #f59e0b;
+  --accent-orange-dim: #f59e0b20;
+  --accent-red: #ef4444;
+  --accent-red-dim: #ef444420;
+  --accent-cyan: #22d3ee;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #1e293b;
+  --border-light: #334155;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+/* ---- HEADER ---- */
+.hero {
+  position: relative;
+  padding: 60px 40px 50px;
+  background: linear-gradient(135deg, #0a0e17 0%, #111d2e 40%, #0f2027 100%);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -120px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-green-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-green-dim);
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #e2e8f0 0%, var(--accent-green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero .subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 24px; margin-top: 24px;
+  font-size: 13px; color: var(--text-muted);
+}
+.hero-meta span { display: flex; align-items: center; gap: 6px; }
+.hero-meta .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.hero-credits { margin-top: 18px; font-size: 13px; color: var(--text-muted); }
+.hero-credits strong { color: var(--text-secondary); }
+.guide-label {
+  display: inline-block;
+  background: var(--accent-blue);
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+/* ---- NAV ---- */
+.nav-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,14,23,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  overflow-x: auto;
+}
+.nav-bar::-webkit-scrollbar { height: 0; }
+.nav-inner { display: flex; gap: 4px; max-width: 1200px; margin: 0 auto; }
+.nav-inner a {
+  color: var(--text-muted); text-decoration: none; font-size: 13px;
+  font-weight: 600; padding: 14px 16px; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all 0.2s;
+}
+.nav-inner a:hover, .nav-inner a.active {
+  color: var(--accent-green); border-bottom-color: var(--accent-green);
+}
+
+/* ---- OBJECTIVES ---- */
+.objectives-strip {
+  background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 36px 40px;
+}
+.obj-title { font-size: 14px; font-weight: 700; color: var(--accent-green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.objectives-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px;
+}
+.obj-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 16px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg-card-alt);
+  font-size: 14px; font-weight: 500; transition: border-color 0.2s;
+}
+.obj-item:hover { border-color: var(--accent-green); }
+.obj-num {
+  background: var(--accent-green-dim); color: var(--accent-green);
+  font-size: 11px; font-weight: 700; border-radius: 6px;
+  min-width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ---- MAIN ---- */
+.main { max-width: 1200px; margin: 0 auto; padding: 40px; }
+.section { margin-bottom: 64px; scroll-margin-top: 70px; }
+.section-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+}
+.section-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.section-header h2 { font-size: 1.6rem; font-weight: 800; line-height: 1.3; }
+.section-header .sec-tag {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text-muted);
+}
+
+/* Content blocks */
+.content-block {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px; margin-bottom: 20px;
+}
+.content-block h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
+.content-block p { color: var(--text-secondary); margin-bottom: 12px; }
+.content-block p:last-child { margin-bottom: 0; }
+.content-block ul, .content-block ol { padding-left: 20px; color: var(--text-secondary); }
+.content-block li { margin-bottom: 6px; }
+
+/* Key Concept */
+.key-concept {
+  background: var(--accent-blue-dim); border-left: 4px solid var(--accent-blue);
+  border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 20px 0;
+}
+.key-concept .kc-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--accent-blue); margin-bottom: 6px;
+}
+
+/* Remember Box */
+.remember-box {
+  background: #1a1028; border-left: 4px solid #a78bfa;
+  border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 20px 0;
+}
+.remember-box .rb-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: #a78bfa; margin-bottom: 6px;
+}
+
+/* Lab Exercise */
+.lab-exercise {
+  background: linear-gradient(135deg, #071a12 0%, #0d1f18 100%);
+  border: 1px solid #1a3d2a; border-radius: 14px; padding: 28px;
+  margin: 24px 0; position: relative; overflow: hidden;
+}
+.lab-exercise::before {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--accent-green-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.lab-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-green-dim); border: 1px solid var(--accent-green);
+  color: var(--accent-green); padding: 4px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 14px;
+}
+.lab-exercise h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; }
+.lab-exercise ol, .lab-exercise ul { padding-left: 20px; color: var(--text-secondary); }
+.lab-exercise li { margin-bottom: 8px; }
+
+/* Code blocks */
+.code-block {
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: 10px; padding: 4px; margin: 14px 0; overflow-x: auto;
+}
+.code-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px; border-bottom: 1px solid var(--border);
+  font-size: 11px; color: var(--text-muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.code-bar .lang-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent-green); display: inline-block; margin-right: 6px;
+}
+pre {
+  padding: 16px; font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; line-height: 1.6; color: var(--accent-green);
+  overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+}
+
+/* Cert Question */
+.cert-question {
+  background: var(--accent-orange-dim); border: 1px solid #f59e0b44;
+  border-radius: 14px; padding: 28px; margin: 24px 0;
+}
+.cert-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #f59e0b22; border: 1px solid var(--accent-orange);
+  color: var(--accent-orange); padding: 4px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 14px;
+}
+.cert-question h4 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+.cert-options { list-style: none; padding: 0; }
+.cert-options li {
+  padding: 10px 16px; border: 1px solid var(--border);
+  border-radius: 8px; margin-bottom: 8px; cursor: pointer;
+  transition: all 0.2s; font-size: 14px; color: var(--text-secondary);
+  background: var(--bg-card);
+}
+.cert-options li:hover { border-color: var(--accent-orange); color: var(--text-primary); }
+.cert-options li.correct { border-color: var(--accent-green); background: var(--accent-green-dim); color: var(--accent-green); font-weight: 600; }
+.cert-options li.wrong { border-color: var(--accent-red); background: var(--accent-red-dim); color: var(--accent-red); }
+.cert-explanation {
+  margin-top: 14px; padding: 14px 16px; background: var(--bg-card);
+  border-radius: 8px; font-size: 14px; color: var(--text-secondary); display: none;
+}
+
+/* Summary box */
+.summary-box {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-alt) 100%);
+  border: 1px solid var(--border-light); border-radius: 14px; padding: 28px; margin: 24px 0;
+}
+.summary-box h4 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; color: var(--accent-cyan); }
+.summary-box ul { padding-left: 18px; color: var(--text-secondary); }
+.summary-box li { margin-bottom: 6px; }
+
+/* Tables */
+.comp-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+.comp-table th {
+  background: var(--bg-card-alt); color: var(--accent-green);
+  padding: 12px 16px; text-align: left; font-weight: 700;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 2px solid var(--accent-green);
+}
+.comp-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+.comp-table tr:hover td { background: var(--bg-card-alt); }
+
+/* Collapsible */
+.collapsible { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+.collapsible-header {
+  padding: 16px 20px; background: var(--bg-card); cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  font-weight: 600; font-size: 15px; transition: background 0.2s; user-select: none;
+}
+.collapsible-header:hover { background: var(--bg-card-alt); }
+.collapsible-header .arrow { transition: transform 0.3s; font-size: 12px; color: var(--text-muted); }
+.collapsible-header.open .arrow { transform: rotate(180deg); }
+.collapsible-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--bg-dark); }
+.collapsible-body-inner { padding: 20px; }
+
+/* Notes area */
+.notes-area {
+  background: var(--bg-card); border: 1px dashed var(--border-light);
+  border-radius: 12px; padding: 20px; margin: 20px 0;
+  min-height: 80px;
+}
+.notes-area .notes-label {
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.notes-area textarea {
+  width: 100%; min-height: 60px; background: transparent;
+  border: none; color: var(--text-secondary); font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; resize: vertical; outline: none; line-height: 1.6;
+}
+
+/* Footer */
+.lesson-footer {
+  text-align: center; padding: 48px 40px; border-top: 1px solid var(--border);
+  color: var(--text-muted); font-size: 14px;
+}
+
+/* Progress */
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-green); z-index: 9999; transition: width 0.1s; }
+
+@media (max-width: 768px) {
+  .hero, .main, .nav-bar, .objectives-strip { padding-left: 20px; padding-right: 20px; }
+  .objectives-grid { grid-template-columns: 1fr; }
+  .content-block, .lab-exercise, .cert-question { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<style id="slh-nav-style">
+.slh-nav{font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 24px;
+  background:#0b1220;box-sizing:border-box;}
+.slh-nav *{box-sizing:border-box;}
+.slh-nav.slh-top{border-bottom:1px solid #223052;}
+.slh-nav.slh-bottom{border-top:1px solid #223052;margin-top:48px;}
+.slh-dash{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:11px;
+  background:linear-gradient(100deg,#F6296B,#FF7A18);color:#fff;font-weight:700;font-size:14px;
+  text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 20px -12px rgba(246,41,107,.7);
+  line-height:1;transition:filter .15s,transform .12s;white-space:nowrap;}
+.slh-dash:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.slh-dash svg{width:16px;height:16px;flex:none;}
+.slh-side{display:flex;gap:8px;align-items:stretch;margin-left:auto;flex-wrap:wrap;}
+.slh-link{display:flex;align-items:center;gap:10px;padding:9px 15px;border:1px solid #2a3855;
+  border-radius:11px;color:#e2e8f0;text-decoration:none;background:#141c2e;line-height:1.2;
+  transition:border-color .15s,transform .12s,background .15s;min-width:0;}
+.slh-link:hover{border-color:#F6296B;transform:translateY(-1px);background:#172136;}
+.slh-link .slh-ar{font-size:17px;color:#8894ab;flex:none;}
+.slh-link:hover .slh-ar{color:#F6296B;}
+.slh-tt{display:flex;flex-direction:column;min-width:0;}
+.slh-tt small{color:#8894ab;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.slh-tt b{font-size:13px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.slh-next{text-align:right;}
+.slh-disabled{opacity:.3;pointer-events:none;}
+@media (max-width:640px){
+  .slh-nav{padding:10px 14px;gap:8px;}
+  .slh-side{width:100%;margin-left:0;}
+  .slh-link{flex:1;}
+  .slh-next{justify-content:flex-end;}
+  .slh-dash{width:100%;justify-content:center;}
+  .slh-tt b{white-space:normal;}
+}
+</style>
+
+<nav class="slh-nav slh-top" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_1.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lesson 1</b></span></a><a class="slh-link slh-next" href="student_guide_200_3.html"><span class="slh-tt"><small>Next</small><b>Lesson 3</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ======== HERO ======== -->
+<header class="hero">
+  <div class="guide-label">📘 Student Guide</div>
+  <div class="hero-badge">📡 Per Scholas Security with AI Program</div>
+  <h1>Lesson 200.2<br>Basic Searching in Splunk</h1>
+  <p class="subtitle">Learn how to search machine data using Splunk — from basic queries and key-value pairs to time modifiers, job management, and saving results.</p>
+  <div class="hero-meta">
+    <span><span class="dot" style="background:var(--accent-green)"></span> 11 Hands-On Labs</span>
+    <span><span class="dot" style="background:var(--accent-orange)"></span> Certification Practice Questions</span>
+    <span><span class="dot" style="background:var(--accent-blue)"></span> 9 Learning Objectives</span>
+  </div>
+  <div class="hero-credits">Lead Instructor &amp; Designer: <strong>Dr. Solomon Seifu</strong> &nbsp;|&nbsp; Co-Instructor: <strong>Naly Rosario</strong></div>
+</header>
+
+<!-- ======== NAV ======== -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="#s20">2.0 Adding Data</a>
+    <a href="#s21">2.1 Basic Searches</a>
+    <a href="#s22">2.2 Time Range</a>
+    <a href="#s23">2.3 Search Results</a>
+    <a href="#s24">2.4 Refine Searches</a>
+    <a href="#s25">2.5 Timeline</a>
+    <a href="#s26">Time Modifiers</a>
+    <a href="#s27">2.7 Search Jobs</a>
+    <a href="#s28">2.8 Save Results</a>
+    <a href="#review">Review</a>
+  </div>
+</nav>
+
+<!-- ======== OBJECTIVES ======== -->
+<section class="objectives-strip">
+  <div class="obj-title">🎯 Learning Objectives</div>
+  <div class="objectives-grid">
+    <div class="obj-item"><span class="obj-num">1</span> Describe adding data to Splunk</div>
+    <div class="obj-item"><span class="obj-num">2</span> Run basic searches</div>
+    <div class="obj-item"><span class="obj-num">3</span> Set the time range of a search</div>
+    <div class="obj-item"><span class="obj-num">4</span> Identify the contents of search results</div>
+    <div class="obj-item"><span class="obj-num">5</span> Refine searches</div>
+    <div class="obj-item"><span class="obj-num">6</span> Use the timeline</div>
+    <div class="obj-item"><span class="obj-num">7</span> Use time modifiers</div>
+    <div class="obj-item"><span class="obj-num">8</span> Control a search job</div>
+    <div class="obj-item"><span class="obj-num">9</span> Save search results</div>
+  </div>
+</section>
+
+<!-- ======== MAIN ======== -->
+<main class="main">
+
+<!-- ==================== 2.0 ==================== -->
+<section class="section" id="s20">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">📥</div>
+    <div><div class="sec-tag">Section 2.0</div><h2>Adding Data to Splunk</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>How Does Data Get Into Splunk?</h3>
+    <p>Before you can search, you need data inside Splunk. Splunk supports <strong>logs</strong>, <strong>metrics</strong>, and <strong>events</strong> — both structured (CSV, JSON) and unstructured (raw log files).</p>
+    <p>Data is typically added by <strong>IT or DevOps teams</strong> who configure forwarders, file monitors, and network inputs. End-users usually don't add data, though exceptions exist in lab settings.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Three Methods to Add Data</h3>
+    <table class="comp-table">
+      <thead><tr><th>Method</th><th>Description</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Upload</strong></td><td>Upload a file directly (.log, .csv)</td><td>Lab practice, sample datasets</td></tr>
+        <tr><td><strong>Monitor</strong></td><td>Watch a file or folder path continuously</td><td>Live logs that update frequently</td></tr>
+        <tr><td><strong>Forward</strong></td><td>Use a Universal Forwarder agent on remote machines</td><td>Production, multi-system environments</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Indexing</div>
+    <p>An <strong>index</strong> is where Splunk stores your data after processing. During indexing, Splunk breaks data into individual events, extracts fields, and assigns timestamps. Default indexes include: <code>main</code>, <code>_internal</code>, and <code>_audit</code>.</p>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Sourcetype</div>
+    <p>A <strong>sourcetype</strong> is a metadata field that tells Splunk the format of your data. It controls how Splunk parses events and extracts fields. Examples: <code>access_combined</code> (Apache logs), <code>syslog</code> (system logs), <code>json</code> (structured data).</p>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Key Takeaways</h4>
+    <ul>
+      <li>Data must be directed to an <strong>index</strong> and tagged with a <strong>sourcetype</strong></li>
+      <li>The sourcetype helps Splunk parse and extract fields correctly</li>
+      <li>Methods: Upload, Monitor, or Forward</li>
+      <li>Think of indexing as the storage box, and sourcetype as the label that tells Splunk how to read it</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 2.1 ==================== -->
+<section class="section" id="s21">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">🔍</div>
+    <div><div class="sec-tag">Section 2.1</div><h2>Run Basic Searches</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Searching with SPL</h3>
+    <p>Searching means using the <strong>Search & Reporting app</strong> to query indexed data with <strong>SPL (Search Processing Language)</strong>. You can search for keywords, phrases, or field-value pairs and filter by time, index, sourcetype, and more.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>The Search Interface</h3>
+    <table class="comp-table">
+      <thead><tr><th>#</th><th>Component</th><th>What It Does</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>Apps Bar</strong></td><td>Switch between Search, Analytics, Alerts, Reports, Dashboards</td></tr>
+        <tr><td>2</td><td><strong>Search Bar</strong></td><td>Type SPL commands here</td></tr>
+        <tr><td>3</td><td><strong>Time Range Picker</strong></td><td>Set the time period for your search</td></tr>
+        <tr><td>4</td><td><strong>Search Mode</strong></td><td>Choose Smart, Fast, or Verbose</td></tr>
+        <tr><td>5</td><td><strong>How to Search</strong></td><td>Built-in docs, tutorials, and Data Summary</td></tr>
+        <tr><td>6</td><td><strong>Table Views</strong></td><td>Point-and-click search builder</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 1</div>
+    <h4>Your First Search</h4>
+    <ol>
+      <li>Open your Splunk instance → click <strong>Search & Reporting</strong></li>
+      <li>In the search bar, type and press Enter:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal</pre></div>
+      </li>
+      <li>Set the time range to <strong>"Last 15 minutes"</strong></li>
+      <li>Now search with a keyword:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal error</pre></div>
+      </li>
+      <li>Observe the results and identify the fields shown in each event</li>
+    </ol>
+  </div>
+
+  <!-- Key-Value Pairs -->
+  <div class="content-block">
+    <h3>Key-Value Pairs</h3>
+    <p>Key-value pairs link a <strong>field name</strong> (key) to its <strong>data</strong> (value) using the equal sign (<code>=</code>).</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>Format</span></div><pre>key=value
+source=/var/log/syslog
+status=404
+user=admin</pre></div>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Remember</div>
+    <p><strong>Keys ARE case-sensitive:</strong> <code>source</code> ≠ <code>Source</code> — these return different results!</p>
+    <p><strong>Values are NOT case-sensitive:</strong> <code>source=/var/log/syslog</code> = <code>source=/VAR/LOG/SYSLOG</code></p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 2</div>
+    <h4>Case Sensitivity Test</h4>
+    <ol>
+      <li>Run with lowercase:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal source=*splunkd.log</pre></div>
+      </li>
+      <li>Run with uppercase:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal Source=*splunkd.log</pre></div>
+      </li>
+      <li>Compare: Did the uppercase version return fewer or no events?</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 Your Observations</div>
+      <textarea placeholder="Write what you observed..."></textarea>
+    </div>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 CySA+ Practice</div>
+    <h4>What syntax is used to link key/value pairs in search strings?</h4>
+    <ul class="cert-options" data-correct="1">
+      <li onclick="checkAnswer(this, false)">A. <code>action+purchase</code></li>
+      <li onclick="checkAnswer(this, true)">B. <code>action=purchase</code></li>
+      <li onclick="checkAnswer(this, false)">C. <code>action | purchase</code></li>
+      <li onclick="checkAnswer(this, false)">D. <code>action equal purchase</code></li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: B</strong> — Key-value pairs use the equal sign (<code>=</code>) to link the field name with its value.</div>
+  </div>
+
+  <!-- Wildcards -->
+  <div class="content-block">
+    <h3>Wildcards</h3>
+    <p>The asterisk (<code>*</code>) matches zero or more characters. Use it when you don't know the exact full value.</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>product_name=web*        → matches web, website, webinar
+user=*admin              → matches superadmin, testadmin
+source=*syslog*          → matches anything containing "syslog"</pre></div>
+    <p>⚠️ Wildcards at the beginning of a value can slow searches. Use at the end when possible.</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 3</div>
+    <h4>Wildcard Searches</h4>
+    <ol>
+      <li>Try these searches and compare results:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal source=*log*
+index=_internal sourcetype=splunkd*
+index=_internal component=*</pre></div>
+      </li>
+      <li>Remove or modify the wildcards — how do results change?</li>
+    </ol>
+  </div>
+
+  <!-- Boolean Operators -->
+  <div class="content-block">
+    <h3>Search Operators: AND, OR, NOT</h3>
+    <table class="comp-table">
+      <thead><tr><th>Operator</th><th>What It Does</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>AND</strong></td><td>Both terms must match (default if omitted)</td><td><code>error AND webserver</code></td></tr>
+        <tr><td><strong>OR</strong></td><td>Either term can match</td><td><code>error OR warning</code></td></tr>
+        <tr><td><strong>NOT</strong></td><td>Exclude matching events</td><td><code>error NOT database</code></td></tr>
+      </tbody>
+    </table>
+    <p><strong>Default behavior:</strong> <code>error webserver</code> = <code>error AND webserver</code> (AND is implied).</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 4</div>
+    <h4>Boolean Operators</h4>
+    <ol>
+      <li>Test AND (implicit vs. explicit):
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal error splunkd
+index=_internal error AND splunkd</pre></div>
+        <p>Do both produce the same results?</p>
+      </li>
+      <li>Test OR:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal error OR warn</pre></div>
+      </li>
+      <li>Test NOT:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal error NOT metrics</pre></div>
+      </li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 Compare: Which returned more results — AND or OR?</div>
+      <textarea placeholder="Write your comparison..."></textarea>
+    </div>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 CySA+ Practice</div>
+    <h4>Which search matches events containing BOTH "error" AND "webserver"?</h4>
+    <ul class="cert-options" data-correct="0">
+      <li onclick="checkAnswer(this, true)">A. <code>index=security Error Webserver</code></li>
+      <li onclick="checkAnswer(this, false)">B. <code>index=security error OR webserver</code></li>
+      <li onclick="checkAnswer(this, false)">C. <code>index=security "error web server"</code></li>
+      <li onclick="checkAnswer(this, false)">D. <code>index=security NOT error NOT webserver</code></li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: A</strong> — Splunk assumes AND between terms. B returns <em>either</em>. C is an exact phrase. D excludes both.</div>
+  </div>
+
+  <!-- Search Tools -->
+  <div class="content-block">
+    <h3>Helpful Search Tools</h3>
+    <ul>
+      <li><strong>Search Assistant</strong> — suggests terms, field names, and commands as you type</li>
+      <li><strong>Search History</strong> — view and rerun previous searches (found under the search bar)</li>
+      <li><strong>Data Summary</strong> — browse available hosts, sourcetypes, and data sources (How to Search → Data Summary)</li>
+    </ul>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 2.1 Key Takeaways</h4>
+    <ul>
+      <li>Key-value pairs use <code>=</code> — keys are case-sensitive, values are not</li>
+      <li><code>AND</code> is the default operator between terms</li>
+      <li><code>*</code> wildcard matches any number of characters</li>
+      <li>Use quotation marks for values with spaces: <code>status="server error"</code></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 2.2 ==================== -->
+<section class="section" id="s22">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">⏱️</div>
+    <div><div class="sec-tag">Section 2.2</div><h2>Set the Time Range of a Search</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Why Time Matters</h3>
+    <p>Filtering by time is the <strong>easiest and most effective</strong> way to optimize searches. Use the <strong>Time Range Picker</strong> (top-right of the search bar) to narrow your scope.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Time Range Picker Options</h3>
+    <table class="comp-table">
+      <thead><tr><th>Section</th><th>What It Offers</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Presets</strong></td><td>Common ranges</td><td>Last 15 min, Last 24 hours</td></tr>
+        <tr><td><strong>Relative</strong></td><td>Calendar-based</td><td>Today, Yesterday, Week to date</td></tr>
+        <tr><td><strong>Real-Time</strong></td><td>Live, continuously updating</td><td>30 sec window, 1 min window</td></tr>
+        <tr><td><strong>Date Range</strong></td><td>Specific dates</td><td>Select from calendar</td></tr>
+        <tr><td><strong>Date & Time</strong></td><td>Exact date + time</td><td>April 19, 10:00 AM to 11:00 AM</td></tr>
+        <tr><td><strong>Advanced</strong></td><td>Time token syntax</td><td><code>-15m@m</code>, <code>@d</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 5</div>
+    <h4>Explore the Time Range Picker</h4>
+    <ol>
+      <li>Run: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal log_level=ERROR</pre></div></li>
+      <li>Change the time range to: Last 15 minutes → Last 60 minutes → Custom range</li>
+      <li>Observe how the result count changes with each time window</li>
+    </ol>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 CySA+ Practice</div>
+    <h4>Which user interface component allows for time selection?</h4>
+    <ul class="cert-options" data-correct="1">
+      <li onclick="checkAnswer(this, false)">A. Time summary</li>
+      <li onclick="checkAnswer(this, true)">B. Time range picker</li>
+      <li onclick="checkAnswer(this, false)">C. Search time picker</li>
+      <li onclick="checkAnswer(this, false)">D. Data source time statistics</li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: B</strong> — The official name is the <strong>Time Range Picker</strong>.</div>
+  </div>
+</section>
+
+<!-- ==================== 2.3 ==================== -->
+<section class="section" id="s23">
+  <div class="section-header">
+    <div class="section-icon" style="background:#22d3ee20;color:var(--accent-cyan);">📊</div>
+    <div><div class="sec-tag">Section 2.3</div><h2>Identify the Contents of Search Results</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>The Four Result Tabs</h3>
+    <table class="comp-table">
+      <thead><tr><th>Tab</th><th>Shows</th><th>Activated By</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Events</strong></td><td>Raw logs with timestamps and highlighted terms</td><td>Basic searches</td></tr>
+        <tr><td><strong>Patterns</strong></td><td>Events grouped by similar structure</td><td>Pattern recognition</td></tr>
+        <tr><td><strong>Statistics</strong></td><td>Summary tables</td><td><code>stats</code>, <code>top</code>, <code>chart</code></td></tr>
+        <tr><td><strong>Visualization</strong></td><td>Charts and graphs</td><td><code>stats</code>, <code>top</code>, <code>chart</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Inside the Events Tab</h3>
+    <ul>
+      <li><strong>Timeline</strong> — bar chart of event frequency over time</li>
+      <li><strong>Display Options</strong> — switch between List, Raw, and Table views</li>
+      <li><strong>Fields Sidebar</strong> — <em>Selected Fields</em> (host, source, sourcetype) + <em>Interesting Fields</em> (auto-extracted)</li>
+      <li><strong>Events Viewer</strong> — actual log entries with search terms highlighted</li>
+    </ul>
+    <p>Events appear in <strong>reverse chronological order</strong> (newest first).</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 6</div>
+    <h4>Explore All Four Tabs</h4>
+    <ol>
+      <li>Run a transforming search:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal | stats count by component</pre></div>
+      </li>
+      <li>Click each tab: Events → Patterns → Statistics → Visualization</li>
+      <li>On Visualization, try different chart types (bar, pie, line)</li>
+      <li>Now run a basic search:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal log_level=ERROR</pre></div>
+      </li>
+      <li>In the Fields Sidebar, click an Interesting Field to add it to your display</li>
+      <li>Switch between List, Raw, and Table display modes</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 Which tab gave you the fastest insight? Which display mode did you prefer?</div>
+      <textarea placeholder="Write your thoughts..."></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 2.4 ==================== -->
+<section class="section" id="s24">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-red-dim);color:var(--accent-red);">🎯</div>
+    <div><div class="sec-tag">Section 2.4</div><h2>Refine Searches</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>How to Refine</h3>
+    <ul>
+      <li>Add more search terms to be specific</li>
+      <li>Use field-value filters: <code>status=404</code>, <code>src_ip=10.0.0.1</code></li>
+      <li>Drill down — expand events using the <strong>ⓘ</strong> icon</li>
+      <li>Click field names for statistics and unique values</li>
+      <li>Click field values to add/remove them from your search</li>
+      <li>Change search mode (Fast, Smart, Verbose)</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <h3>Three Search Modes</h3>
+    <table class="comp-table">
+      <thead><tr><th>Mode</th><th>Speed</th><th>Detail</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Fast</strong></td><td>⚡ Fastest</td><td>Minimal fields</td><td>Quick counts, dashboards</td></tr>
+        <tr><td><strong>Smart</strong> (default)</td><td>⚡⚡ Balanced</td><td>Auto-adjusts</td><td>General searching</td></tr>
+        <tr><td><strong>Verbose</strong></td><td>🐢 Slowest</td><td>All fields</td><td>Troubleshooting, forensics</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 7</div>
+    <h4>Progressive Refinement</h4>
+    <ol>
+      <li>Start broad (note event count):
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal</pre></div>
+      </li>
+      <li>Add sourcetype:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd</pre></div>
+      </li>
+      <li>Add keyword:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd log_level=ERROR</pre></div>
+      </li>
+      <li>Watch the count drop at each step</li>
+      <li><strong>Drill-down:</strong> Expand an event with <strong>ⓘ</strong> → click the timestamp → "Show events before/after this time"</li>
+      <li><strong>Search modes:</strong> Run the same search in Fast, Smart, and Verbose — compare speed and fields extracted</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 Event count at each step</div>
+      <textarea placeholder="Step 1: _____ events | Step 2: _____ events | Step 3: _____ events"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 2.5 ==================== -->
+<section class="section" id="s25">
+  <div class="section-header">
+    <div class="section-icon" style="background:#22d3ee20;color:var(--accent-cyan);">📈</div>
+    <div><div class="sec-tag">Section 2.5</div><h2>Use the Timeline</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Timeline as an Investigation Tool</h3>
+    <p>The timeline is a bar chart showing event frequency over time. Use it to spot <strong>peaks</strong> (spikes/attacks) and <strong>valleys</strong> (downtime). Hover over bars for counts; click to drill down.</p>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Important Distinction</div>
+    <p><strong>Selecting a range on the timeline</strong> → filters existing results (no new search)</p>
+    <p><strong>Zoom In/Out or Zoom to Selection</strong> → runs a NEW search with updated time frame</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Timeline Format Options</h3>
+    <table class="comp-table">
+      <thead><tr><th>Option</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Hidden / Compact / Full</strong></td><td>Control timeline display size</td></tr>
+        <tr><td><strong>Linear Scale</strong></td><td>Proportional bar heights</td></tr>
+        <tr><td><strong>Log Scale</strong></td><td>Reveals small spikes next to large ones</td></tr>
+        <tr><td><strong>Zoom to Selection</strong></td><td>Click-drag across bars to zoom in</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 8</div>
+    <h4>Investigate with the Timeline</h4>
+    <ol>
+      <li>Run: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal log_level=ERROR</pre></div></li>
+      <li>Hover over bars to see event counts</li>
+      <li>Click and drag to select bars → click <strong>Zoom to Selection</strong></li>
+      <li>Toggle between Compact and Full view</li>
+      <li>Switch between Linear and Log scale</li>
+      <li>Click <strong>Deselect</strong> to return to full view</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ==================== TIME MODIFIERS ==================== -->
+<section class="section" id="s26">
+  <div class="section-header">
+    <div class="section-icon" style="background:#a78bfa20;color:#a78bfa;">🕐</div>
+    <div><div class="sec-tag">Bonus Section</div><h2>Use Time Modifiers in Your Search</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Absolute vs. Relative Time</h3>
+    <table class="comp-table">
+      <thead><tr><th>Type</th><th>Format</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Absolute</strong></td><td><code>%m/%d/%Y:%H:%M:%S</code></td><td><code>earliest=04/19/2023:00:00:00 latest=04/27/2023:00:00:00</code></td></tr>
+        <tr><td><strong>Relative</strong></td><td><code>-[number][unit]</code></td><td><code>earliest=-60m latest=now</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Relative Time Units</h3>
+    <table class="comp-table">
+      <thead><tr><th>Unit</th><th>Meaning</th><th>Unit</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>s</code></td><td>Seconds</td><td><code>d</code></td><td>Days</td></tr>
+        <tr><td><code>m</code></td><td>Minutes</td><td><code>w</code></td><td>Weeks</td></tr>
+        <tr><td><code>h</code></td><td>Hours</td><td><code>mon</code></td><td>Months</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Override Rule</div>
+    <p>Time modifiers in the search bar <strong>always override</strong> the Time Range Picker. If the picker says "Last 24 hours" but you type <code>earliest=-30m</code>, only 30 minutes are searched.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Snap to Time with @</h3>
+    <p>Use <code>@</code> to round time to the nearest boundary:</p>
+    <ul>
+      <li><code>earliest=-1h@h</code> — 1 hour ago, snapped to top of hour (15:45 → 15:00)</li>
+      <li><code>earliest=-7d@d</code> — 7 days ago, snapped to midnight</li>
+      <li><code>earliest=-mon@mon latest=@mon</code> — entire previous month</li>
+    </ul>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 9</div>
+    <h4>Time Modifiers in Practice</h4>
+    <ol>
+      <li>Relative time:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal earliest=-15m</pre></div>
+      </li>
+      <li>Override test — set Picker to "Last 24 hours", then run:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal earliest=-10m latest=now</pre></div>
+        <p>How much time was actually searched?</p>
+      </li>
+      <li>Snap to time:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal earliest=-1h@h latest=now</pre></div>
+      </li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 What start time did the snap-to-time produce?</div>
+      <textarea placeholder="Write the actual start time you observed..."></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 2.7 ==================== -->
+<section class="section" id="s27">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">⚙️</div>
+    <div><div class="sec-tag">Section 2.7</div><h2>Control a Search Job</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Is a Search Job?</h3>
+    <p>Every search creates a <strong>search job</strong> — a process tracking the owner, app, event count, and duration. Default lifetime: <strong>10 minutes</strong> (extendable to 7 days).</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Job Management Tools</h3>
+    <table class="comp-table">
+      <thead><tr><th>Tool</th><th>Purpose</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Job Inspector</strong></td><td>Execution costs & diagnostics</td><td>Job → Inspect Job</td></tr>
+        <tr><td><strong>Job Details</strong></td><td>Performance overview</td><td>Via Job Inspector</td></tr>
+        <tr><td><strong>Jobs Manager</strong></td><td>View all recent jobs</td><td>Activity → Jobs</td></tr>
+        <tr><td><strong>Job Menu</strong></td><td>Edit, background, inspect, delete</td><td>Click "Job" on search page</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 10</div>
+    <h4>Explore Search Jobs</h4>
+    <ol>
+      <li>Run: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal | stats count by sourcetype</pre></div></li>
+      <li>Click <strong>Job → Inspect Job</strong> — review execution costs</li>
+      <li>Go to <strong>Activity → Jobs</strong> — find your search job</li>
+      <li>Click <strong>Job → Edit Job Settings</strong> — try extending the lifetime</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ==================== 2.8 ==================== -->
+<section class="section" id="s28">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">💾</div>
+    <div><div class="sec-tag">Section 2.8</div><h2>Save Search Results</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Save and Export Options</h3>
+    <table class="comp-table">
+      <thead><tr><th>Action</th><th>How</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Save As Report</strong></td><td>Save As → Report</td><td>Reusable, schedulable searches</td></tr>
+        <tr><td><strong>Save As Alert</strong></td><td>Save As → Alert</td><td>Notifications when conditions are met</td></tr>
+        <tr><td><strong>Dashboard Panel</strong></td><td>Save As → Dashboard Panel</td><td>Visualize on a dashboard</td></tr>
+        <tr><td><strong>Export</strong></td><td>Export button (near Job toolbar)</td><td>Download for offline use</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Export formats:</strong> Raw Events, CSV, XML, JSON</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 11</div>
+    <h4>Save and Export</h4>
+    <ol>
+      <li>Run: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd | stats count by log_level</pre></div></li>
+      <li>Click <strong>Save As → Report</strong> → name it and save</li>
+      <li>Click the <strong>Export</strong> icon → choose CSV → download</li>
+      <li>Open the CSV and identify three fields you recognize</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ==================== REVIEW ==================== -->
+<section class="section" id="review">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🎓</div>
+    <div><div class="sec-tag">Knowledge Check</div><h2>Lesson Review — Test Yourself</h2></div>
+  </div>
+
+  <p style="color:var(--text-secondary);margin-bottom:24px;">Click each question to reveal the answer.</p>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>1. What syntax links key/value pairs?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>The <strong>equal sign (<code>=</code>)</strong>. Example: <code>status=404</code></p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>2. What does "earliest=-72h@h latest=@d" do?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>Starts <strong>72 hours ago, snapped to the hour</strong>, and ends at the <strong>start of the current day</strong>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>3. What is the function of the timeline?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>A <strong>visual representation of event distribution</strong> over time, helping identify patterns and anomalies.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>4. What can be configured using Edit Job Settings?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>Read permissions</strong>, <strong>job lifetime</strong>, and a <strong>shareable URL</strong>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>5. How long does Splunk retain a search job by default?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>10 minutes</strong>. Extendable to 7 days.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>6. Which Boolean operator is implied between terms?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>AND</strong>. <code>error webserver</code> = <code>error AND webserver</code>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>7. What character is the wildcard?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>The <strong>asterisk (<code>*</code>)</strong>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>8. What is the easiest way to optimize searches?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>Be <strong>specific with search terms</strong> and <strong>narrow the time range</strong>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>9. What is an event?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>A single <strong>timestamped data entry</strong> representing a record of activity.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>10. What are the three search modes?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>Fast</strong> (speed), <strong>Smart</strong> (balanced, default), <strong>Verbose</strong> (full detail).</p></div></div></div>
+</section>
+
+</main>
+
+<footer class="lesson-footer">
+  <p>🎯 You've completed <strong>Lesson 200.2 — Basic Searching in Splunk</strong></p>
+  <p>Keep practicing these searches in your Splunk lab. The more you search, the sharper your skills become.</p>
+  <p style="margin-top:20px;font-size:12px;color:var(--text-muted);">Per Scholas Greater Boston · Security with AI Program</p>
+</footer>
+
+<script>
+function toggleCollapsible(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  if (body.style.maxHeight) { body.style.maxHeight = null; }
+  else { body.style.maxHeight = body.scrollHeight + 'px'; }
+}
+function checkAnswer(li, isCorrect) {
+  const parent = li.parentElement;
+  if (parent.dataset.answered) return;
+  parent.dataset.answered = 'true';
+  if (isCorrect) { li.classList.add('correct'); }
+  else {
+    li.classList.add('wrong');
+    const correctIdx = parseInt(parent.dataset.correct);
+    parent.children[correctIdx].classList.add('correct');
+  }
+  const explanation = parent.nextElementSibling;
+  if (explanation && explanation.classList.contains('cert-explanation')) { explanation.style.display = 'block'; }
+}
+window.addEventListener('scroll', () => {
+  const p = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100;
+  document.getElementById('progressBar').style.width = p + '%';
+});
+</script>
+
+<nav class="slh-nav slh-bottom" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_1.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lesson 1</b></span></a><a class="slh-link slh-next" href="student_guide_200_3.html"><span class="slh-tt"><small>Next</small><b>Lesson 3</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+</body>
+</html>

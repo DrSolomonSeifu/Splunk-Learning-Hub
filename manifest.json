@@ -1,0 +1,22 @@
+{
+  "name": "Splunk Learning Hub",
+  "short_name": "Splunk Hub",
+  "description": "A dashboard-style learning hub for the Splunk Core User course — eight lessons plus hands-on labs, global search, and integrated web search.",
+  "id": "/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0B1220",
+  "theme_color": "#0B1220",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Practice Labs", "short_name": "Labs", "url": "./splunk_lab_portal.html" },
+    { "name": "Lesson 1 — Splunk Basics", "short_name": "Lesson 1", "url": "./student_guide_200_1.html" }
+  ]
+}

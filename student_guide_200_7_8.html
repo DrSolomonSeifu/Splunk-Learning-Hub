@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lessons 200.7 & 200.8 — Student Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg-dark:#0a0e17;--bg-card:#111827;--bg-card-alt:#1a2332;--bg-code:#0d1117;--accent-green:#00d084;--accent-green-dim:#00d08433;--accent-blue:#3b82f6;--accent-blue-dim:#3b82f620;--accent-orange:#f59e0b;--accent-orange-dim:#f59e0b20;--accent-red:#ef4444;--accent-red-dim:#ef444420;--accent-purple:#a78bfa;--accent-purple-dim:#a78bfa20;--accent-cyan:#22d3ee;--accent-cyan-dim:#22d3ee20;--accent-teal:#14b8a6;--accent-teal-dim:#14b8a620;--accent-gold:#fbbf24;--accent-gold-dim:#fbbf2422;--text-primary:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#1e293b;--border-light:#334155}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.7;font-size:16px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent-teal),var(--accent-cyan));z-index:1000;transition:width .1s}
+.hero{position:relative;padding:50px 40px 40px;background:linear-gradient(135deg,#0a0e17 0%,#0f1d2e 40%,#0a1a24 100%);border-bottom:1px solid var(--border);overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;background:radial-gradient(circle,var(--accent-teal-dim) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-80px;left:20%;width:300px;height:300px;background:radial-gradient(circle,var(--accent-cyan-dim) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-teal-dim);border:1px solid var(--accent-teal);color:var(--accent-teal);padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:16px}
+.hero h1{font-size:clamp(28px,4vw,42px);font-weight:800;line-height:1.2;margin-bottom:8px}
+.hero h1 span{background:linear-gradient(135deg,var(--accent-teal),var(--accent-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text-secondary);font-size:16px;max-width:700px}
+.hero-meta{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap}
+.hero-meta span{color:var(--text-muted);font-size:13px}
+.lesson-switcher{display:flex;justify-content:center;background:var(--bg-card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:99}
+.lesson-tab{flex:1;max-width:400px;padding:16px 32px;text-align:center;font-weight:700;font-size:15px;cursor:pointer;border:none;border-bottom:3px solid transparent;color:var(--text-muted);transition:all .3s;background:transparent}
+.lesson-tab:hover{color:var(--text-primary);background:var(--bg-card-alt)}
+.lesson-tab.active{color:var(--accent-teal);border-bottom-color:var(--accent-teal);background:var(--bg-card-alt)}
+.nav-bar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;white-space:nowrap}
+.nav-inner{display:flex;gap:0;max-width:1200px;margin:0 auto}
+.nav-inner a{padding:12px 18px;font-size:13px;font-weight:600;color:var(--text-muted);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0}
+.nav-inner a:hover{color:var(--accent-teal);background:var(--accent-teal-dim)}
+.main{max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.lesson-content{display:none}.lesson-content.active{display:block}
+.section{margin-bottom:48px}
+.section-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:24px}
+.section-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.sec-tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent-teal);margin-bottom:4px}
+.section h2{font-size:24px;font-weight:800}
+.cb{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.cb h3{font-size:18px;font-weight:700;margin-bottom:12px;color:var(--accent-teal)}
+.cb p{color:var(--text-secondary);margin-bottom:12px}
+.cb ul,.cb ol{margin:12px 0 12px 24px;color:var(--text-secondary)}.cb li{margin-bottom:8px}.cb li strong{color:var(--text-primary)}
+.kc{background:linear-gradient(135deg,var(--accent-teal-dim),var(--accent-cyan-dim));border:1px solid var(--accent-teal);border-radius:12px;padding:24px;margin-bottom:20px}
+.kc-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent-teal);margin-bottom:8px}
+.kc p{color:var(--text-primary)}
+.cd{background:var(--bg-code);border:1px solid var(--border-light);border-radius:8px;margin:16px 0;overflow:hidden}
+.cd-bar{display:flex;align-items:center;padding:8px 16px;background:#161b22;border-bottom:1px solid var(--border-light);font-size:12px;color:var(--text-muted)}
+.ld{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent-teal);margin-right:8px}
+.cd pre{padding:16px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#e6edf3}
+.lab{background:var(--bg-card);border:2px solid var(--accent-green);border-radius:12px;padding:24px;margin-bottom:20px;position:relative}
+.lab-tag{position:absolute;top:-12px;left:20px;background:var(--accent-green);color:#0a0e17;font-size:12px;font-weight:800;padding:4px 14px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}
+.lab h4{margin-top:8px;font-size:17px;color:var(--accent-green);margin-bottom:12px}
+.lab ol,.lab ul{margin:12px 0 0 24px;color:var(--text-secondary)}.lab li{margin-bottom:8px}
+.ct{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.ct th{background:var(--accent-teal);color:#0a0e17;padding:12px 16px;text-align:left;font-weight:700}
+.ct td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text-secondary)}
+.ct tr:hover td{background:var(--bg-card-alt)}
+.col{margin-bottom:8px}
+.col-h{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-weight:600;font-size:15px;transition:all .2s}
+.col-h:hover{border-color:var(--accent-teal);background:var(--bg-card-alt)}
+.col-h .arrow{font-size:12px;color:var(--text-muted);transition:transform .3s}
+.col-b{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.col-bi{padding:16px 20px;background:var(--bg-card-alt);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;color:var(--text-secondary);font-size:14px;line-height:1.7}
+.sb{background:linear-gradient(135deg,var(--accent-gold-dim),#f59e0b10);border:1px solid var(--accent-gold);border-radius:12px;padding:24px;margin:20px 0}
+.sb h4{color:var(--accent-gold);margin-bottom:12px}
+.sb ul{margin:0 0 0 20px;color:var(--text-secondary)}.sb li{margin-bottom:6px}
+.na{margin:24px 0}
+.na h4{color:var(--text-muted);font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.na textarea{width:100%;min-height:100px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:16px;color:var(--text-primary);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;resize:vertical}
+.lf{text-align:center;padding:40px;border-top:1px solid var(--border);color:var(--text-muted);font-size:13px}
+@media(max-width:768px){.hero{padding:30px 20px}.main{padding:24px 16px 60px}.nav-inner a{padding:10px 14px;font-size:12px}.lesson-tab{padding:12px 16px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<style id="slh-nav-style">
+.slh-nav{font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 24px;
+  background:#0b1220;box-sizing:border-box;}
+.slh-nav *{box-sizing:border-box;}
+.slh-nav.slh-top{border-bottom:1px solid #223052;}
+.slh-nav.slh-bottom{border-top:1px solid #223052;margin-top:48px;}
+.slh-dash{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:11px;
+  background:linear-gradient(100deg,#F6296B,#FF7A18);color:#fff;font-weight:700;font-size:14px;
+  text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 20px -12px rgba(246,41,107,.7);
+  line-height:1;transition:filter .15s,transform .12s;white-space:nowrap;}
+.slh-dash:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.slh-dash svg{width:16px;height:16px;flex:none;}
+.slh-side{display:flex;gap:8px;align-items:stretch;margin-left:auto;flex-wrap:wrap;}
+.slh-link{display:flex;align-items:center;gap:10px;padding:9px 15px;border:1px solid #2a3855;
+  border-radius:11px;color:#e2e8f0;text-decoration:none;background:#141c2e;line-height:1.2;
+  transition:border-color .15s,transform .12s,background .15s;min-width:0;}
+.slh-link:hover{border-color:#F6296B;transform:translateY(-1px);background:#172136;}
+.slh-link .slh-ar{font-size:17px;color:#8894ab;flex:none;}
+.slh-link:hover .slh-ar{color:#F6296B;}
+.slh-tt{display:flex;flex-direction:column;min-width:0;}
+.slh-tt small{color:#8894ab;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.slh-tt b{font-size:13px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.slh-next{text-align:right;}
+.slh-disabled{opacity:.3;pointer-events:none;}
+@media (max-width:640px){
+  .slh-nav{padding:10px 14px;gap:8px;}
+  .slh-side{width:100%;margin-left:0;}
+  .slh-link{flex:1;}
+  .slh-next{justify-content:flex-end;}
+  .slh-dash{width:100%;justify-content:center;}
+  .slh-tt b{white-space:normal;}
+}
+</style>
+
+<nav class="slh-nav slh-top" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_6.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lesson 6</b></span></a><a class="slh-link slh-next" href="splunk_lab_portal.html"><span class="slh-tt"><small>Next</small><b>Practice Labs</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+
+<div class="progress-bar" id="progressBar"></div>
+<header class="hero">
+  <div class="hero-badge">📘 Student Guide</div>
+  <h1>Lessons 200.7 &amp; 200.8 — <span>Lookups, Scheduled Reports &amp; Alerts</span></h1>
+  <p>Enrich your data with external context using lookups, then automate monitoring with scheduled reports and alerts.</p>
+  <div class="hero-meta"><span>📚 Per Scholas Greater Boston</span><span>🔐 Security with AI Program</span><span>👨‍🏫 Lead Instructor &amp; Designer: Dr. Solomon Seifu &nbsp;|&nbsp; Co-Instructor: Naly Rosario</span></div>
+</header>
+<div class="lesson-switcher">
+  <button class="lesson-tab active" onclick="switchLesson('L7',this)">📗 Lesson 200.7 — Creating &amp; Using Lookups</button>
+  <button class="lesson-tab" onclick="switchLesson('L8',this)">📙 Lesson 200.8 — Scheduled Reports &amp; Alerts</button>
+</div>
+
+<!-- ==================== LESSON 7 ==================== -->
+<div class="lesson-content active" id="L7">
+<nav class="nav-bar"><div class="nav-inner">
+  <a href="#S71">7.1 What</a><a href="#S72">7.2 Types</a><a href="#S73">7.3 Files</a><a href="#S74">7.4 Definitions</a><a href="#S75">7.5 Auto</a><a href="#S76">7.6 Commands</a><a href="#S77">7.7 CSV</a><a href="#S78">7.8 Create</a><a href="#S79">7.9 Use</a><a href="#S7R">Review</a>
+</div></nav>
+<main class="main">
+
+<!-- 7.1 -->
+<section class="section" id="S71">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-teal-dim);color:var(--accent-teal);">🔍</div><div><div class="sec-tag">Section 7.1</div><h2>What Is a Lookup?</h2></div></div>
+  <div class="cb"><h3>The Problem — Data Without Context</h3><p>Machine data contains valuable insights, but it doesn't always provide the full picture. Your event data might show <code>user_id=101</code>, but that alone doesn't tell you <strong>who</strong> that user is, what department they belong to, or what role they have.</p></div>
+  <div class="cb"><h3>The Solution — Lookups</h3><p>A <strong>lookup</strong> in Splunk enriches or transforms your data by bringing in information from external sources, such as tables or files.</p>
+  <ul><li><strong>Enrich</strong> results with extra details — department names, locations, device owners</li><li><strong>Match</strong> values in indexed data with corresponding values in an external table</li><li>Work through <strong>paired fields</strong> — at least one field must be common between event data and the lookup table</li></ul></div>
+  <div class="kc"><div class="kc-label">Quick Example</div><p>Your event has <code>user_id=101</code> — that doesn't mean much.<br>A lookup file tells us <strong>101 belongs to Alex from HR</strong>.</p></div>
+  <div class="cb"><h3>Real-World Use Case</h3><p>A field <code>productId=WC-98-047</code> means nothing alone. With a lookup file containing <code>product_name</code>, <code>price</code>, and <code>category</code>, Splunk can automatically pull that in.</p>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=main sourcetype="access_combined_wcookie"
+| where isnotnull(productId)
+| lookup product_price.csv productId OUTPUT product_name, price, sale_price
+| table productId, product_name, price, sale_price</pre></div></div>
+</section>
+
+<!-- 7.2 -->
+<section class="section" id="S72">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">📂</div><div><div class="sec-tag">Section 7.2</div><h2>Four Types of Lookups</h2></div></div>
+  <div class="cb">
+  <table class="ct"><thead><tr><th>Type</th><th>Source</th><th>Best For</th><th>Example</th></tr></thead><tbody>
+  <tr><td><strong>CSV Lookup</strong></td><td>.csv file</td><td>Small, static datasets</td><td>Product list, employee directory</td></tr>
+  <tr><td><strong>External Lookup</strong></td><td>Python script</td><td>Dynamic, real-time data</td><td>DNS lookup to resolve IPs</td></tr>
+  <tr><td><strong>KV Store Lookup</strong></td><td>Splunk NoSQL DB</td><td>Large, frequently changing</td><td>Device inventory updated daily</td></tr>
+  <tr><td><strong>Geospatial Lookup</strong></td><td>KML/KMZ files</td><td>Location enrichment</td><td>Mapping IPs to countries</td></tr>
+  </tbody></table></div>
+  <div class="cb"><h3>Detailed Breakdown</h3>
+  <ul><li><strong>CSV Lookup</strong> — Most common. Also called a <em>static lookup</em>. Upload a .csv file with field-value pairs.</li>
+  <li><strong>External Lookup</strong> — Also known as a <em>scripted lookup</em>. Uses Python scripts to dynamically fetch data (e.g., DNS server).</li>
+  <li><strong>KV Store Lookup</strong> — Splunk's internal Key-Value Store. Best for large or frequently changing data.</li>
+  <li><strong>Geospatial Lookup</strong> — Uses <strong>KML</strong> (Keyhole Markup Language) or <strong>KMZ</strong> (compressed KML) files for location mapping.</li></ul></div>
+  <div class="kc"><div class="kc-label">Summary</div><p><strong>CSV</strong> = simple &amp; static | <strong>External</strong> = dynamic scripting | <strong>KV Store</strong> = large/changing | <strong>Geospatial</strong> = mapping &amp; location</p></div>
+</section>
+
+<!-- 7.3 -->
+<section class="section" id="S73">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">📄</div><div><div class="sec-tag">Section 7.3</div><h2>Lookup Table Files</h2></div></div>
+  <div class="cb"><h3>What Are Lookup Table Files?</h3><p>The actual files storing lookup data — think of them as <strong>external reference sheets</strong> Splunk reads during searches.</p>
+  <ul><li>Only <strong>CSV</strong> and <strong>Geospatial</strong> lookups require uploading a file</li><li>One file can support <strong>multiple lookup definitions</strong></li><li>Example: Same <code>product_price.csv</code> → one lookup for names, another for prices</li></ul></div>
+  <div class="cb"><h3>CSV File Restrictions</h3>
+  <ul><li>At least <strong>two columns</strong> — one lookup key + one data field</li><li>One column must match a field in your events</li><li><strong>Plain ASCII or valid UTF-8</strong> only</li><li>No old-style line endings (<code>\r</code>)</li><li>Header row under <strong>4096 characters</strong></li></ul></div>
+  <div class="lab"><div class="lab-tag">🧪 Lab 1</div><h4>View Existing Lookup Files</h4>
+  <ol><li>Go to <strong>Settings → Lookups → Lookup table files</strong></li><li>Browse the list — note Path, Owner, App, Sharing columns</li>
+  <li>View a file's contents:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>| inputlookup geo_attr_countries.csv</pre></div></li>
+  <li>Filter the results:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>| inputlookup geo_attr_countries.csv | head 20</pre></div></li></ol></div>
+</section>
+
+<!-- 7.4 -->
+<section class="section" id="S74">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-purple-dim);color:var(--accent-purple);">⚙️</div><div><div class="sec-tag">Section 7.4</div><h2>Lookup Definitions</h2></div></div>
+  <div class="cb"><h3>What Is a Lookup Definition?</h3><p>Tells Splunk <strong>where to find</strong> a lookup table and <strong>how to use it</strong>. Acts as a bridge between search commands and the actual file.</p>
+  <ul><li>Assigns a <strong>name and path</strong> to the file</li><li>Can include <strong>matching rules or restrictions</strong></li><li>A single table can have <strong>multiple definitions</strong> (one matches employee_id, another matches email)</li><li><strong>All lookup types</strong> require a definition before use</li></ul></div>
+  <div class="kc"><div class="kc-label">Think of It This Way</div><p><strong>Lookup Table File</strong> = the actual data (the CSV file)<br><strong>Lookup Definition</strong> = the instructions for how Splunk uses that data</p></div>
+</section>
+
+<!-- 7.5 -->
+<section class="section" id="S75">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">🔄</div><div><div class="sec-tag">Section 7.5</div><h2>Automatic Lookups</h2></div></div>
+  <div class="cb"><h3>What Are Automatic Lookups?</h3><p>Apply a lookup <strong>automatically</strong> — no need to type the <code>lookup</code> command every time.</p>
+  <ul><li>Links a definition to <strong>specific fields</strong> in indexed data</li><li>Whenever those fields appear, Splunk enriches results automatically</li><li>Ensures <strong>consistency</strong> across all users and reports</li></ul></div>
+  <div class="kc"><div class="kc-label">Before vs After</div><p><strong>Without:</strong> Must type <code>| lookup http_codes status OUTPUT status_description status_type</code> every time<br><strong>With:</strong> Just run <code>index=web</code> and the enrichment fields appear automatically!</p></div>
+  <div class="cb"><h3>How to Configure</h3>
+  <ol><li><strong>Settings → Lookups → Automatic lookups → + Add new</strong></li><li>Choose destination app (e.g., <code>search</code>)</li><li>Name it (e.g., <code>http_codes</code>)</li><li>Select lookup definition</li><li>Apply to sourcetype (e.g., <code>access_combined</code>)</li><li>Map <strong>input fields</strong> (event field → lookup field)</li><li>Map <strong>output fields</strong> (fields to add)</li><li>Click <strong>Save</strong></li></ol></div>
+  <div class="lab"><div class="lab-tag">🧪 Lab 2</div><h4>Configure an Automatic Lookup</h4>
+  <ol><li>Go to <strong>Settings → Lookups → Automatic lookups</strong></li><li>Click <strong>+ Add new</strong></li><li>App: search, Name: http_codes</li><li>Lookup table: http_codes, Sourcetype: access_combined</li><li>Input: status → status | Output: status_description, status_type</li><li>Save and set Read permissions for Everyone</li>
+  <li>Verify — run without lookup command:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=main sourcetype="access_combined_wcookie"
+| stats count by status_type, status_description</pre></div></li></ol></div>
+</section>
+
+<!-- 7.6 -->
+<section class="section" id="S76">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-cyan-dim);color:var(--accent-cyan);">⌨️</div><div><div class="sec-tag">Section 7.6</div><h2>Lookup Search Commands</h2></div></div>
+  <div class="cb">
+  <table class="ct"><thead><tr><th>Command</th><th>Purpose</th><th>Example</th></tr></thead><tbody>
+  <tr><td><strong><code>lookup</code></strong></td><td>Adds fields from a lookup table to results</td><td><code>| lookup products.csv productId OUTPUT product_name, price</code></td></tr>
+  <tr><td><strong><code>inputlookup</code></strong></td><td>Displays contents of a lookup table</td><td><code>| inputlookup products.csv</code></td></tr>
+  <tr><td><strong><code>outputlookup</code></strong></td><td>Writes results into a lookup table</td><td><code>| outputlookup updated_products.csv</code></td></tr>
+  </tbody></table>
+  <p><strong>Important:</strong> <code>outputlookup</code> does NOT work with external lookups — only CSV or KV Store.</p></div>
+  <div class="lab"><div class="lab-tag">🧪 Lab 3</div><h4>Practice All Three Commands</h4>
+  <ol><li>View a lookup:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>| inputlookup geo_attr_countries.csv</pre></div></li>
+  <li>Filter contents:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>| inputlookup geo_attr_countries.csv | where lat > 40</pre></div></li>
+  <li>Write results to a new lookup:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR
+| stats count by component
+| outputlookup error_components.csv</pre></div></li>
+  <li>Verify what was written:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>| inputlookup error_components.csv</pre></div></li></ol></div>
+</section>
+
+<!-- 7.7 -->
+<section class="section" id="S77">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-gold-dim);color:var(--accent-gold);">📊</div><div><div class="sec-tag">Section 7.7</div><h2>CSV Lookups — Deep Dive</h2></div></div>
+  <div class="cb"><h3>What Is a CSV File?</h3><p><strong>CSV = Comma-Separated Values</strong>. A plain text file that organizes data in tabular format.</p>
+  <ul><li>Each line = a <strong>row</strong> of data</li><li>Values separated by <strong>commas</strong></li><li>Easy for humans and machines to read</li><li>Standard format for Excel, databases, and Splunk</li></ul></div>
+  <div class="cb"><h3>CSV Lookup Characteristics</h3>
+  <ul><li><strong>File-based</strong> and <strong>static</strong> — the file rarely changes</li><li>Great for <strong>small datasets</strong> that don't change frequently</li><li>Examples: product lists, employee directories, HTTP status codes</li></ul></div>
+</section>
+
+<!-- 7.8 -->
+<section class="section" id="S78">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-red-dim);color:var(--accent-red);">🛠️</div><div><div class="sec-tag">Section 7.8</div><h2>Creating a CSV Lookup — Step by Step</h2></div></div>
+  <div class="cb"><h3>Step 1: Upload the File</h3>
+  <ol><li><strong>Settings → Lookups → Lookup table files → + Add new</strong></li><li>Choose app (e.g., <code>search</code>)</li><li>Click Choose File → select your CSV (e.g., <code>http_status.csv</code>)</li><li>Set Destination filename (e.g., <code>http_codes.csv</code>)</li><li>Click <strong>Save</strong></li></ol>
+  <p><strong>Note:</strong> Your role must include <code>upload_lookup_files</code> capability.</p></div>
+  <div class="cb"><h3>Step 2: Set Permissions</h3>
+  <ol><li>Find your file → click <strong>Permissions</strong></li><li>Choose <strong>This app only (search)</strong></li><li>Check <strong>Read</strong> for <strong>Everyone</strong></li><li>Click <strong>Save</strong></li></ol></div>
+  <div class="cb"><h3>Step 3: Create a Definition</h3>
+  <ol><li><strong>Settings → Lookups → Lookup definitions → + Add new</strong></li><li>Name it (e.g., <code>http_codes</code>)</li><li>Select the lookup table file</li><li>Click <strong>Save</strong></li></ol></div>
+  <div class="lab"><div class="lab-tag">🧪 Lab 4</div><h4>Full Lookup Creation Workflow</h4>
+  <ol><li>Download or create a CSV with columns: status, status_description, status_type</li><li>Upload: Settings → Lookups → Lookup table files → + Add new</li><li>Set Read permissions for Everyone</li><li>Create a lookup definition pointing to it</li>
+  <li>Verify:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>| inputlookup http_codes.csv</pre></div></li>
+  <li>Test with a filter:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>| inputlookup http_codes.csv | where status >= 400</pre></div></li></ol></div>
+</section>
+
+<!-- 7.9 -->
+<section class="section" id="S79">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">🎯</div><div><div class="sec-tag">Section 7.9</div><h2>Using Lookups in Searches</h2></div></div>
+  <div class="cb"><h3>Without a Lookup — Raw Data</h3>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL — No lookup</div><pre>index=web
+| stats count(status) as "Number of Requests" by status</pre></div>
+  <p>Shows status codes (200, 404, 503) with no explanation of what they mean.</p></div>
+  <div class="cb"><h3>With a Lookup — Enriched Data</h3>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL — With lookup</div><pre>index=main sourcetype="access_combined_wcookie"
+| lookup http_status.csv status OUTPUT status_description status_type
+| stats count(status) as "Number of Requests" by status status_description status_type
+| rename status_type as "HTTP message category", status_description as "Message details"
+| sort - "HTTP message category"</pre></div>
+  <p>Now each code shows readable categories like "Client Error" and descriptions like "Not Found".</p></div>
+  <div class="cb"><h3>Verify an Automatic Lookup</h3>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL — Auto lookup verification</div><pre>index=main sourcetype="access_combined_wcookie"
+| stats count(status) as "Number of Requests" by status_type, status_description
+| rename status_type as "HTTP message category", status_description as "Message details"
+| sort - "HTTP message category"</pre></div>
+  <p>If automatic lookup is configured, enrichment fields appear <strong>without</strong> using the <code>lookup</code> command!</p></div>
+  <div class="lab"><div class="lab-tag">🧪 Lab 5</div><h4>Before &amp; After Comparison</h4>
+  <ol><li>Run <strong>without</strong> lookup:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=_internal | stats count by log_level</pre></div></li>
+  <li>Now use the lookup command to enrich:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=web | lookup http_codes.csv status OUTPUT status_description status_type
+| stats count by status_type status_description</pre></div></li>
+  <li>Discuss: How does the lookup make data more actionable for a SOC analyst?</li></ol></div>
+</section>
+
+<!-- 7 REVIEW -->
+<section class="section" id="S7R">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🎓</div><div><div class="sec-tag">Knowledge Check</div><h2>Lesson 200.7 Review</h2></div></div>
+
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>1. What is a lookup table?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">A file containing field-value pairs used to add meaningful data to search results.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>2. What is a CSV file?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">A plain text file that stores data in tabular format using commas to separate values.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>3. How can a lookup enrich search results?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">By matching fields in your events to a lookup table and adding more descriptive fields.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>4. What command invokes a field value lookup?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi"><code>lookup</code> — e.g., <code>| lookup http_codes.csv status OUTPUT status_description</code></div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>5. What command displays lookup table contents?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi"><code>inputlookup</code> — e.g., <code>| inputlookup products.csv</code></div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>6. What is a limitation of CSV lookups?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">They are static and not suitable for large or frequently updated datasets.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>7. What command writes results to a lookup file?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi"><code>outputlookup</code> — Note: Does NOT work with external lookups.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>8. What delimiter does CSV use?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">A comma (<code>,</code>) is the standard delimiter.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>9. What do automatic lookups achieve?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">They apply lookups automatically without the manual <code>lookup</code> command.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>10. Name the four types of lookups.</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">CSV lookups, External lookups, KV Store lookups, and Geospatial lookups.</div></div></div>
+
+  <div class="sb"><h4>📋 Lesson 200.7 Summary</h4>
+  <ul><li>Lookups enrich event data by adding field-value pairs from external tables</li><li>Four types: CSV, External, KV Store, Geospatial</li><li>Key commands: <code>lookup</code>, <code>inputlookup</code>, <code>outputlookup</code></li><li>Lookup definitions bridge search commands to lookup files</li><li>Automatic lookups apply enrichment without manual commands</li></ul></div>
+  <div class="na"><h4>📝 My Notes — Lesson 200.7</h4><textarea placeholder="Write your notes, questions, or key takeaways here..."></textarea></div>
+</section>
+</main></div>
+
+<!-- ==================== LESSON 8 ==================== -->
+<div class="lesson-content" id="L8">
+<nav class="nav-bar"><div class="nav-inner">
+  <a href="#S81">8.1 Intro</a><a href="#S82">8.2 Workflow</a><a href="#S83">8.3 Types</a><a href="#S84">8.4 Scheduled</a><a href="#S85">8.5 Real-Time</a><a href="#S86">8.6 Rolling</a><a href="#S87">8.7 Report vs Alert</a><a href="#S88">8.8 Manage</a><a href="#S8R">Review</a>
+</div></nav>
+<main class="main">
+
+<!-- 8.1 -->
+<section class="section" id="S81">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🔔</div><div><div class="sec-tag">Section 8.1</div><h2>Introduction to Scheduled Reports &amp; Alerts</h2></div></div>
+  <div class="cb"><h3>Why Automate?</h3><p>Instead of running the same searches manually, you can <strong>schedule reports</strong> to run at set intervals and create <strong>alerts</strong> that notify you when conditions are met.</p>
+  <ul><li>Important insights delivered <strong>on time</strong></li><li>Critical issues caught and acted upon <strong>quickly</strong></li><li>Makes Splunk a <strong>proactive</strong> tool, not just a reactive one</li></ul></div>
+  <div class="cb"><h3>What Is an Alert?</h3><p>Alerts monitor data in real-time or on a schedule to help you respond quickly to important events.</p>
+  <ul><li><strong>Built on saved searches</strong> — when results match conditions, Splunk triggers the alert</li><li><strong>Actions:</strong> send email, run script, post to webhook, create ticket</li><li><strong>Example:</strong> If failed logins exceed 10 in 5 minutes → alert the security team</li></ul></div>
+</section>
+
+<!-- 8.2 -->
+<section class="section" id="S82">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">⚡</div><div><div class="sec-tag">Section 8.2</div><h2>Alert Workflow — Four Parts</h2></div></div>
+  <div class="cb"><h3>The Four Components</h3>
+  <ol><li><strong>Search</strong> — What do you want to track? (failed logins, error codes, etc.)</li>
+  <li><strong>Alert Type</strong> — How often should Splunk check? (Scheduled or Real-time)</li>
+  <li><strong>Trigger Conditions &amp; Throttling</strong> — When should it fire? Throttle to prevent alert fatigue.</li>
+  <li><strong>Alert Actions</strong> — What happens? (email, script, ticket, triggered alerts list)</li></ol></div>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL — Example alert search</div><pre>search error
+| stats count by host
+| where count > 100</pre></div>
+</section>
+
+<!-- 8.3 -->
+<section class="section" id="S83">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-purple-dim);color:var(--accent-purple);">📋</div><div><div class="sec-tag">Section 8.3</div><h2>Alert Types — Scheduled vs Real-Time</h2></div></div>
+  <div class="cb">
+  <table class="ct"><thead><tr><th>Feature</th><th>Scheduled</th><th>Real-Time (Per-Result)</th><th>Real-Time (Rolling Window)</th></tr></thead><tbody>
+  <tr><td><strong>How it works</strong></td><td>Runs on a defined schedule</td><td>Runs continuously</td><td>Runs continuously</td></tr>
+  <tr><td><strong>Triggering</strong></td><td>Results meet conditions</td><td>Each matching result</td><td>Conditions within a time window</td></tr>
+  <tr><td><strong>Throttling</strong></td><td>Time-based suppression</td><td>Optional time/field-based</td><td>Time-based suppression</td></tr>
+  <tr><td><strong>Use case</strong></td><td>Daily sales check at 23:00</td><td>Alert on each failed login</td><td>Alert if &gt;10 failures in 5 min</td></tr>
+  </tbody></table></div>
+</section>
+
+<!-- 8.4 -->
+<section class="section" id="S84">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">📅</div><div><div class="sec-tag">Section 8.4</div><h2>Creating a Scheduled Alert</h2></div></div>
+  <div class="cb"><h3>Scenario: Daily Sales Alert</h3><p>Alert if daily online sales drop below 800.</p>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=web sourcetype=access_combined action=purchase
+| stats count as "Online Sales"</pre></div></div>
+  <div class="cb"><h3>Configuration Steps</h3>
+  <ol><li>Run the search → click <strong>Save As → Alert</strong></li><li><strong>Title:</strong> <code>Sales_Alert_Less_than_800_items</code></li><li><strong>Permissions:</strong> Shared in App</li><li><strong>Alert type:</strong> Scheduled</li><li><strong>Schedule:</strong> Run every day at 23:00</li><li><strong>Expires:</strong> 24 hours</li><li><strong>Trigger:</strong> Number of Results less than 800</li><li><strong>Trigger Once:</strong> Yes</li><li><strong>Action:</strong> Add to Triggered Alerts, Severity: Medium</li><li>Click <strong>Save</strong></li></ol></div>
+  <div class="lab"><div class="lab-tag">🧪 Lab 6</div><h4>Create a Scheduled Alert</h4>
+  <ol><li>Run:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR
+| stats count as error_count</pre></div></li>
+  <li>Save As → Alert</li><li>Title: <code>Training_Alert_Error_Spike</code></li><li>Type: Scheduled, run every hour</li><li>Trigger: Number of Results &gt; 50</li><li>Action: Add to Triggered Alerts, Severity: High</li><li>Save and review the alert configuration page</li></ol></div>
+</section>
+
+<!-- 8.5 -->
+<section class="section" id="S85">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-red-dim);color:var(--accent-red);">🚨</div><div><div class="sec-tag">Section 8.5</div><h2>Real-Time Alerts — Per-Result</h2></div></div>
+  <div class="cb"><h3>What Are Real-Time Per-Result Alerts?</h3><p>Continuously search for events and trigger <strong>every time a matching event occurs</strong>.</p>
+  <ul><li>Critical for <strong>immediate monitoring</strong> — unauthorized access, system failures</li><li>Continuously scans the incoming data stream</li><li>Use <strong>throttling</strong> to prevent alert flooding</li></ul></div>
+  <div class="cb"><h3>Example: HTTP Server Error Alert</h3>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=web sourcetype=access_combined (host=www1 OR host=www2 OR host=www3) status>=500</pre></div>
+  <ul><li><strong>Type:</strong> Real-time, Per result</li><li><strong>Throttle:</strong> 1 hour (suppress per status code)</li><li><strong>Action:</strong> Add to Triggered Alerts, Severity: High</li></ul></div>
+  <div class="lab"><div class="lab-tag">🧪 Lab 7</div><h4>Create a Real-Time Per-Result Alert</h4>
+  <ol><li>Run:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR</pre></div></li>
+  <li>Save As → Alert</li><li>Title: <code>RT_Alert_Errors</code></li><li>Type: Real-time, Per result</li><li>Throttle: Suppress for 30 minutes</li><li>Action: Add to Triggered Alerts, Severity: High</li><li>Save and observe the Triggered Alerts page</li></ol></div>
+</section>
+
+<!-- 8.6 -->
+<section class="section" id="S86">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-purple-dim);color:var(--accent-purple);">⏱️</div><div><div class="sec-tag">Section 8.6</div><h2>Real-Time Alerts — Rolling Time Window</h2></div></div>
+  <div class="cb"><h3>What Is a Rolling Time Window?</h3><p>Monitors events over a <strong>continuous time frame</strong> (e.g., last 5 minutes) and triggers when a <strong>condition is met within that window</strong>.</p>
+  <ul><li>Detects <strong>patterns or trends</strong> rather than individual events</li><li>Example: Alert if <strong>&gt;20 failed logins within 5 minutes</strong></li></ul></div>
+  <div class="cb"><h3>Example: Failed Login Detection</h3>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=security sourcetype=linux_secure ("Failed password")</pre></div>
+  <ul><li><strong>Title:</strong> <code>SEC_Alert_20_failed_login</code></li><li><strong>Type:</strong> Real-time</li><li><strong>Trigger:</strong> Number of Results &gt; 20 in 5 minutes</li><li><strong>Throttle:</strong> Suppress for 30 minutes</li><li><strong>Action:</strong> Add to Triggered Alerts, Severity: High</li></ul></div>
+  <div class="kc"><div class="kc-label">Per-Result vs Rolling Window</div><p><strong>Per-Result:</strong> "Alert me every time someone fails to log in" → individual event<br><strong>Rolling Window:</strong> "Alert me if 20+ failures in 5 minutes" → pattern detection</p></div>
+</section>
+
+<!-- 8.7 -->
+<section class="section" id="S87">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-cyan-dim);color:var(--accent-cyan);">⚖️</div><div><div class="sec-tag">Section 8.7</div><h2>Scheduled Report vs Scheduled Alert</h2></div></div>
+  <div class="cb">
+  <table class="ct"><thead><tr><th>Feature</th><th>Scheduled Report</th><th>Scheduled Alert</th></tr></thead><tbody>
+  <tr><td><strong>When action runs</strong></td><td>Every time report completes</td><td>Only when condition is met</td></tr>
+  <tr><td><strong>Analogy</strong></td><td>Weekly report every Monday 9 AM</td><td>Email only if failed logins &gt; 10</td></tr>
+  <tr><td><strong>Use case</strong></td><td>Compliance, dashboards</td><td>Security monitoring, thresholds</td></tr>
+  </tbody></table></div>
+  <div class="kc"><div class="kc-label">Remember</div><p><strong>Reports = Always run on schedule</strong> (action executes every time)<br><strong>Alerts = Run only when a condition is met</strong> (action is conditional)</p></div>
+</section>
+
+<!-- 8.8 -->
+<section class="section" id="S88">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-teal-dim);color:var(--accent-teal);">📊</div><div><div class="sec-tag">Section 8.8</div><h2>Viewing &amp; Managing Triggered Alerts</h2></div></div>
+  <div class="cb"><h3>How to View Triggered Alerts</h3>
+  <ol><li>Go to <strong>Activity → Triggered Alerts</strong></li><li>View all alerts triggered in past 24 hours (default)</li><li>Filter by: <strong>All</strong>, <strong>Yours</strong>, or <strong>This App's</strong></li></ol></div>
+  <div class="cb"><h3>Triggered Alert Details</h3>
+  <table class="ct"><thead><tr><th>Field</th><th>Description</th></tr></thead><tbody>
+  <tr><td><strong>Time</strong></td><td>When the alert triggered</td></tr>
+  <tr><td><strong>Fired alerts</strong></td><td>Alert name(s)</td></tr>
+  <tr><td><strong>App</strong></td><td>Context/app it runs from</td></tr>
+  <tr><td><strong>Type</strong></td><td>Scheduled or Real-time</td></tr>
+  <tr><td><strong>Severity</strong></td><td>High, Medium, Low</td></tr>
+  <tr><td><strong>Mode</strong></td><td>Per-result or Digest</td></tr>
+  </tbody></table></div>
+  <div class="cb"><h3>When Do Alerts Appear?</h3>
+  <ul><li><strong>"Add to Triggered Alerts"</strong> action must be enabled</li><li>Alert must have <strong>triggered recently</strong></li><li><strong>Retention period</strong> still active (default: 24h, extendable to 7 days)</li><li>Record must <strong>not have been deleted</strong></li></ul></div>
+  <div class="cb"><h3>Useful SPL for Alert Investigation</h3>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL — Failed scheduled alerts</div><pre>index=_internal sourcetype=scheduler status=failure
+| stats count by savedsearch_name, user, app</pre></div>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL — Successful alerts</div><pre>index=_internal sourcetype=scheduler action_name="alert_action" status=success
+| stats count by savedsearch_name</pre></div>
+  <div class="cd"><div class="cd-bar"><span class="ld"></span>SPL — List via REST API</div><pre>| rest /services/alerts/fired_alerts
+| table title, triggered_alerts, app, alert_type, severity, alert_mode</pre></div></div>
+  <div class="lab"><div class="lab-tag">🧪 Lab 8</div><h4>Investigate Triggered Alerts</h4>
+  <ol><li>Go to <strong>Activity → Triggered Alerts</strong></li><li>Review any alerts that fired — click <strong>View results</strong></li>
+  <li>Run the internal search:<div class="cd"><div class="cd-bar"><span class="ld"></span>SPL</div><pre>index=_internal sourcetype=scheduler | stats count by savedsearch_name status</pre></div></li>
+  <li>Identify which alerts succeeded and which failed</li><li>Check alert details: source IP, HTTP status, host, timestamp</li></ol></div>
+</section>
+
+<!-- 8 REVIEW -->
+<section class="section" id="S8R">
+  <div class="section-header"><div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🎓</div><div><div class="sec-tag">Knowledge Check</div><h2>Lesson 200.8 Review</h2></div></div>
+
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>1. What are the two alert types?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi"><strong>Scheduled</strong> and <strong>Real-time</strong> alerts.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>2. Scheduled alert vs scheduled report?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">A scheduled alert acts <strong>only when conditions are met</strong>. A scheduled report acts <strong>every time it completes</strong>.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>3. Advantage and disadvantage of real-time alerts?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi"><strong>Advantage:</strong> Immediate detection. <strong>Disadvantage:</strong> Higher resource usage and potential alert fatigue.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>4. What scheduling options exist for scheduled alerts?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">Predefined (hourly, daily at specific time) or <strong>custom cron expressions</strong>.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>5. Per-result vs rolling window trigger?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi"><strong>Per-result:</strong> triggers on each matching event. <strong>Rolling window:</strong> triggers based on conditions within a defined time window.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>6. When should an admin throttle an alert?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">To avoid repeated alerts for the same issue — e.g., suppress for 1 hour.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>7. Conditions for alert to appear on Triggered Alerts page?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">"Add to Triggered Alerts" enabled, triggered recently, retention active, not deleted.</div></div></div>
+  <div class="col"><div class="col-h" onclick="toggleC(this)"><span>8. What does severity level provide?</span><span class="arrow">▼</span></div><div class="col-b"><div class="col-bi">Tags alert with High/Medium/Low to help <strong>filter and prioritize</strong> on the Triggered Alerts page.</div></div></div>
+
+  <div class="sb"><h4>📋 Lesson 200.8 Summary</h4>
+  <ul><li>Alerts automate monitoring — built on saved searches with trigger conditions</li><li>Two types: <strong>Scheduled</strong> and <strong>Real-time</strong> (Per-result + Rolling window)</li><li>Throttling prevents alert fatigue by suppressing duplicates</li><li>Reports always run; Alerts only trigger when conditions are met</li><li>Manage alerts via Activity → Triggered Alerts</li></ul></div>
+  <div class="na"><h4>📝 My Notes — Lesson 200.8</h4><textarea placeholder="Write your notes, questions, or key takeaways here..."></textarea></div>
+</section>
+</main></div>
+
+<footer class="lf">
+  <p>📘 <strong>Student Guide</strong> — Lessons 200.7 &amp; 200.8: Lookups, Scheduled Reports &amp; Alerts</p>
+  <p style="margin-top:8px">Per Scholas Greater Boston · Security with AI Program</p>
+  <p style="margin-top:4px">Created and Designed by: Solomon Seifu</p>
+</footer>
+
+<script>
+function switchLesson(id,btn){document.querySelectorAll('.lesson-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.lesson-tab').forEach(e=>e.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function toggleC(el){const b=el.nextElementSibling,a=el.querySelector('.arrow');if(b.style.maxHeight){b.style.maxHeight=null;a.style.transform='rotate(0deg)';}else{b.style.maxHeight=b.scrollHeight+'px';a.style.transform='rotate(180deg)';}}
+window.addEventListener('scroll',()=>{const p=(document.documentElement.scrollTop/(document.documentElement.scrollHeight-document.documentElement.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%';});
+</script>
+
+<nav class="slh-nav slh-bottom" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_6.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lesson 6</b></span></a><a class="slh-link slh-next" href="splunk_lab_portal.html"><span class="slh-tt"><small>Next</small><b>Practice Labs</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+</body>
+</html>

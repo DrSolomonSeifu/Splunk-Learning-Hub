@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 200.1 — Splunk Basics | Student Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-dark: #0a0e17;
+  --bg-card: #111827;
+  --bg-card-alt: #1a2332;
+  --bg-code: #0d1117;
+  --accent-green: #00d084;
+  --accent-green-dim: #00d08433;
+  --accent-blue: #3b82f6;
+  --accent-blue-dim: #3b82f620;
+  --accent-orange: #f59e0b;
+  --accent-orange-dim: #f59e0b20;
+  --accent-red: #ef4444;
+  --accent-red-dim: #ef444420;
+  --accent-cyan: #22d3ee;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #1e293b;
+  --border-light: #334155;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+/* ---- HEADER ---- */
+.hero {
+  position: relative;
+  padding: 60px 40px 50px;
+  background: linear-gradient(135deg, #0a0e17 0%, #111d2e 40%, #0f2027 100%);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -120px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-green-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-green-dim);
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #e2e8f0 0%, var(--accent-green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero .subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 24px; margin-top: 24px;
+  font-size: 13px; color: var(--text-muted);
+}
+.hero-meta span { display: flex; align-items: center; gap: 6px; }
+.hero-meta .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.hero-credits {
+  margin-top: 18px; font-size: 13px; color: var(--text-muted);
+}
+.hero-credits strong { color: var(--text-secondary); }
+.guide-label {
+  display: inline-block;
+  background: var(--accent-blue);
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+/* ---- NAV ---- */
+.nav-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,14,23,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  overflow-x: auto;
+}
+.nav-bar::-webkit-scrollbar { height: 0; }
+.nav-inner { display: flex; gap: 4px; max-width: 1200px; margin: 0 auto; }
+.nav-inner a {
+  color: var(--text-muted); text-decoration: none; font-size: 13px;
+  font-weight: 600; padding: 14px 16px; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all 0.2s;
+}
+.nav-inner a:hover, .nav-inner a.active {
+  color: var(--accent-green); border-bottom-color: var(--accent-green);
+}
+
+/* ---- OBJECTIVES ---- */
+.objectives-strip {
+  background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 36px 40px;
+}
+.obj-title { font-size: 14px; font-weight: 700; color: var(--accent-green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.objectives-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px;
+}
+.obj-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 16px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg-card-alt);
+  font-size: 14px; font-weight: 500; transition: border-color 0.2s;
+}
+.obj-item:hover { border-color: var(--accent-green); }
+.obj-num {
+  background: var(--accent-green-dim); color: var(--accent-green);
+  font-size: 11px; font-weight: 700; border-radius: 6px;
+  min-width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ---- MAIN ---- */
+.main { max-width: 1200px; margin: 0 auto; padding: 40px; }
+.section { margin-bottom: 64px; scroll-margin-top: 70px; }
+.section-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+}
+.section-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.section-header h2 { font-size: 1.6rem; font-weight: 800; line-height: 1.3; }
+.section-header .sec-tag {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text-muted);
+}
+
+/* Content blocks */
+.content-block {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px; margin-bottom: 20px;
+}
+.content-block h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
+.content-block p { color: var(--text-secondary); margin-bottom: 12px; }
+.content-block p:last-child { margin-bottom: 0; }
+.content-block ul, .content-block ol { padding-left: 20px; color: var(--text-secondary); }
+.content-block li { margin-bottom: 6px; }
+
+/* Key Concept */
+.key-concept {
+  background: var(--accent-blue-dim); border-left: 4px solid var(--accent-blue);
+  border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 20px 0;
+}
+.key-concept .kc-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--accent-blue); margin-bottom: 6px;
+}
+
+/* Remember Box */
+.remember-box {
+  background: #1a1028; border-left: 4px solid #a78bfa;
+  border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 20px 0;
+}
+.remember-box .rb-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: #a78bfa; margin-bottom: 6px;
+}
+
+/* Lab Exercise */
+.lab-exercise {
+  background: linear-gradient(135deg, #071a12 0%, #0d1f18 100%);
+  border: 1px solid #1a3d2a; border-radius: 14px; padding: 28px;
+  margin: 24px 0; position: relative; overflow: hidden;
+}
+.lab-exercise::before {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--accent-green-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.lab-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-green-dim); border: 1px solid var(--accent-green);
+  color: var(--accent-green); padding: 4px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 14px;
+}
+.lab-exercise h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; }
+.lab-exercise ol, .lab-exercise ul { padding-left: 20px; color: var(--text-secondary); }
+.lab-exercise li { margin-bottom: 8px; }
+
+/* Code blocks */
+.code-block {
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: 10px; padding: 4px; margin: 14px 0; overflow-x: auto;
+}
+.code-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px; border-bottom: 1px solid var(--border);
+  font-size: 11px; color: var(--text-muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.code-bar .lang-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent-green); display: inline-block; margin-right: 6px;
+}
+pre {
+  padding: 16px; font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; line-height: 1.6; color: var(--accent-green);
+  overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+}
+
+/* Cert Question */
+.cert-question {
+  background: var(--accent-orange-dim); border: 1px solid #f59e0b44;
+  border-radius: 14px; padding: 28px; margin: 24px 0;
+}
+.cert-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #f59e0b22; border: 1px solid var(--accent-orange);
+  color: var(--accent-orange); padding: 4px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 14px;
+}
+.cert-question h4 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+.cert-options { list-style: none; padding: 0; }
+.cert-options li {
+  padding: 10px 16px; border: 1px solid var(--border);
+  border-radius: 8px; margin-bottom: 8px; cursor: pointer;
+  transition: all 0.2s; font-size: 14px; color: var(--text-secondary);
+  background: var(--bg-card);
+}
+.cert-options li:hover { border-color: var(--accent-orange); color: var(--text-primary); }
+.cert-options li.correct { border-color: var(--accent-green); background: var(--accent-green-dim); color: var(--accent-green); font-weight: 600; }
+.cert-options li.wrong { border-color: var(--accent-red); background: var(--accent-red-dim); color: var(--accent-red); }
+.cert-explanation {
+  margin-top: 14px; padding: 14px 16px; background: var(--bg-card);
+  border-radius: 8px; font-size: 14px; color: var(--text-secondary); display: none;
+}
+
+/* Summary box */
+.summary-box {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-alt) 100%);
+  border: 1px solid var(--border-light); border-radius: 14px; padding: 28px; margin: 24px 0;
+}
+.summary-box h4 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; color: var(--accent-cyan); }
+.summary-box ul { padding-left: 18px; color: var(--text-secondary); }
+.summary-box li { margin-bottom: 6px; }
+
+/* Tables */
+.comp-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+.comp-table th {
+  background: var(--bg-card-alt); color: var(--accent-green);
+  padding: 12px 16px; text-align: left; font-weight: 700;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 2px solid var(--accent-green);
+}
+.comp-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+.comp-table tr:hover td { background: var(--bg-card-alt); }
+
+/* Collapsible */
+.collapsible { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+.collapsible-header {
+  padding: 16px 20px; background: var(--bg-card); cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  font-weight: 600; font-size: 15px; transition: background 0.2s; user-select: none;
+}
+.collapsible-header:hover { background: var(--bg-card-alt); }
+.collapsible-header .arrow { transition: transform 0.3s; font-size: 12px; color: var(--text-muted); }
+.collapsible-header.open .arrow { transform: rotate(180deg); }
+.collapsible-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--bg-dark); }
+.collapsible-body-inner { padding: 20px; }
+
+/* Notes area */
+.notes-area {
+  background: var(--bg-card); border: 1px dashed var(--border-light);
+  border-radius: 12px; padding: 20px; margin: 20px 0;
+  min-height: 80px;
+}
+.notes-area .notes-label {
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.notes-area textarea {
+  width: 100%; min-height: 60px; background: transparent;
+  border: none; color: var(--text-secondary); font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; resize: vertical; outline: none; line-height: 1.6;
+}
+
+/* Footer */
+.lesson-footer {
+  text-align: center; padding: 48px 40px; border-top: 1px solid var(--border);
+  color: var(--text-muted); font-size: 14px;
+}
+
+/* Progress */
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent-green); z-index: 9999; transition: width 0.1s; }
+
+@media (max-width: 768px) {
+  .hero, .main, .nav-bar, .objectives-strip { padding-left: 20px; padding-right: 20px; }
+  .objectives-grid { grid-template-columns: 1fr; }
+  .content-block, .lab-exercise, .cert-question { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<style id="slh-nav-style">
+.slh-nav{font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 24px;
+  background:#0b1220;box-sizing:border-box;}
+.slh-nav *{box-sizing:border-box;}
+.slh-nav.slh-top{border-bottom:1px solid #223052;}
+.slh-nav.slh-bottom{border-top:1px solid #223052;margin-top:48px;}
+.slh-dash{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:11px;
+  background:linear-gradient(100deg,#F6296B,#FF7A18);color:#fff;font-weight:700;font-size:14px;
+  text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 20px -12px rgba(246,41,107,.7);
+  line-height:1;transition:filter .15s,transform .12s;white-space:nowrap;}
+.slh-dash:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.slh-dash svg{width:16px;height:16px;flex:none;}
+.slh-side{display:flex;gap:8px;align-items:stretch;margin-left:auto;flex-wrap:wrap;}
+.slh-link{display:flex;align-items:center;gap:10px;padding:9px 15px;border:1px solid #2a3855;
+  border-radius:11px;color:#e2e8f0;text-decoration:none;background:#141c2e;line-height:1.2;
+  transition:border-color .15s,transform .12s,background .15s;min-width:0;}
+.slh-link:hover{border-color:#F6296B;transform:translateY(-1px);background:#172136;}
+.slh-link .slh-ar{font-size:17px;color:#8894ab;flex:none;}
+.slh-link:hover .slh-ar{color:#F6296B;}
+.slh-tt{display:flex;flex-direction:column;min-width:0;}
+.slh-tt small{color:#8894ab;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.slh-tt b{font-size:13px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.slh-next{text-align:right;}
+.slh-disabled{opacity:.3;pointer-events:none;}
+@media (max-width:640px){
+  .slh-nav{padding:10px 14px;gap:8px;}
+  .slh-side{width:100%;margin-left:0;}
+  .slh-link{flex:1;}
+  .slh-next{justify-content:flex-end;}
+  .slh-dash{width:100%;justify-content:center;}
+  .slh-tt b{white-space:normal;}
+}
+</style>
+
+<nav class="slh-nav slh-top" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><span class="slh-link slh-prev slh-disabled"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>&mdash;</b></span></span><a class="slh-link slh-next" href="student_guide_200_2.html"><span class="slh-tt"><small>Next</small><b>Lesson 2</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ======== HERO ======== -->
+<header class="hero">
+  <div class="guide-label">📘 Student Guide</div>
+  <div class="hero-badge">📡 Per Scholas Security with AI Program</div>
+  <h1>Lesson 200.1<br>Splunk Basics</h1>
+  <p class="subtitle">Your first step into Splunk — understand machine data, how Splunk works, its core components, real-world uses, apps, deployment types, and how to navigate and personalize the platform.</p>
+  <div class="hero-meta">
+    <span><span class="dot" style="background:var(--accent-green)"></span> 4 Hands-On Labs</span>
+    <span><span class="dot" style="background:var(--accent-orange)"></span> Certification Practice Questions</span>
+    <span><span class="dot" style="background:var(--accent-blue)"></span> 8 Learning Objectives</span>
+  </div>
+  <div class="hero-credits">Lead Instructor &amp; Designer: <strong>Dr. Solomon Seifu</strong> &nbsp;|&nbsp; Co-Instructor: <strong>Naly Rosario</strong></div>
+</header>
+
+<!-- ======== NAV ======== -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="#intro">Introduction</a>
+    <a href="#s11">1.1 Machine Data</a>
+    <a href="#s12">1.2 Splunk</a>
+    <a href="#s13">1.3 Components</a>
+    <a href="#s14">1.4 Uses of Splunk</a>
+    <a href="#s15">1.5 Splunk Apps</a>
+    <a href="#s16">1.6 Deployment</a>
+    <a href="#s17">1.7 Navigation</a>
+    <a href="#s18">1.8 User Settings</a>
+    <a href="#review">Review</a>
+  </div>
+</nav>
+
+<!-- ======== OBJECTIVES ======== -->
+<section class="objectives-strip">
+  <div class="obj-title">🎯 Learning Objectives</div>
+  <div class="objectives-grid">
+    <div class="obj-item"><span class="obj-num">1</span> Explain machine data</div>
+    <div class="obj-item"><span class="obj-num">2</span> Describe Splunk</div>
+    <div class="obj-item"><span class="obj-num">3</span> List the components of Splunk</div>
+    <div class="obj-item"><span class="obj-num">4</span> Describe the uses of Splunk</div>
+    <div class="obj-item"><span class="obj-num">5</span> Define Splunk apps</div>
+    <div class="obj-item"><span class="obj-num">6</span> Describe Splunk deployment types</div>
+    <div class="obj-item"><span class="obj-num">7</span> Practice navigating in Splunk</div>
+    <div class="obj-item"><span class="obj-num">8</span> Practice configuring account and user settings</div>
+  </div>
+</section>
+
+<!-- ======== MAIN ======== -->
+<main class="main">
+
+<!-- ==================== INTRO ==================== -->
+<section class="section" id="intro">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">👋</div>
+    <div><div class="sec-tag">Introduction</div><h2>Welcome to Splunk</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Is Splunk, and Why Are We Learning It?</h3>
+    <p><strong>Splunk</strong> is a platform that helps organizations <strong>search, analyze, and visualize machine-generated data</strong>. It ingests data from many different sources and provides <strong>real-time insights</strong> so teams can quickly spot trends and anomalies.</p>
+    <p>With its visualization tools and scalability, Splunk supports a wide range of use cases — <strong>IT operations</strong>, <strong>security and compliance</strong>, and <strong>business analytics</strong>.</p>
+    <p>As an IT or security professional, you need to monitor and troubleshoot many systems, applications, and infrastructure components. Splunk gives you <strong>visibility</strong> into all of them by ingesting and analyzing the logs and metrics they generate — all from one place.</p>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — One Pane of Glass</div>
+    <p>Instead of logging into ten different servers to read ten different log files, Splunk pulls all of that data into <strong>one searchable place</strong>. Think of it as a search engine — like Google — but for your organization's own machine data.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>How This Lesson Flows</h3>
+    <p>We start with the raw material (<strong>machine data</strong>), then meet the tool that tames it (<strong>Splunk</strong>), look under the hood (<strong>components</strong>), see what it's used for (<strong>use cases</strong>), learn how it's extended (<strong>apps</strong>) and installed (<strong>deployment types</strong>), and finish hands-on: <strong>navigating Splunk</strong> and <strong>customizing your settings</strong>.</p>
+  </div>
+</section>
+
+<!-- ==================== 1.1 ==================== -->
+<section class="section" id="s11">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">🗂️</div>
+    <div><div class="sec-tag">Section 1.1</div><h2>Machine Data</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Is Machine Data?</h3>
+    <p><strong>Machine data</strong> is any type of data that is <strong>generated by machines, systems, or devices</strong> — not typed by a human.</p>
+    <p>It is produced <strong>automatically</strong>, <strong>continuously</strong>, and in <strong>large quantities</strong>. That makes it difficult to manage and analyze without the right tools. A single busy web server can generate millions of log lines per day — no human could read them all.</p>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Digital Exhaust</div>
+    <p>Every machine leaves a trail of records about what it is doing — like footprints in the snow. Every login, error, connection, and update leaves a line in a log somewhere. Machine data is that trail, and it tells the story of what actually happened on your systems.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>The Six Main Types of Machine Data</h3>
+    <table class="comp-table">
+      <thead><tr><th>Type</th><th>What It Contains</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Server logs</strong></td><td>Server events: user logins, system errors, software updates</td><td>Linux <code>/var/log/auth.log</code> recording a failed SSH login</td></tr>
+        <tr><td><strong>Network logs</strong></td><td>Network traffic: source and destination IP addresses, protocols used, data transfer rates</td><td>A firewall log showing traffic from <code>10.0.0.5</code> to port <code>443</code></td></tr>
+        <tr><td><strong>Sensor data</strong></td><td>Readings from sensors embedded in machines or devices: temperature, humidity, pressure, other environmental conditions</td><td>A data-center sensor reporting rack temperature every 30 seconds</td></tr>
+        <tr><td><strong>Application logs</strong></td><td>Application events: user interactions, errors, performance metrics</td><td>A web app logging "checkout completed in 1.2s"</td></tr>
+        <tr><td><strong>Security data</strong></td><td>Security events: login attempts, system breaches, virus/malware detections</td><td>Antivirus logging "malware quarantined on HOST-42"</td></tr>
+        <tr><td><strong>IoT data</strong></td><td>Data from Internet of Things devices: smart homes, wearables, industrial sensors</td><td>A smart thermostat reporting usage patterns</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>What Raw Machine Data Actually Looks Like</h3>
+    <p>Here is a single, real-looking log event. Notice how much information is packed into one messy line:</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>Raw Log Event</span></div><pre>Jul 04 09:15:22 web-server-01 sshd[2841]: Failed password for admin from 203.0.113.45 port 52144 ssh2</pre></div>
+    <p>A trained eye can spot a <strong>timestamp</strong>, a <strong>hostname</strong>, a <strong>process</strong>, a <strong>failed login</strong>, a <strong>username</strong>, and a <strong>source IP address</strong>. Now imagine millions of lines like this arriving every hour, in dozens of different formats. That is why raw machine data needs a tool like Splunk.</p>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Common Mistake</div>
+    <p>Beginners often assume machine data means only "server logs." It is much broader — <strong>anything a machine records automatically</strong> counts, from a firewall entry to a smartwatch heartbeat reading.</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 1</div>
+    <h4>See Machine Data on Your Own Computer</h4>
+    <ol>
+      <li>On your Windows machine, press <strong>Win + R</strong>, type <code>eventvwr</code>, and press Enter to open <strong>Event Viewer</strong></li>
+      <li>Expand <strong>Windows Logs → System</strong> — scroll through the events. This is machine data your computer generates constantly</li>
+      <li>Open <strong>Windows Logs → Security</strong> — find a logon event. What details does it record?</li>
+      <li>Now imagine collecting these events from <strong>hundreds</strong> of machines into one searchable place — that is what Splunk does</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 What details did one event contain?</div>
+      <textarea placeholder="Timestamp, source, event ID, user..."></textarea>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 1.1 — Key Takeaways</h4>
+    <ul>
+      <li>Machine data = data <strong>generated automatically</strong> by machines, systems, or devices</li>
+      <li>Types include <strong>server logs, network logs, sensor data, application logs, security data, and IoT data</strong></li>
+      <li>It is a valuable source of insight — it can <strong>optimize operations, improve security, and drive business decisions</strong></li>
+      <li>Raw machine data is <strong>huge, complex, and not human-friendly</strong> — which is exactly where Splunk enters the stage</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 1.2 ==================== -->
+<section class="section" id="s12">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">🔎</div>
+    <div><div class="sec-tag">Section 1.2</div><h2>Splunk</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Is Splunk?</h3>
+    <p><strong>Splunk</strong> is a powerful platform that helps organizations <strong>search, analyze, and visualize machine-generated data</strong>.</p>
+    <p>It provides a <strong>scalable, real-time</strong> approach to ingesting and processing large volumes of data from a wide range of sources — servers, applications, network devices, and security systems.</p>
+    <p>Splunk's <strong>indexing engine</strong> makes data easy to <strong>search, correlate, and analyze</strong>, giving IT professionals a comprehensive view of their environment.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>What Else Does Splunk Offer?</h3>
+    <ul>
+      <li><strong>Pre-built apps and add-ons</strong> — packages that help you get even more value from machine data, such as monitoring security events, analyzing network traffic, and managing IT operations (covered in Section 1.5)</li>
+      <li><strong>Visualization tools</strong> — charts, graphs, and dashboards that help organizations quickly identify <strong>trends, anomalies, and potential problems</strong></li>
+      <li><strong>Machine learning capabilities</strong> — Splunk can <strong>detect anomalies</strong> and even <strong>predict future issues</strong> before they happen</li>
+    </ul>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Why "Real Time" Matters</div>
+    <p>Traditional log review happens <em>after</em> something breaks. Splunk analyzes data <strong>as it arrives</strong>, so you can catch a spreading attack or a failing server <em>while it is happening</em> — not the next morning.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>The Five Main Functions of Splunk</h3>
+    <p>Splunk operates through <strong>five main functions</strong>. Learn these in order — each one builds on the previous:</p>
+    <table class="comp-table">
+      <thead><tr><th>#</th><th>Function</th><th>In One Sentence</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>Index Data</strong></td><td>Ingest data and store it in a searchable format</td></tr>
+        <tr><td>2</td><td><strong>Search and Investigate</strong></td><td>Query and filter data in real time</td></tr>
+        <tr><td>3</td><td><strong>Add Knowledge</strong></td><td>Enrich data with custom fields, tags, and lookups</td></tr>
+        <tr><td>4</td><td><strong>Monitor and Alert</strong></td><td>Watch data continuously and get notified when conditions are met</td></tr>
+        <tr><td>5</td><td><strong>Report and Analyze</strong></td><td>Turn data into reports, dashboards, and decisions</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Function 1 — Index Data</h3>
+    <p><strong>Splunk indexing</strong> is the process of ingesting data from various sources — logs, metrics, and configuration files — and storing it in a format that can be easily <strong>searched, correlated, and analyzed</strong>.</p>
+    <p>The Splunk indexing engine uses a <strong>multi-step process</strong>:</p>
+    <ol>
+      <li><strong>Break the data into events</strong> — each log entry becomes its own searchable record</li>
+      <li><strong>Parse the events to extract fields</strong> — pull out useful pieces like timestamps, IPs, and usernames</li>
+      <li><strong>Normalize the fields into a common format</strong> — so different data sources can be compared side by side</li>
+      <li><strong>Store the normalized events in an index</strong> — Splunk's searchable "database"</li>
+    </ol>
+    <p><strong>Analogy:</strong> think of a librarian receiving a truckload of loose papers, sorting them into labeled folders, and filing them in the right drawers — so anyone can find any page in seconds.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Function 2 — Search and Investigate</h3>
+    <p>Search and Investigate lets users <strong>search, filter, and investigate data in real time</strong>. You can build complex queries and filters to extract insights from your data.</p>
+    <p>Key capabilities include:</p>
+    <ul>
+      <li><strong>Real-time searching</strong> — query data as it streams in</li>
+      <li><strong>Search Processing Language (SPL)</strong> — Splunk's query language for creating complex search queries (the focus of Lesson 200.2)</li>
+      <li><strong>Field extraction</strong> — pull structured fields out of raw text</li>
+      <li><strong>Visualization</strong> — view results as charts and graphs</li>
+      <li><strong>Correlation</strong> — connect related events across different systems</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <h3>Function 3 — Add Knowledge</h3>
+    <p>Add Knowledge means adding <strong>custom knowledge</strong> to the data already indexed in Splunk. You can create custom fields, tags, event types, and other data structures that help you better understand and analyze your data.</p>
+    <ul>
+      <li><strong>Custom fields</strong> — extract new fields from raw data that Splunk did not find automatically</li>
+      <li><strong>Tags</strong> — apply labels to events to group related events together (for example, tag all authentication events as <code>login</code>)</li>
+      <li><strong>Lookups</strong> — match values in your data to other data sources to add context (for example, turn error code <code>404</code> into "Page Not Found," or an employee ID into a name and department)</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <h3>Function 4 — Monitor and Alert</h3>
+    <p>Monitor and Alert helps users <strong>proactively monitor</strong> their data and <strong>receive alerts</strong> when certain conditions are met — so you find problems before your users (or attackers) do.</p>
+    <ul>
+      <li><strong>Real-time monitoring</strong> — watch your data continuously as it arrives</li>
+      <li><strong>Custom alerts</strong> — trigger on specific conditions, such as "more than 10 failed logins in 5 minutes"</li>
+      <li><strong>Alert actions</strong> — define what happens when an alert fires: send an email, run a script, create a ticket</li>
+      <li><strong>Alert escalation</strong> — define escalation paths so alerts are addressed in a timely manner even if the first responder misses them</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <h3>Function 5 — Report and Analyze</h3>
+    <p>Report and Analyze helps users <strong>analyze and visualize</strong> their data to gain insights into their environment. You can create reports and dashboards that give a comprehensive view of your data, make informed decisions, and <strong>present and share findings on a single pane of glass</strong>.</p>
+    <ul>
+      <li><strong>Data visualization</strong> — a range of tools including charts, graphs, and dashboards</li>
+      <li><strong>Custom reports</strong> — build reports tailored to exactly the question you need answered</li>
+      <li><strong>Scheduled reports</strong> — schedule reports to run automatically at specific intervals (for example, a compliance report every Monday at 8 AM)</li>
+      <li><strong>Dashboards</strong> — combine multiple visualizations into one live view for your team or management</li>
+    </ul>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 Cert Practice</div>
+    <h4>Which of the five Splunk functions is responsible for breaking data into events, extracting fields, and storing them in a searchable format?</h4>
+    <ul class="cert-options" data-correct="2">
+      <li onclick="checkAnswer(this, false)">A. Search and Investigate</li>
+      <li onclick="checkAnswer(this, false)">B. Monitor and Alert</li>
+      <li onclick="checkAnswer(this, true)">C. Index Data</li>
+      <li onclick="checkAnswer(this, false)">D. Report and Analyze</li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: C</strong> — Indexing is the ingestion pipeline: break data into events → parse/extract fields → normalize → store in an index.</div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 1.2 — Key Takeaways</h4>
+    <ul>
+      <li>Splunk lets organizations <strong>collect, index, search, and analyze</strong> machine-generated data from virtually any source, <strong>in real time</strong></li>
+      <li>The five functions: <strong>Index Data → Search &amp; Investigate → Add Knowledge → Monitor &amp; Alert → Report &amp; Analyze</strong></li>
+      <li>Its user-friendly interface and advanced features make it a popular tool for IT professionals to <strong>monitor, troubleshoot, and optimize</strong> systems and infrastructure</li>
+      <li>Official documentation lives at <strong>docs.splunk.com</strong> — bookmark it now; you will use it throughout this course</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 1.3 ==================== -->
+<section class="section" id="s13">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🧩</div>
+    <div><div class="sec-tag">Section 1.3</div><h2>Splunk Components</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>The Three Core Components</h3>
+    <p><strong>Splunk Enterprise</strong> is Splunk's core product — it provides the indexing and search capabilities needed to process machine data. It is composed of several components that work together to <strong>process, index, and analyze</strong> that data:</p>
+    <table class="comp-table">
+      <thead><tr><th>Component</th><th>Role</th><th>Think of It As…</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Forwarders</strong></td><td>Collect data at the source and send it to indexers</td><td>Delivery trucks bringing the data in</td></tr>
+        <tr><td><strong>Indexers</strong></td><td>Receive, process, and index data, making it searchable</td><td>Librarians organizing everything on the shelves</td></tr>
+        <tr><td><strong>Search Heads</strong></td><td>Let users search, analyze, and visualize the data</td><td>The front desk where you ask your questions</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Data flows in one direction:</strong> Forwarders → Indexers → Search Heads → You.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Indexers</h3>
+    <p><strong>Indexers</strong> receive, process, and index data from various sources, making it <strong>searchable and available for analysis</strong>. They allow data to be stored and retrieved quickly and efficiently — even across massive datasets.</p>
+    <p>In larger environments, multiple indexers can be <strong>clustered</strong> together to provide <strong>high availability</strong> and improved performance.</p>
+    <p>The index itself is composed of several files:</p>
+    <ul>
+      <li><strong>Raw data files</strong> — the original data exactly as it was ingested</li>
+      <li><strong>Metadata files</strong> — information <em>about</em> each event, such as its timestamp and source</li>
+      <li><strong>Index files</strong> — the lookup structures that make searching fast</li>
+    </ul>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Buckets</div>
+    <p>Splunk uses a process called <strong>"bucketing"</strong> to manage index files. The index is divided into <strong>time-based buckets</strong> that group together events from a specific time period — such as one hour or one day. When you search "last 24 hours," Splunk only opens the buckets from that window, which is a big part of why searches are fast.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Search Heads</h3>
+    <p>The <strong>search head</strong> is the component that enables users to <strong>search and analyze data in real time</strong>. When you run a search query, it goes to the search head, which <strong>distributes the search to one or more indexers</strong>.</p>
+    <p>The search head then <strong>receives the results back from the indexers</strong> and presents them to you in a user-friendly web interface, where you can <strong>visualize, analyze, and act upon</strong> the data.</p>
+    <p>The search head is also where you create <strong>alerts and reports</strong>.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Forwarders</h3>
+    <p>The <strong>forwarder</strong> is responsible for <strong>collecting and forwarding data</strong> from various sources to the Splunk indexers. It runs <strong>on the source machine</strong> — the server, workstation, or device that is generating the data — and collects logs, metrics, and other data in real time, then forwards it to one or more indexers for processing.</p>
+    <p>There are two types:</p>
+    <table class="comp-table">
+      <thead><tr><th>Type</th><th>Description</th><th>When to Use</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Universal Forwarder</strong></td><td>A lightweight agent that can be deployed on a wide range of machines to collect data and forward it to Splunk</td><td>The standard choice — minimal footprint, just collects and sends</td></tr>
+        <tr><td><strong>Heavy Forwarder</strong></td><td>A full Splunk Enterprise instance that can index, search, and change (transform) data, as well as forward it</td><td>When data must be filtered, masked, or routed <em>before</em> it reaches the indexers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Remember</div>
+    <p><strong>Universal = lightweight, forward only. Heavy = full Splunk instance that can also process data.</strong> This distinction appears in interviews and certification questions constantly.</p>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 Cert Practice</div>
+    <h4>A user runs a search query in Splunk. Which component receives the query and distributes it to the indexers?</h4>
+    <ul class="cert-options" data-correct="1">
+      <li onclick="checkAnswer(this, false)">A. Universal Forwarder</li>
+      <li onclick="checkAnswer(this, true)">B. Search Head</li>
+      <li onclick="checkAnswer(this, false)">C. Heavy Forwarder</li>
+      <li onclick="checkAnswer(this, false)">D. Index Bucket</li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: B</strong> — The search head is the user's entry point. It distributes searches to indexers, gathers the results, and presents them in the web interface.</div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 1.3 — Key Takeaways</h4>
+    <ul>
+      <li><strong>Indexers, Search Heads, and Forwarders</strong> are the core components of the Splunk platform</li>
+      <li><strong>Indexers</strong> parse and timestamp raw data, creating index files organized into time-based <strong>buckets</strong></li>
+      <li>The <strong>Search Head</strong> is your web-based interface for searching and analyzing data</li>
+      <li><strong>Forwarders</strong> are agents that run on the machines generating the data and forward it to the indexers</li>
+      <li>Working together, these components let Splunk efficiently process and analyze machine data at scale</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 1.4 ==================== -->
+<section class="section" id="s14">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-red-dim);color:var(--accent-red);">🛡️</div>
+    <div><div class="sec-tag">Section 1.4</div><h2>Uses of Splunk</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Where Is Splunk Used?</h3>
+    <p>Splunk is a powerful platform used across industries for a wide range of use cases:</p>
+    <table class="comp-table">
+      <thead><tr><th>Use Case</th><th>What Splunk Does</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>IT Operations</strong></td><td>Monitor and troubleshoot IT infrastructure, applications, and services so teams quickly identify and resolve issues that impact business operations. Also used for performance monitoring, capacity planning, and log analysis.</td><td>Finding why a website slowed down at 2 PM by correlating server and application logs</td></tr>
+        <tr><td><strong>Security</strong></td><td>Detect and respond to security threats in real time — identify and investigate suspicious activity, conduct forensic analysis, and manage security incidents. Also used for compliance reporting and auditing.</td><td>A SOC analyst spotting a burst of failed logins followed by a successful one</td></tr>
+        <tr><td><strong>Business Analytics</strong></td><td>Analyze customer behavior, marketing campaigns, and product performance for data-driven decisions and better customer engagement. Also used for financial analysis, supply chain management, and risk management.</td><td>Tracking which product pages customers abandon before checkout</td></tr>
+        <tr><td><strong>Internet of Things (IoT)</strong></td><td>Collect and analyze data from IoT devices and sensors to monitor and optimize IoT deployments, improve product quality, and enhance customer experiences.</td><td>A factory monitoring sensor data to predict machine failures before they happen</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Same Data, Different Questions</div>
+    <p>Notice that all four use cases search the <em>same kind</em> of machine data — they just ask different questions. IT asks "is it healthy?", Security asks "is it safe?", Business asks "is it profitable?", IoT asks "is it performing?". One platform, many audiences.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Use Case Walkthrough — Resolving a Network Security Breach</h3>
+    <p><strong>The situation:</strong> A company is alerted to a potential security breach on its network. The IT security team needs to quickly <strong>identify the source</strong> of the breach, <strong>assess the extent</strong> of the damage, and take action to <strong>contain and remediate</strong> the issue.</p>
+    <p><strong>The investigation:</strong> Using Splunk's search and investigation capabilities, the team quickly searches for suspicious activity and <strong>correlates events across multiple systems</strong>. Splunk's dashboards and reports help them visualize and analyze network traffic, identify <strong>anomalies and patterns</strong>, and gain insight into the attack.</p>
+    <p><strong>The finding:</strong> The breach was caused by a <strong>phishing attack</strong> that compromised a user account. The team can see that the attacker used the compromised account to <strong>access sensitive data</strong> on the network and attempted to <strong>exfiltrate</strong> (steal out) the data using a <strong>command and control (C2) server</strong>.</p>
+    <p><strong>The response:</strong> Armed with this evidence, the team responds quickly — <strong>disabling the compromised user account</strong> and <strong>blocking the attacker's IP address</strong>.</p>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Why This Matters to You</div>
+    <p>This walkthrough is a preview of your future job. In a SOC, this exact sequence — <strong>detect → investigate → identify → contain → remediate</strong> — happens inside Splunk every day. Everything you learn in this course builds toward being able to do this yourself.</p>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 1.4 — Key Takeaways</h4>
+    <ul>
+      <li><strong>IT operations:</strong> monitoring and troubleshooting servers, networks, applications, and databases</li>
+      <li><strong>Security &amp; compliance:</strong> detecting and responding to threats, investigating incidents, ensuring regulatory compliance</li>
+      <li><strong>Business analytics:</strong> analyzing data and providing insights to drive decision-making and improve performance</li>
+      <li><strong>IoT:</strong> monitoring and optimizing device and sensor deployments</li>
+      <li>With its ability to index, search, and analyze machine data from <strong>virtually any source</strong>, Splunk provides value to many industries and use cases</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 1.5 ==================== -->
+<section class="section" id="s15">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">📦</div>
+    <div><div class="sec-tag">Section 1.5</div><h2>Splunk Apps</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Are Splunk Apps?</h3>
+    <p><strong>Splunk apps</strong> are pre-built packages of <strong>dashboards, reports, and other content</strong> that provide specific functionality on top of the core Splunk platform.</p>
+    <p>They are designed to help users <strong>quickly solve specific use cases</strong> without needing the expertise to build custom dashboards and reports from scratch. In short: <strong>apps extend Splunk's capabilities</strong>.</p>
+    <p>Think of them exactly like apps on your phone: your phone works without them, but apps make it useful for <em>your</em> specific needs.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Who Makes Apps — and Which Ones Can You Trust?</h3>
+    <ul>
+      <li>Apps can be created by <strong>Splunk itself</strong>, by <strong>third-party vendors</strong>, or by <strong>individuals</strong> — you can even build your own using the Splunk app framework</li>
+      <li>Apps marked with the <strong>Splunk Built</strong> logo are made by Splunk</li>
+      <li>Apps marked with the <strong>Splunk Certified</strong> logo have been reviewed and certified by Splunk to meet its quality standards</li>
+      <li>An app can still provide plenty of value <strong>even without</strong> being certified by Splunk — certification is a quality signal, not a requirement</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <h3>Under the Hood — What an App Actually Is</h3>
+    <p>An app is not magic — a Splunk app is simply a <strong>collection of Splunk configuration files</strong> stored in a folder. On a Windows machine:</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>File Path</span></div><pre>C:\Program Files\Splunk\etc\apps\[app name]</pre></div>
+    <p>Every app you install gets its own folder there. Knowing this helps you troubleshoot later — if an app misbehaves, you know exactly where its files live.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Apps vs. Add-Ons</h3>
+    <p>A <strong>Splunk add-on</strong> is a software module that provides <strong>additional functionality</strong> to the Splunk platform or to Splunk apps — usually in the form of <strong>data inputs, parsers, or other components</strong> that allow Splunk to ingest and analyze data from specific sources.</p>
+    <table class="comp-table">
+      <thead><tr><th></th><th>App</th><th>Add-On</th></tr></thead>
+      <tbody>
+        <tr><td><strong>What it gives you</strong></td><td>Dashboards, reports, visualizations — things you <em>see</em></td><td>Data inputs and parsers — plumbing that works <em>behind the scenes</em></td></tr>
+        <tr><td><strong>Purpose</strong></td><td>Solve a use case out of the box</td><td>Get data from a specific source into Splunk correctly</td></tr>
+        <tr><td><strong>Example</strong></td><td>Splunk App for AWS (ready-made AWS dashboards)</td><td>Splunk Add-on for AWS (knows how to pull and parse AWS data)</td></tr>
+      </tbody>
+    </table>
+    <p>Add-ons are often developed by third-party vendors, are available from the <strong>Splunkbase</strong> app store, and can be installed and configured using the <strong>Splunk Web Interface</strong>.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Where to Get Apps</h3>
+    <ul>
+      <li>Many vendors — such as <strong>Cisco, Amazon, and Microsoft</strong> — create Splunk apps tailored to help monitor their own products</li>
+      <li>Download apps <strong>from within the Splunk interface</strong> or from <strong>Splunkbase.com</strong></li>
+      <li>Most apps are <strong>free</strong>; some <strong>premium apps require a license</strong></li>
+    </ul>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 2</div>
+    <h4>Explore Splunkbase</h4>
+    <ol>
+      <li>In a web browser, go to <strong>splunkbase.splunk.com</strong></li>
+      <li>Search for an app from a vendor you know — try <strong>Cisco</strong>, <strong>AWS</strong>, or <strong>Microsoft</strong></li>
+      <li>Open one app's page and identify: Who built it? Is it Splunk Built or Splunk Certified? Is it free?</li>
+      <li>Find one <strong>add-on</strong> (look for "Add-on" in the name) and note what data source it supports</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 Which app did you explore, and who built it?</div>
+      <textarea placeholder="App name, builder, certified or not..."></textarea>
+    </div>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 Cert Practice</div>
+    <h4>Which statement best describes the difference between a Splunk app and a Splunk add-on?</h4>
+    <ul class="cert-options" data-correct="3">
+      <li onclick="checkAnswer(this, false)">A. Apps are free; add-ons always require a license</li>
+      <li onclick="checkAnswer(this, false)">B. Apps run on forwarders; add-ons run on search heads</li>
+      <li onclick="checkAnswer(this, false)">C. Add-ons include dashboards; apps only include data inputs</li>
+      <li onclick="checkAnswer(this, true)">D. Apps provide user-facing content like dashboards and reports; add-ons provide data inputs and parsers that extend the platform</li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: D</strong> — Apps are what you see (dashboards, reports); add-ons are the behind-the-scenes components (inputs, parsers) that help Splunk ingest and understand data from specific sources.</div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 1.5 — Key Takeaways</h4>
+    <ul>
+      <li>Splunk apps are <strong>pre-built packages of dashboards, reports, and other content</strong> that solve specific use cases without building from scratch</li>
+      <li>Apps are available for <strong>free or as premium apps</strong> requiring a license, downloadable from <strong>Splunkbase</strong> or inside Splunk</li>
+      <li><strong>Add-ons</strong> extend apps and the platform — mainly data inputs and parsers</li>
+      <li>An app is really just a folder of <strong>configuration files</strong> under <code>etc\apps</code></li>
+      <li>You can also <strong>develop your own custom apps</strong> using the Splunk app framework</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 1.6 ==================== -->
+<section class="section" id="s16">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">🏗️</div>
+    <div><div class="sec-tag">Section 1.6</div><h2>Splunk Deployment Types</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Three Ways to Deploy Splunk</h3>
+    <p>Splunk Enterprise can be deployed in many configurations — from a <strong>single instance</strong> to distributed deployments of <strong>hundreds or thousands of instances</strong>, depending on an organization's requirements. There are three primary deployment types:</p>
+    <table class="comp-table">
+      <thead><tr><th>Type</th><th>Description</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Standalone</strong></td><td>A single Splunk instance performs <strong>all</strong> functions — data ingestion, indexing, search, and visualization</td><td>Small environments, labs, testing, learning (this is what you use in class)</td></tr>
+        <tr><td><strong>Distributed</strong></td><td>Multiple Splunk instances, each responsible for one or more functions — for example, one instance handles data ingestion while another handles indexing and search</td><td>Medium to large organizations with high data volumes</td></tr>
+        <tr><td><strong>Cloud</strong></td><td>Similar to a distributed deployment, but <strong>hosted and managed by a third-party cloud provider</strong> such as AWS or Microsoft Azure</td><td>Organizations that do not want to manage their own infrastructure or need to scale quickly</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Same Components, Different Homes</div>
+    <p>The deployment type does not change <em>what</em> Splunk does — it changes <em>where the components live</em>. In a standalone deployment, the forwarder role, indexer, and search head all run in one box. In a distributed deployment, each role gets its own dedicated machines. In the cloud, someone else runs those machines for you.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>A Small Enterprise Example</h3>
+    <p>A typical small-enterprise distributed deployment looks like this: many <strong>universal forwarders</strong> installed across servers and workstations, all sending data to a small number of <strong>indexers</strong>, with one <strong>search head</strong> where analysts log in and run searches. (The official reference diagrams are at <strong>docs.splunk.com</strong>.)</p>
+    <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>Data Flow</span></div><pre>[ Forwarders on many machines ]  →  [ Indexers ]  →  [ Search Head ]  →  You</pre></div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 1.6 — Key Takeaways</h4>
+    <ul>
+      <li>Three primary deployment types: <strong>standalone, distributed, and cloud</strong></li>
+      <li><strong>Standalone</strong> = one instance does everything; <strong>distributed</strong> = multiple instances with dedicated roles</li>
+      <li><strong>Cloud</strong> = like distributed, but hosted and managed by a third-party provider (AWS, Azure)</li>
+      <li>Organizations choose based on the <strong>size and complexity</strong> of their environment</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 1.7 ==================== -->
+<section class="section" id="s17">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🧭</div>
+    <div><div class="sec-tag">Section 1.7</div><h2>Basic Navigation in Splunk</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>The Splunk Web Interface</h3>
+    <p>Splunk uses a <strong>customizable, web-based interface</strong> that gives users access to their indexed and stored data. It includes components such as the <strong>search bar</strong>, <strong>search results page</strong>, <strong>navigation bar</strong>, and <strong>dashboard and visualization editors</strong> — all designed to be intuitive and efficient for analyzing and understanding data.</p>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Key Concept — Port 8000</div>
+    <p>You sign into Splunk through a <strong>web browser</strong> using <strong>port 8000</strong>. For example: <code>http://localhost:8000</code> on your own machine, or <code>http://splunk-server:8000</code> for a remote server. No special client software required — just a browser.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>What You Will See After Signing In</h3>
+    <table class="comp-table">
+      <thead><tr><th>Area</th><th>What It Is</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Home page / Launcher</strong></td><td>Your landing page after login — shows your apps and quick links to get started</td></tr>
+        <tr><td><strong>App panel / Manage Applications</strong></td><td>Lists installed apps (like Search &amp; Reporting) and lets you browse, install, and manage apps</td></tr>
+        <tr><td><strong>Splunk bar</strong></td><td>The black bar across the top — navigation menus for Settings, Activity, Help, and your account</td></tr>
+        <tr><td><strong>Main user roles</strong></td><td>Splunk has three main roles: <strong>admin</strong> (full control), <strong>power</strong> (advanced user — can share objects and use more features), and <strong>user</strong> (standard access)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 3 — Follow Along with the Instructor</div>
+    <h4>Sign In and Take the Tour</h4>
+    <ol>
+      <li>Open your browser and go to your Splunk instance on <strong>port 8000</strong></li>
+      <li><strong>Sign in</strong> with the credentials provided by your instructor</li>
+      <li>Explore the <strong>Home page / launcher</strong> — what apps do you see?</li>
+      <li>Open the <strong>app panel / Manage Applications</strong> page — count the installed apps</li>
+      <li>Explore the <strong>Splunk bar</strong> — click through the navigation menus (Settings, Activity, Help)</li>
+      <li>Find where <strong>user roles</strong> are shown: <strong>Settings → Users</strong> — what role is your account?</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 Your Observations</div>
+      <textarea placeholder="Which apps are installed? What is your user role?"></textarea>
+    </div>
+  </div>
+
+  <div class="cert-question">
+    <div class="cert-tag">📝 Cert Practice</div>
+    <h4>By default, which port do users connect to when accessing Splunk Web in a browser?</h4>
+    <ul class="cert-options" data-correct="1">
+      <li onclick="checkAnswer(this, false)">A. 443</li>
+      <li onclick="checkAnswer(this, true)">B. 8000</li>
+      <li onclick="checkAnswer(this, false)">C. 8080</li>
+      <li onclick="checkAnswer(this, false)">D. 9997</li>
+    </ul>
+    <div class="cert-explanation">✅ <strong>Correct: B</strong> — Splunk Web listens on port <strong>8000</strong> by default. You sign in via a web browser, e.g. <code>http://localhost:8000</code>.</div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 1.7 — Key Takeaways</h4>
+    <ul>
+      <li>Splunk's interface is <strong>web-based</strong> — sign in through a browser on <strong>port 8000</strong></li>
+      <li>Key areas: <strong>home page/launcher, app panel, Splunk bar</strong> navigation menus</li>
+      <li>The interface includes the <strong>search bar, results page, navigation bar, and dashboard/visualization editors</strong></li>
+      <li>Three main user roles: <strong>admin, power, user</strong></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== 1.8 ==================== -->
+<section class="section" id="s18">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">⚙️</div>
+    <div><div class="sec-tag">Section 1.8</div><h2>Customizing User Settings</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Account Settings and Preferences</h3>
+    <p>Splunk lets each user personalize their account and workspace. The two main areas are:</p>
+    <table class="comp-table">
+      <thead><tr><th>Area</th><th>What You Can Configure</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Account Settings — Personal</strong></td><td>Full name, email, and password</td></tr>
+        <tr><td><strong>Preferences — Global</strong></td><td><strong>Time Zone</strong> — ensures timestamps are aligned with you, the user</td></tr>
+        <tr><td><strong>Preferences — SPL Editor</strong></td><td>How the search editor behaves and looks (line numbers, auto-format, editor theme)</td></tr>
+        <tr><td><strong>Preferences — General / Themes</strong></td><td>Overall interface appearance, including light and dark themes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ The Time Zone Setting Is Not Cosmetic</div>
+    <p>If your time zone is wrong, every timestamp you see is <strong>shifted</strong>. Imagine investigating an incident and reporting that an attack happened at 3 AM when it really happened at 8 AM your time — your whole timeline (and your incident report) would be wrong. <strong>Set your time zone first, before anything else.</strong></p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 4 — Follow Along with the Instructor</div>
+    <h4>Customize Your Account</h4>
+    <ol>
+      <li>Click your <strong>username</strong> in the Splunk bar (top right)</li>
+      <li>Open <strong>Account Settings</strong> — review your <strong>full name, email, and password</strong> options</li>
+      <li>Open <strong>Preferences → Global</strong> — set your <strong>Time Zone</strong> to your local time zone</li>
+      <li>Open the <strong>SPL Editor</strong> preferences — note what can be changed</li>
+      <li>Open <strong>General / Themes</strong> — try switching between <strong>light and dark</strong> themes</li>
+    </ol>
+    <div class="notes-area">
+      <div class="notes-label">📝 What time zone did you set, and which theme do you prefer?</div>
+      <textarea placeholder="Write your settings choices here..."></textarea>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <h4>📋 Section 1.8 — Key Takeaways</h4>
+    <ul>
+      <li><strong>Account Settings</strong> hold your personal info: full name, email, password</li>
+      <li><strong>Preferences</strong> include Global (time zone), SPL Editor, and General/Themes</li>
+      <li>Always set the <strong>time zone</strong> so timestamps align with you — it directly affects investigation accuracy</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== REVIEW ==================== -->
+<section class="section" id="review">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🎓</div>
+    <div><div class="sec-tag">Knowledge Check</div><h2>Lesson Review — Test Yourself</h2></div>
+  </div>
+
+  <p style="color:var(--text-secondary);margin-bottom:24px;">Click each question to reveal the answer.</p>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>1. What is machine data? Where does it come from?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>Machine data is any data <strong>generated automatically by machines, systems, or devices</strong>. It comes from server logs, network logs, sensors, application logs, security tools, and IoT devices.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>2. What is the Splunk platform?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>A platform that lets organizations <strong>collect, index, search, analyze, and visualize machine-generated data</strong> from virtually any source, in real time.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>3. What are Forwarders, Indexers, and Search Heads?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>Forwarders</strong> collect data on source machines and send it to Splunk. <strong>Indexers</strong> receive, process, and index that data, making it searchable. <strong>Search Heads</strong> provide the web interface where users search, analyze, and visualize the data.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>4. What is one way an IT professional can use Splunk?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>Any of: <strong>monitoring and troubleshooting</strong> IT infrastructure, <strong>detecting and responding to security threats</strong>, <strong>compliance reporting</strong>, <strong>business analytics</strong>, or <strong>IoT monitoring</strong>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>5. What are Splunk Apps?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>Pre-built packages of dashboards, reports, and other content</strong> that extend Splunk's capabilities and solve specific use cases — downloadable from Splunkbase, mostly free, some premium.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>6. What is a common Splunk deployment type?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>Any of the three: <strong>standalone</strong> (one instance does everything), <strong>distributed</strong> (multiple instances with dedicated roles), or <strong>cloud</strong> (hosted and managed by a provider like AWS or Azure).</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>7. How do users connect to Splunk?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>Through a <strong>web browser</strong>, using <strong>port 8000</strong>.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>8. Why is it important to set the time zone correctly in Splunk?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p>So <strong>timestamps are aligned with the user</strong>. A wrong time zone shifts every event time you see, which can wreck an investigation timeline.</p></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)"><span>9. How many main user roles do you have in Splunk?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><p><strong>Three</strong> main roles: <strong>admin</strong>, <strong>power</strong>, and <strong>user</strong>.</p></div></div></div>
+</section>
+
+</main>
+
+<footer class="lesson-footer">
+  <p>🎯 You've completed <strong>Lesson 200.1 — Splunk Basics</strong></p>
+  <p>You now know what Splunk is, what it's made of, and how to move around in it. Next up: putting it to work with searches in Lesson 200.2.</p>
+  <p style="margin-top:20px;font-size:12px;color:var(--text-muted);">Per Scholas Greater Boston · Security with AI Program<br>Lead Instructor &amp; Designer: Dr. Solomon Seifu | Co-Instructor: Naly Rosario</p>
+</footer>
+
+<script>
+function toggleCollapsible(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  if (body.style.maxHeight) { body.style.maxHeight = null; }
+  else { body.style.maxHeight = body.scrollHeight + 'px'; }
+}
+function checkAnswer(li, isCorrect) {
+  const parent = li.parentElement;
+  if (parent.dataset.answered) return;
+  parent.dataset.answered = 'true';
+  if (isCorrect) { li.classList.add('correct'); }
+  else {
+    li.classList.add('wrong');
+    const correctIdx = parseInt(parent.dataset.correct);
+    parent.children[correctIdx].classList.add('correct');
+  }
+  const explanation = parent.nextElementSibling;
+  if (explanation && explanation.classList.contains('cert-explanation')) { explanation.style.display = 'block'; }
+}
+window.addEventListener('scroll', () => {
+  const p = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100;
+  document.getElementById('progressBar').style.width = p + '%';
+});
+</script>
+
+<nav class="slh-nav slh-bottom" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><span class="slh-link slh-prev slh-disabled"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>&mdash;</b></span></span><a class="slh-link slh-next" href="student_guide_200_2.html"><span class="slh-tt"><small>Next</small><b>Lesson 2</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Splunk Lab Portal — Lessons 200.1–200.8</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060b14;--bg2:#0c1322;--bg3:#111c30;--bg4:#172036;--green:#10b981;--green-d:#10b98120;--blue:#3b82f6;--blue-d:#3b82f618;--orange:#f59e0b;--orange-d:#f59e0b18;--red:#ef4444;--red-d:#ef444418;--purple:#8b5cf6;--purple-d:#8b5cf618;--cyan:#06b6d4;--cyan-d:#06b6d418;--teal:#14b8a6;--teal-d:#14b8a618;--gold:#fbbf24;--gold-d:#fbbf2418;--rose:#f43f5e;--rose-d:#f43f5e18;--t1:#e2e8f0;--t2:#94a3b8;--t3:#64748b;--b1:#1e293b;--b2:#334155}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);line-height:1.7;font-size:15px}
+::selection{background:var(--green);color:#000}
+
+/* HERO */
+.hero{padding:56px 40px 48px;background:linear-gradient(160deg,#060b14 0%,#0a1628 30%,#0d1f2d 60%,#091a1a 100%);border-bottom:1px solid var(--b1);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-60px;width:500px;height:500px;background:radial-gradient(circle,#10b98108 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-150px;left:10%;width:400px;height:400px;background:radial-gradient(circle,#06b6d408 0%,transparent 70%);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-d);border:1px solid var(--green);color:var(--green);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,5vw,48px);font-weight:700;line-height:1.15;margin-bottom:10px}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--t2);font-size:16px;max-width:720px}
+.hero-meta{display:flex;gap:20px;margin-top:18px;flex-wrap:wrap}
+.hero-meta span{color:var(--t3);font-size:13px;font-weight:500}
+
+/* LESSON TABS */
+.tab-bar{display:flex;background:var(--bg2);border-bottom:1px solid var(--b1);overflow-x:auto;white-space:nowrap;position:sticky;top:0;z-index:99}
+.tab-bar::-webkit-scrollbar{height:0}
+.ltab{padding:12px 18px;font-size:13px;font-weight:700;cursor:pointer;border:none;border-bottom:3px solid transparent;color:var(--t3);background:transparent;transition:all .25s;flex-shrink:0}
+.ltab:hover{color:var(--t1);background:var(--bg3)}
+.ltab.active{color:var(--green);border-bottom-color:var(--green);background:var(--bg3)}
+
+/* CONTENT */
+.tab-content{display:none}.tab-content.active{display:block}
+.main{max-width:940px;margin:0 auto;padding:36px 24px 80px}
+
+/* LESSON INTRO */
+.lesson-intro{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--b1);border-radius:16px;padding:28px;margin-bottom:36px}
+.lesson-intro h2{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px}
+.lesson-intro p{color:var(--t2);font-size:14px}
+.obj-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.obj-pill{background:var(--green-d);border:1px solid #10b98130;color:var(--green);padding:4px 12px;border-radius:16px;font-size:12px;font-weight:600}
+
+/* LAB CARD */
+.lab-card{background:var(--bg2);border:1px solid var(--b1);border-radius:14px;margin-bottom:24px;overflow:hidden;transition:border-color .3s}
+.lab-card:hover{border-color:var(--b2)}
+.lab-head{padding:20px 24px 16px;display:flex;align-items:flex-start;gap:14px}
+.lab-num{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;flex-shrink:0}
+.lab-head-text h3{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:2px}
+.lab-head-text p{color:var(--t3);font-size:13px}
+.lab-body{padding:0 24px 24px}
+.lab-body p{color:var(--t2);margin-bottom:12px;font-size:14px}
+.lab-body ol,.lab-body ul{margin:10px 0 10px 22px;color:var(--t2);font-size:14px}
+.lab-body li{margin-bottom:8px}
+.lab-body li strong{color:var(--t1)}
+.lab-body li code{background:var(--bg);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan)}
+
+/* CODE */
+.spl{background:#080d18;border:1px solid var(--b2);border-radius:8px;margin:12px 0;overflow:hidden}
+.spl-bar{padding:6px 14px;background:#0c1220;border-bottom:1px solid var(--b2);font-size:11px;color:var(--t3);display:flex;align-items:center;gap:6px}
+.spl-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.spl pre{padding:14px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.55;color:#c9d1d9}
+
+/* SCENARIO BOX */
+.scenario{background:var(--blue-d);border:1px solid #3b82f630;border-radius:10px;padding:18px;margin:14px 0}
+.scenario-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--blue);margin-bottom:6px}
+.scenario p{color:var(--t2);font-size:13px;margin:0}
+
+/* TIP */
+.tip{background:var(--gold-d);border:1px solid #fbbf2430;border-radius:10px;padding:16px;margin:14px 0}
+.tip-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--gold);margin-bottom:6px}
+.tip p{color:var(--t2);font-size:13px;margin:0}
+
+/* CHALLENGE */
+.challenge{background:var(--rose-d);border:1px solid #f43f5e30;border-radius:10px;padding:18px;margin:14px 0}
+.ch-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--rose);margin-bottom:6px}
+.challenge p{color:var(--t2);font-size:13px;margin:0}
+
+/* EXPECTED OUTPUT */
+.expect{margin:12px 0;border-left:3px solid var(--green);padding:12px 16px;background:var(--green-d);border-radius:0 8px 8px 0}
+.expect-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--green);margin-bottom:4px}
+.expect p{color:var(--t2);font-size:13px;margin:0}
+
+/* FOOTER */
+.ft{text-align:center;padding:40px;border-top:1px solid var(--b1);color:var(--t3);font-size:12px}
+
+@media(max-width:768px){.hero{padding:30px 18px}.main{padding:24px 14px 60px}.ltab{padding:10px 12px;font-size:12px}.lab-head{padding:16px 18px 12px}.lab-body{padding:0 18px 18px}}
+</style>
+</head>
+<body>
+
+<style id="slh-nav-style">
+.slh-nav{font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 24px;
+  background:#0b1220;box-sizing:border-box;}
+.slh-nav *{box-sizing:border-box;}
+.slh-nav.slh-top{border-bottom:1px solid #223052;}
+.slh-nav.slh-bottom{border-top:1px solid #223052;margin-top:48px;}
+.slh-dash{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:11px;
+  background:linear-gradient(100deg,#F6296B,#FF7A18);color:#fff;font-weight:700;font-size:14px;
+  text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 20px -12px rgba(246,41,107,.7);
+  line-height:1;transition:filter .15s,transform .12s;white-space:nowrap;}
+.slh-dash:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.slh-dash svg{width:16px;height:16px;flex:none;}
+.slh-side{display:flex;gap:8px;align-items:stretch;margin-left:auto;flex-wrap:wrap;}
+.slh-link{display:flex;align-items:center;gap:10px;padding:9px 15px;border:1px solid #2a3855;
+  border-radius:11px;color:#e2e8f0;text-decoration:none;background:#141c2e;line-height:1.2;
+  transition:border-color .15s,transform .12s,background .15s;min-width:0;}
+.slh-link:hover{border-color:#F6296B;transform:translateY(-1px);background:#172136;}
+.slh-link .slh-ar{font-size:17px;color:#8894ab;flex:none;}
+.slh-link:hover .slh-ar{color:#F6296B;}
+.slh-tt{display:flex;flex-direction:column;min-width:0;}
+.slh-tt small{color:#8894ab;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.slh-tt b{font-size:13px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.slh-next{text-align:right;}
+.slh-disabled{opacity:.3;pointer-events:none;}
+@media (max-width:640px){
+  .slh-nav{padding:10px 14px;gap:8px;}
+  .slh-side{width:100%;margin-left:0;}
+  .slh-link{flex:1;}
+  .slh-next{justify-content:flex-end;}
+  .slh-dash{width:100%;justify-content:center;}
+  .slh-tt b{white-space:normal;}
+}
+</style>
+
+<nav class="slh-nav slh-top" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_7_8.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lessons 7 & 8</b></span></a><span class="slh-link slh-next slh-disabled"><span class="slh-tt"><small>Next</small><b>&mdash;</b></span><span class="slh-ar">&rarr;</span></span></div></nav>
+
+
+<header class="hero">
+  <div class="badge">🧪 Hands-On Lab Portal</div>
+  <h1>Splunk Core User — <em>Practice Labs</em></h1>
+  <p>48 practical exercises spanning all 8 lessons. Build real SPL skills through progressive, hands-on practice from basic searching to automated alerting.</p>
+  <div class="hero-meta"><span>📚 Per Scholas Greater Boston</span><span>🔐 Security with AI Program</span><span>👨‍🏫 Lead Instructor &amp; Designer: Dr. Solomon Seifu &nbsp;|&nbsp; Co-Instructor: Naly Rosario</span></div>
+</header>
+
+<div class="tab-bar">
+  <button class="ltab active" onclick="sw('T1',this)">1 — Basics</button>
+  <button class="ltab" onclick="sw('T2',this)">2 — Searching</button>
+  <button class="ltab" onclick="sw('T3',this)">3 — Fields</button>
+  <button class="ltab" onclick="sw('T4',this)">4 — SPL Commands</button>
+  <button class="ltab" onclick="sw('T5',this)">5 — Transforming</button>
+  <button class="ltab" onclick="sw('T6',this)">6 — Reports &amp; Dashboards</button>
+  <button class="ltab" onclick="sw('T7',this)">7 — Lookups</button>
+  <button class="ltab" onclick="sw('T8',this)">8 — Alerts</button>
+</div>
+
+<!-- ==================== LESSON 1 ==================== -->
+<div class="tab-content active" id="T1"><main class="main">
+<div class="lesson-intro"><h2>Lesson 200.1 — Splunk Basics</h2><p>Get familiar with the Splunk interface, understand its architecture, and explore your first data.</p>
+<div class="obj-row"><span class="obj-pill">Navigate Splunk Web</span><span class="obj-pill">Understand Components</span><span class="obj-pill">Explore Data Summary</span></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--teal-d);color:var(--teal);">1.1</div><div class="lab-head-text"><h3>Navigate the Splunk Interface</h3><p>Explore the home screen, apps, and main navigation areas</p></div></div><div class="lab-body">
+<ol><li>Log in to Splunk Web (typically <code>http://localhost:8000</code>)</li>
+<li>Identify the <strong>Apps Bar</strong> at the top — click <strong>Search &amp; Reporting</strong></li>
+<li>Locate these areas: <strong>Search Bar</strong>, <strong>Time Range Picker</strong>, <strong>Data Summary</strong> button</li>
+<li>Click <strong>Data Summary</strong> and explore the three tabs: <strong>Hosts</strong>, <strong>Sources</strong>, <strong>Sourcetypes</strong></li>
+<li>Write down 3 hosts and 3 sourcetypes you see listed</li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>The Data Summary button gives you a quick snapshot of ALL data in your Splunk instance — use it anytime you want to know what's available to search.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--teal-d);color:var(--teal);">1.2</div><div class="lab-head-text"><h3>Explore Splunk Apps &amp; Settings</h3><p>Discover installed apps and basic configuration areas</p></div></div><div class="lab-body">
+<ol><li>From the home screen, click the <strong>gear icon</strong> next to Apps to view all installed apps</li>
+<li>Go to <strong>Settings → Data Inputs</strong> — explore the different input types available</li>
+<li>Go to <strong>Settings → Indexes</strong> — list the indexes that exist in your environment</li>
+<li>Navigate to <strong>Settings → Server Settings → General Settings</strong> — note the Splunk server name and default index</li></ol>
+<div class="expect"><div class="expect-label">✅ What you should see</div><p>At minimum, the <code>main</code> and <code>_internal</code> indexes. The _internal index stores Splunk's own operational logs — we'll use this heavily for practice.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--teal-d);color:var(--teal);">1.3</div><div class="lab-head-text"><h3>Your First Search</h3><p>Run a simple search and explore the results</p></div></div><div class="lab-body">
+<ol><li>In the Search bar, type the following and press Enter:</li></ol>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal</pre></div>
+<ol start="2"><li>Set the <strong>Time Range</strong> to <strong>Last 15 minutes</strong></li>
+<li>Observe the <strong>Events</strong> tab — click on any event to expand it</li>
+<li>In the expanded event, identify: <code>host</code>, <code>source</code>, <code>sourcetype</code>, <code>_time</code></li>
+<li>Look at the <strong>Fields sidebar</strong> on the left — how many fields are listed under "Selected Fields"?</li>
+<li>Click the <strong>Patterns</strong> tab — what common patterns does Splunk identify?</li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>Every search starts with an index. The <code>_internal</code> index is always available because it contains Splunk's own logs — perfect for practice!</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--teal-d);color:var(--teal);">1.4</div><div class="lab-head-text"><h3>Understanding Splunk Components</h3><p>Map the three core processing layers</p></div></div><div class="lab-body">
+<div class="scenario"><div class="scenario-label">🎯 Scenario</div><p>Your manager asks you to explain how data flows through Splunk. Explore the following to build your understanding.</p></div>
+<ol><li>Run this search to see Splunk's internal data pipeline:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd component=Metrics group=pipeline
+| head 20</pre></div></li>
+<li>Notice the <code>processor</code> field — this shows data pipeline stages</li>
+<li>Now explore how data is indexed:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd component=Metrics group=per_index_thruput
+| stats sum(kb) as total_KB by series
+| sort - total_KB</pre></div></li>
+<li>This shows data throughput per index — which index is receiving the most data?</li></ol></div></div>
+</main></div>
+
+<!-- ==================== LESSON 2 ==================== -->
+<div class="tab-content" id="T2"><main class="main">
+<div class="lesson-intro"><h2>Lesson 200.2 — Basic Searching</h2><p>Master keyword searches, Boolean operators, time ranges, and search modes.</p>
+<div class="obj-row"><span class="obj-pill">Keywords &amp; Phrases</span><span class="obj-pill">Boolean Operators</span><span class="obj-pill">Time Range Picker</span><span class="obj-pill">Search Modes</span></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--blue-d);color:var(--blue);">2.1</div><div class="lab-head-text"><h3>Keyword &amp; Phrase Searches</h3><p>Find events using simple text matching</p></div></div><div class="lab-body">
+<ol><li>Search for a keyword:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal error</pre></div></li>
+<li>Search for an exact phrase (use quotes):
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal "failed to connect"</pre></div></li>
+<li>Search for a key-value pair:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal log_level=ERROR</pre></div></li>
+<li>Compare the result counts from steps 1 and 3 — why might they differ?</li></ol>
+<div class="expect"><div class="expect-label">✅ Expected</div><p>The keyword <code>error</code> matches anywhere in the raw text (case-insensitive). The field <code>log_level=ERROR</code> only matches the specific field. The keyword search typically returns more results because it finds "error" in any context.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--blue-d);color:var(--blue);">2.2</div><div class="lab-head-text"><h3>Boolean Operators</h3><p>Combine search terms with AND, OR, NOT</p></div></div><div class="lab-body">
+<ol><li>AND is implied — these are the same:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal error connection</pre></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal error AND connection</pre></div></li>
+<li>Use OR to broaden:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal error OR warning</pre></div></li>
+<li>Use NOT to exclude:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal error NOT debug</pre></div></li>
+<li>Use parentheses for complex logic:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal (error OR warning) NOT debug</pre></div></li>
+<li>Compare result counts at each step</li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>Boolean operators must be <strong>UPPERCASE</strong>: <code>AND</code>, <code>OR</code>, <code>NOT</code>. Lowercase versions are treated as keywords.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--blue-d);color:var(--blue);">2.3</div><div class="lab-head-text"><h3>Wildcards</h3><p>Use * to match partial values</p></div></div><div class="lab-body">
+<ol><li>Match anything starting with "fail":
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal fail*</pre></div></li>
+<li>Match anything ending with "Error":
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd *Error</pre></div></li>
+<li>Use wildcards in field values:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal component=Index*</pre></div></li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>Wildcards at the <strong>beginning</strong> of a term (<code>*Error</code>) are slower because Splunk can't use the index efficiently. Place wildcards at the <strong>end</strong> when possible.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--blue-d);color:var(--blue);">2.4</div><div class="lab-head-text"><h3>Time Range Picker</h3><p>Control the time window of your searches</p></div></div><div class="lab-body">
+<ol><li>Run a search with <strong>Last 60 minutes</strong>:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd</pre></div></li>
+<li>Note the event count. Now change to <strong>Last 15 minutes</strong> — how does the count change?</li>
+<li>Try <strong>Last 4 hours</strong> — observe the increase</li>
+<li>Use inline time modifiers (these override the picker):
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd earliest=-30m latest=now</pre></div></li>
+<li>Try a specific date range:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd earliest=-7d@d latest=@d</pre></div></li></ol>
+<div class="expect"><div class="expect-label">✅ Expected</div><p><code>@d</code> snaps to the beginning of the current day. <code>-7d@d</code> means 7 days ago at midnight. This gives you exactly one week of data.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--blue-d);color:var(--blue);">2.5</div><div class="lab-head-text"><h3>Search Modes — Smart, Fast, Verbose</h3><p>Understand how search modes affect results and performance</p></div></div><div class="lab-body">
+<ol><li>Set search mode to <strong>Verbose</strong> and run:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd</pre></div></li>
+<li>Check the Fields sidebar — count the number of fields shown</li>
+<li>Switch to <strong>Fast</strong> mode and re-run the same search — how many fields now?</li>
+<li>Switch to <strong>Smart</strong> mode — run the search again, then run with a transforming command:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | stats count by log_level</pre></div></li>
+<li>Observe: In Smart mode, Splunk automatically adjusts behavior based on whether you use transforming commands</li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p><strong>Fast</strong> = fewest fields, fastest. <strong>Verbose</strong> = all fields, slowest. <strong>Smart</strong> = best of both — the recommended default.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--blue-d);color:var(--blue);">2.6</div><div class="lab-head-text"><h3>🔥 Challenge: Investigate Error Events</h3><p>Combine everything from this lesson</p></div></div><div class="lab-body">
+<div class="scenario"><div class="scenario-label">🎯 Scenario</div><p>You're a SOC analyst. Your team received a report of unusual error activity in the last 4 hours. Investigate using basic search techniques.</p></div>
+<ol><li>Find all error events in the last 4 hours</li>
+<li>Narrow to only WARN and ERROR level events (use OR)</li>
+<li>Exclude any events from the "scheduler" component</li>
+<li>Use the Time Range Picker to try different windows and see if the pattern changes</li></ol>
+<div class="challenge"><div class="ch-label">🏆 Bonus</div><p>Can you write a single search that finds all ERROR events in the last 24 hours where the source contains "splunkd" but excludes events mentioning "metrics"?</p></div></div></div>
+</main></div>
+
+<!-- ==================== LESSON 3 ==================== -->
+<div class="tab-content" id="T3"><main class="main">
+<div class="lesson-intro"><h2>Lesson 200.3 — Using Fields in Searches</h2><p>Master the Fields Sidebar, use fields as filters, comparison operators, and the table/rename commands.</p>
+<div class="obj-row"><span class="obj-pill">Fields Sidebar</span><span class="obj-pill">Field Filters</span><span class="obj-pill">Comparison Operators</span><span class="obj-pill">table &amp; rename</span></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--purple-d);color:var(--purple);">3.1</div><div class="lab-head-text"><h3>Explore the Fields Sidebar</h3><p>Discover Selected Fields, Interesting Fields, and the Field Window</p></div></div><div class="lab-body">
+<ol><li>Run: <div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd earliest=-15m</pre></div></li>
+<li>In the <strong>Fields Sidebar</strong>, identify: <strong>Selected Fields</strong> (host, source, sourcetype) and <strong>Interesting Fields</strong></li>
+<li>Click on the <code>component</code> field — the <strong>Field Window</strong> opens showing top values, count, and percentage</li>
+<li>Click <strong>"Top values"</strong> in the Field Window — observe the SPL auto-generated in the search bar</li>
+<li>Try clicking <strong>"Top values by time"</strong> — what command does Splunk generate?</li>
+<li>Click <strong>"All Fields"</strong> at the bottom of the sidebar — check some new fields to add them to Selected Fields</li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--purple-d);color:var(--purple);">3.2</div><div class="lab-head-text"><h3>Fields as Filters</h3><p>Use field=value pairs for precise searching</p></div></div><div class="lab-body">
+<ol><li>Basic field filter:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR</pre></div></li>
+<li>Multiple field filters (AND logic):
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR component=DatabaseDirectoryManager</pre></div></li>
+<li>OR within the same field:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd (log_level=ERROR OR log_level=WARN)</pre></div></li>
+<li>Exclude with != :
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level!=INFO</pre></div></li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p><strong>Field names are case-sensitive</strong> (<code>log_level</code> ≠ <code>Log_Level</code>). <strong>Field values are NOT</strong> (<code>ERROR</code> = <code>error</code>). Always check the Fields Sidebar for exact field names.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--purple-d);color:var(--purple);">3.3</div><div class="lab-head-text"><h3>Comparison Operators</h3><p>Use =, !=, &lt;, &gt;, &lt;=, &gt;= for numeric filtering</p></div></div><div class="lab-body">
+<ol><li>Greater than:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd linecount > 5</pre></div></li>
+<li>Less than or equal:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd linecount <= 1</pre></div></li>
+<li>Combine comparisons:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd linecount >= 3 linecount <= 10</pre></div></li>
+<li>Compare result counts at each step</li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--purple-d);color:var(--purple);">3.4</div><div class="lab-head-text"><h3>The table &amp; rename Commands</h3><p>Create clean, formatted output</p></div></div><div class="lab-body">
+<ol><li>Basic table:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR
+| table _time host component message</pre></div></li>
+<li>Table with rename:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR
+| table _time host component message
+| rename _time as "Timestamp", host as "Server", component as "Module", message as "Error Details"</pre></div></li>
+<li>Try renaming with spaces in the new name — remember to use quotes!</li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>After <code>rename</code>, the old field name no longer works in subsequent commands. Always rename LAST in your pipeline.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--purple-d);color:var(--purple);">3.5</div><div class="lab-head-text"><h3>🔥 Challenge: SOC Investigation with Fields</h3><p>Build a complete field-based investigation</p></div></div><div class="lab-body">
+<div class="scenario"><div class="scenario-label">🎯 Scenario</div><p>Create a clean incident table showing all ERROR events from the last 1 hour with timestamp, server, component, and description — properly formatted with professional column names.</p></div>
+<ol><li>Base search with field filters for ERROR events in last 1 hour</li>
+<li>Pipe to <code>table</code> with the key fields</li>
+<li>Pipe to <code>rename</code> for professional display names</li>
+<li>Bonus: Add a field filter to show only a specific component</li></ol></div></div>
+</main></div>
+
+<!-- ==================== LESSON 4 ==================== -->
+<div class="tab-content" id="T4"><main class="main">
+<div class="lesson-intro"><h2>Lesson 200.4 — SPL Fundamentals</h2><p>Master the search pipeline, fields command, dedup, sort, and eval to build powerful multi-stage searches.</p>
+<div class="obj-row"><span class="obj-pill">Search Pipeline</span><span class="obj-pill">fields</span><span class="obj-pill">dedup</span><span class="obj-pill">sort</span><span class="obj-pill">eval</span></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--orange-d);color:var(--orange);">4.1</div><div class="lab-head-text"><h3>Build a Search Pipeline</h3><p>Chain commands with the pipe operator</p></div></div><div class="lab-body">
+<p>Build this pipeline one step at a time — run after each pipe to see how data transforms:</p>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Step 1: Base search</div><pre>index=_internal sourcetype=splunkd</pre></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Step 2: Add fields</div><pre>index=_internal sourcetype=splunkd
+| fields host component log_level</pre></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Step 3: Add dedup</div><pre>index=_internal sourcetype=splunkd
+| fields host component log_level
+| dedup host component</pre></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Step 4: Add sort</div><pre>index=_internal sourcetype=splunkd
+| fields host component log_level
+| dedup host component
+| sort host component</pre></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Step 5: Add table</div><pre>index=_internal sourcetype=splunkd
+| fields host component log_level
+| dedup host component
+| sort host component
+| table host component log_level</pre></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--orange-d);color:var(--orange);">4.2</div><div class="lab-head-text"><h3>The fields Command</h3><p>Include and exclude specific fields</p></div></div><div class="lab-body">
+<ol><li>Include only specific fields:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| fields host source sourcetype log_level</pre></div></li>
+<li>Exclude fields (note the minus sign):
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| fields - _raw punct splunk_server</pre></div></li>
+<li>Compare: Run without <code>fields</code> → check how many fields show in sidebar. Then run with <code>fields</code> — the sidebar changes</li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>Separating field names? Use <strong>spaces</strong>, not commas. <code>fields host source</code> ✅ | <code>fields host, source</code> ❌</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--orange-d);color:var(--orange);">4.3</div><div class="lab-head-text"><h3>The dedup Command</h3><p>Remove duplicate events</p></div></div><div class="lab-body">
+<ol><li>Without dedup — see all events:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | table host component</pre></div></li>
+<li>With dedup — one per combination:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | table host component | dedup host component</pre></div></li>
+<li>Keep 3 per combination:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | table host component | dedup 3 host component</pre></div></li>
+<li>Compare result counts at each step — the difference shows dedup's impact</li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--orange-d);color:var(--orange);">4.4</div><div class="lab-head-text"><h3>The sort Command</h3><p>Order results ascending and descending</p></div></div><div class="lab-body">
+<ol><li>Sort ascending:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| stats count by component
+| sort + count</pre></div></li>
+<li>Sort descending:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| stats count by component
+| sort - count</pre></div></li>
+<li>Sort by multiple fields:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| stats count by host component
+| sort host - count</pre></div></li>
+<li>Limit results:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| stats count by component
+| sort 5 - count</pre></div></li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--orange-d);color:var(--orange);">4.5</div><div class="lab-head-text"><h3>The eval Command — Calculations</h3><p>Create new fields with expressions</p></div></div><div class="lab-body">
+<ol><li>Create a calculated field:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| eval event_size_KB = len(_raw) / 1024
+| table _time host event_size_KB</pre></div></li>
+<li>Use if() for conditional logic:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| eval severity = if(log_level=="ERROR", "CRITICAL", "NORMAL")
+| table _time host log_level severity</pre></div></li>
+<li>String concatenation with period (.):
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| eval full_source = host . " — " . component
+| table _time full_source log_level</pre></div></li>
+<li>The case() function for multiple conditions:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| eval priority = case(
+    log_level=="ERROR", "🔴 High",
+    log_level=="WARN", "🟡 Medium",
+    log_level=="INFO", "🟢 Low",
+    1==1, "⚪ Unknown")
+| table _time host priority log_level</pre></div></li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--orange-d);color:var(--orange);">4.6</div><div class="lab-head-text"><h3>🔥 Challenge: Complete Analysis Pipeline</h3><p>Chain all 4 commands together</p></div></div><div class="lab-body">
+<div class="scenario"><div class="scenario-label">🎯 Scenario</div><p>Build a search that shows unique host-component combinations with error counts, sorted by most errors first, with severity labels and clean column names.</p></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Full Pipeline</div><pre>index=_internal sourcetype=splunkd log_level=ERROR earliest=-24h
+| stats count as errors by host component
+| eval severity = if(errors > 100, "CRITICAL", "NORMAL")
+| sort - errors
+| rename host as "Server", component as "Module", errors as "Error Count"
+| table "Server" "Module" "Error Count" severity</pre></div></div></div>
+</main></div>
+
+<!-- ==================== LESSON 5 ==================== -->
+<div class="tab-content" id="T5"><main class="main">
+<div class="lesson-intro"><h2>Lesson 200.5 — Transforming Commands</h2><p>Turn raw events into structured statistical summaries with top, rare, and stats.</p>
+<div class="obj-row"><span class="obj-pill">top</span><span class="obj-pill">rare</span><span class="obj-pill">stats</span><span class="obj-pill">Statistical Functions</span></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--cyan-d);color:var(--cyan);">5.1</div><div class="lab-head-text"><h3>The top Command</h3><p>Find the most common values</p></div></div><div class="lab-body">
+<ol><li>Basic top:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | top component</pre></div></li>
+<li>Limit results:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | top limit=5 component</pre></div></li>
+<li>Show all values (limit=0):
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | top limit=0 log_level</pre></div></li>
+<li>Top by another field:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | top component by host</pre></div></li>
+<li>Rename the count/percent columns:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | top component countfield="Events" percentfield="Share"</pre></div></li></ol>
+<div class="expect"><div class="expect-label">✅ Expected</div><p>Results appear on the <strong>Statistics tab</strong> with count and percent columns. Click <strong>Visualization</strong> to see charts.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--cyan-d);color:var(--cyan);">5.2</div><div class="lab-head-text"><h3>The rare Command</h3><p>Find the least common values</p></div></div><div class="lab-body">
+<ol><li>Find rarest components:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | rare component</pre></div></li>
+<li>Compare with top:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | rare limit=5 log_level</pre></div></li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>In security, <code>rare</code> is gold. Rare user agents, rare source IPs, rare file names — anomalies often indicate threats. If something appears rarely, investigate it.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--cyan-d);color:var(--cyan);">5.3</div><div class="lab-head-text"><h3>The stats Command — Core Functions</h3><p>count, sum, avg, min, max, dc, values, list</p></div></div><div class="lab-body">
+<ol><li>Count events by field:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | stats count by log_level</pre></div></li>
+<li>Count with rename:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | stats count as "Total Events" by host</pre></div></li>
+<li>Multiple functions:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| stats count as "Events",
+        min(linecount) as "Min Lines",
+        max(linecount) as "Max Lines",
+        avg(linecount) as "Avg Lines"
+  by component
+| sort - Events</pre></div></li>
+<li>Distinct count (dc):
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| stats dc(component) as "Unique Components" by host</pre></div></li>
+<li>The values() function (multivalue):
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd
+| stats values(log_level) as "Log Levels Seen", count by component
+| sort - count</pre></div></li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--cyan-d);color:var(--cyan);">5.4</div><div class="lab-head-text"><h3>🔥 Challenge: Security Investigation Pipeline</h3><p>Combine transforming commands with pipeline skills</p></div></div><div class="lab-body">
+<div class="scenario"><div class="scenario-label">🎯 Scenario</div><p>Identify which hosts generate the most error events and which components are affected.</p></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR earliest=-24h
+| stats count as "Error Count",
+        dc(component) as "Components Affected",
+        values(component) as "Component List"
+  by host
+| sort - "Error Count"</pre></div>
+<div class="challenge"><div class="ch-label">🏆 Bonus</div><p>Modify the search to round the average linecount to 2 decimal places using <code>eval</code> with <code>round()</code>.</p></div></div></div>
+</main></div>
+
+<!-- ==================== LESSON 6 ==================== -->
+<div class="tab-content" id="T6"><main class="main">
+<div class="lesson-intro"><h2>Lesson 200.6 — Reports &amp; Dashboards</h2><p>Save searches as reports, create visualizations, and build interactive dashboards.</p>
+<div class="obj-row"><span class="obj-pill">Save Reports</span><span class="obj-pill">Visualizations</span><span class="obj-pill">Create Dashboards</span><span class="obj-pill">Add Panels</span></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--green-d);color:var(--green);">6.1</div><div class="lab-head-text"><h3>Save a Search as a Report</h3><p>Create your first saved report</p></div></div><div class="lab-body">
+<ol><li>Run a transforming search:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | stats count by log_level</pre></div></li>
+<li>Click <strong>Save As → Report</strong></li>
+<li>Title: <code>Training_Log_Level_Summary</code></li>
+<li>Description: "Count of events by log level"</li>
+<li>Click <strong>Save</strong> → then <strong>View</strong></li>
+<li>On the report page, click <strong>Edit → Edit Permissions</strong> → set to <strong>Shared in App</strong></li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--green-d);color:var(--green);">6.2</div><div class="lab-head-text"><h3>Create Visualizations</h3><p>Turn statistics into visual charts</p></div></div><div class="lab-body">
+<ol><li>Run:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | stats count by log_level</pre></div></li>
+<li>Click the <strong>Visualization</strong> tab</li>
+<li>Try each chart type: <strong>Bar</strong>, <strong>Pie</strong>, <strong>Column</strong></li>
+<li>Now try a time-based chart:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | timechart count by log_level</pre></div></li>
+<li>On the Visualization tab, try <strong>Line</strong>, <strong>Area</strong>, and <strong>Column</strong> charts</li>
+<li>Format: Click <strong>Format</strong> → adjust axis labels, legend position, colors</li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--green-d);color:var(--green);">6.3</div><div class="lab-head-text"><h3>Create a Dashboard</h3><p>Build your first multi-panel dashboard</p></div></div><div class="lab-body">
+<ol><li>Run a search and click <strong>Save As → Dashboard Panel</strong></li>
+<li><strong>Dashboard:</strong> New → Title: <code>Training_SOC_Dashboard</code></li>
+<li><strong>Panel Title:</strong> "Events by Log Level"</li>
+<li>Click <strong>Save → View Dashboard</strong></li>
+<li>Now add more panels — run each search and add to the <strong>existing</strong> dashboard:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Panel 2: Events over time</div><pre>index=_internal sourcetype=splunkd | timechart count by log_level</pre></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Panel 3: Top components</div><pre>index=_internal sourcetype=splunkd | top limit=10 component</pre></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>Panel 4: Error count by host</div><pre>index=_internal sourcetype=splunkd log_level=ERROR | stats count by host</pre></div></li>
+<li>On the dashboard, click <strong>Edit</strong> → rearrange and resize panels</li>
+<li>Export the dashboard as PDF</li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--green-d);color:var(--green);">6.4</div><div class="lab-head-text"><h3>🔥 Challenge: Build a SOC Monitoring Dashboard</h3><p>Create a complete 4-panel security dashboard</p></div></div><div class="lab-body">
+<div class="scenario"><div class="scenario-label">🎯 Scenario</div><p>Your SOC manager wants a dashboard showing: (1) error trends over time, (2) top error sources, (3) error distribution by severity, (4) a single-value count of total errors in the last 24h.</p></div>
+<ol><li>Create each panel search</li>
+<li>Save all four to a new dashboard called <code>SOC_Error_Monitor</code></li>
+<li>Edit the dashboard layout — put the single-value panel at the top</li>
+<li>Set appropriate visualization types for each panel</li></ol></div></div>
+</main></div>
+
+<!-- ==================== LESSON 7 ==================== -->
+<div class="tab-content" id="T7"><main class="main">
+<div class="lesson-intro"><h2>Lesson 200.7 — Creating &amp; Using Lookups</h2><p>Enrich event data with external context using CSV lookups, definitions, and automatic lookups.</p>
+<div class="obj-row"><span class="obj-pill">Lookup Types</span><span class="obj-pill">CSV Upload</span><span class="obj-pill">Lookup Definitions</span><span class="obj-pill">Automatic Lookups</span><span class="obj-pill">lookup / inputlookup / outputlookup</span></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--gold-d);color:var(--gold);">7.1</div><div class="lab-head-text"><h3>Explore Existing Lookups</h3><p>Browse lookup files and view their contents</p></div></div><div class="lab-body">
+<ol><li>Navigate to <strong>Settings → Lookups → Lookup table files</strong></li>
+<li>Browse the list — note Path, Owner, App, Sharing</li>
+<li>View a lookup file's contents:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>| inputlookup geo_attr_countries.csv</pre></div></li>
+<li>Filter lookup contents:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>| inputlookup geo_attr_countries.csv | head 20</pre></div></li>
+<li>Search within a lookup:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>| inputlookup geo_attr_countries.csv | where lat > 40</pre></div></li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--gold-d);color:var(--gold);">7.2</div><div class="lab-head-text"><h3>Upload a CSV Lookup File</h3><p>Complete the upload → permissions → definition workflow</p></div></div><div class="lab-body">
+<ol><li><strong>Upload:</strong> Settings → Lookups → Lookup table files → + Add new</li>
+<li>App: <code>search</code>, select your CSV file, set Destination filename (e.g., <code>http_codes.csv</code>)</li>
+<li><strong>Permissions:</strong> Find your file → Permissions → This app only → Read for Everyone → Save</li>
+<li><strong>Definition:</strong> Settings → Lookups → Lookup definitions → + Add new</li>
+<li>Name it (e.g., <code>http_codes</code>), select the table file → Save</li>
+<li>Verify:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>| inputlookup http_codes.csv</pre></div></li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>If you don't have a CSV, create a simple one in a text editor with headers: <code>status,status_description,status_type</code> and a few rows like <code>200,OK,Success</code>.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--gold-d);color:var(--gold);">7.3</div><div class="lab-head-text"><h3>Use the lookup Command</h3><p>Enrich search results with lookup data</p></div></div><div class="lab-body">
+<ol><li>Without lookup — raw status codes:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL — Before</div><pre>index=web | stats count by status</pre></div></li>
+<li>With lookup — enriched data:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL — After</div><pre>index=web
+| lookup http_codes.csv status OUTPUT status_description status_type
+| stats count by status status_description status_type</pre></div></li>
+<li>Use outputlookup to create a new lookup from search results:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR
+| stats count by component
+| outputlookup error_components.csv</pre></div></li>
+<li>Verify what was written:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>| inputlookup error_components.csv</pre></div></li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--gold-d);color:var(--gold);">7.4</div><div class="lab-head-text"><h3>Configure an Automatic Lookup</h3><p>Enrich data without typing the lookup command</p></div></div><div class="lab-body">
+<ol><li>Settings → Lookups → Automatic lookups → + Add new</li>
+<li>App: search, Name: <code>http_codes</code></li>
+<li>Lookup table: http_codes, Apply to sourcetype: <code>access_combined</code></li>
+<li>Input fields: <code>status</code> → <code>status</code></li>
+<li>Output fields: <code>status_description</code>, <code>status_type</code></li>
+<li>Save → set permissions to Read for Everyone</li>
+<li>Verify — run WITHOUT the lookup command:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL — Auto enrichment</div><pre>index=web sourcetype=access_combined
+| stats count by status_type, status_description</pre></div></li></ol>
+<div class="expect"><div class="expect-label">✅ Expected</div><p>The <code>status_type</code> and <code>status_description</code> fields appear automatically — without using the <code>lookup</code> command. That's the power of automatic lookups!</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--gold-d);color:var(--gold);">7.5</div><div class="lab-head-text"><h3>🔥 Challenge: Build a Complete Lookup Workflow</h3><p>End-to-end: create, upload, define, use, automate</p></div></div><div class="lab-body">
+<div class="scenario"><div class="scenario-label">🎯 Scenario</div><p>Create a severity lookup that maps Splunk log_levels to custom severity ratings and colors, then configure it as an automatic lookup.</p></div>
+<ol><li>Create a CSV file with columns: <code>log_level, severity, priority_num</code></li>
+<li>Sample rows: ERROR→Critical→1, WARN→Warning→2, INFO→Low→3</li>
+<li>Upload, set permissions, create definition</li>
+<li>Test with the <code>lookup</code> command</li>
+<li>Configure as an automatic lookup for sourcetype=splunkd</li>
+<li>Verify auto-enrichment works</li></ol></div></div>
+</main></div>
+
+<!-- ==================== LESSON 8 ==================== -->
+<div class="tab-content" id="T8"><main class="main">
+<div class="lesson-intro"><h2>Lesson 200.8 — Scheduled Reports &amp; Alerts</h2><p>Automate monitoring with scheduled reports, create alerts with trigger conditions, and manage triggered alert investigations.</p>
+<div class="obj-row"><span class="obj-pill">Scheduled Reports</span><span class="obj-pill">Scheduled Alerts</span><span class="obj-pill">Real-Time Alerts</span><span class="obj-pill">Rolling Window</span><span class="obj-pill">Triggered Alerts</span></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--rose-d);color:var(--rose);">8.1</div><div class="lab-head-text"><h3>Create a Scheduled Report</h3><p>Set up a report that runs automatically</p></div></div><div class="lab-body">
+<ol><li>Run a search:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd | stats count by log_level</pre></div></li>
+<li>Click <strong>Save As → Report</strong></li>
+<li>Title: <code>Daily_Log_Level_Report</code></li>
+<li>Click <strong>Schedule</strong> → Enable schedule</li>
+<li>Schedule: Run every day at 08:00</li>
+<li>Time range: Last 24 hours</li>
+<li>Click <strong>Save</strong></li>
+<li>Verify: Settings → Searches, reports, and alerts → find your report</li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>Remember: A scheduled <strong>report</strong> runs its action EVERY time. A scheduled <strong>alert</strong> runs its action only when conditions are met.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--rose-d);color:var(--rose);">8.2</div><div class="lab-head-text"><h3>Create a Scheduled Alert</h3><p>Alert when error count exceeds a threshold</p></div></div><div class="lab-body">
+<ol><li>Run:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR
+| stats count as error_count</pre></div></li>
+<li>Click <strong>Save As → Alert</strong></li>
+<li>Title: <code>Training_Alert_Error_Spike</code></li>
+<li>Alert type: <strong>Scheduled</strong>, run every hour</li>
+<li>Trigger condition: Number of Results &gt; 50</li>
+<li>Trigger: Once</li>
+<li>Action: <strong>Add to Triggered Alerts</strong>, Severity: High</li>
+<li>Click <strong>Save</strong></li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--rose-d);color:var(--rose);">8.3</div><div class="lab-head-text"><h3>Create a Real-Time Per-Result Alert</h3><p>Trigger on every matching event with throttling</p></div></div><div class="lab-body">
+<ol><li>Run:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR</pre></div></li>
+<li>Save As → Alert</li>
+<li>Title: <code>RT_Alert_Errors</code></li>
+<li>Alert type: <strong>Real-time</strong></li>
+<li>Trigger: <strong>Per result</strong></li>
+<li>Throttle: ✅ Enabled — suppress for <strong>30 minutes</strong></li>
+<li>Action: Add to Triggered Alerts, Severity: High</li>
+<li>Save → go to <strong>Activity → Triggered Alerts</strong> to watch it fire</li></ol>
+<div class="tip"><div class="tip-label">💡 Tip</div><p>Without throttling, per-result alerts can generate thousands of notifications. Always set a suppression period in production!</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--rose-d);color:var(--rose);">8.4</div><div class="lab-head-text"><h3>Create a Rolling Time Window Alert</h3><p>Detect patterns over a moving time frame</p></div></div><div class="lab-body">
+<ol><li>Search:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL</div><pre>index=_internal sourcetype=splunkd log_level=ERROR</pre></div></li>
+<li>Save As → Alert</li>
+<li>Title: <code>Pattern_Alert_Error_Burst</code></li>
+<li>Alert type: <strong>Real-time</strong></li>
+<li>Trigger: Number of Results &gt; <strong>20</strong> in <strong>5 minutes</strong></li>
+<li>Trigger: Once</li>
+<li>Throttle: Suppress for 30 minutes</li>
+<li>Action: Add to Triggered Alerts, Severity: Critical</li></ol>
+<div class="expect"><div class="expect-label">✅ Key Difference</div><p><strong>Per-result</strong> = every single matching event. <strong>Rolling window</strong> = only when a PATTERN is detected (20+ events in 5 min). Rolling window detects bursts, not individual events.</p></div></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--rose-d);color:var(--rose);">8.5</div><div class="lab-head-text"><h3>Investigate Triggered Alerts</h3><p>View, analyze, and manage fired alerts</p></div></div><div class="lab-body">
+<ol><li>Go to <strong>Activity → Triggered Alerts</strong></li>
+<li>Review any alerts that fired — note Time, Type, Severity, Mode</li>
+<li>Click <strong>View results</strong> on a triggered alert to see the event data</li>
+<li>Investigate with internal searches:
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL — View alert scheduler status</div><pre>index=_internal sourcetype=scheduler
+| stats count by savedsearch_name status</pre></div>
+<div class="spl"><div class="spl-bar"><span class="spl-dot"></span>SPL — List all fired alerts via REST</div><pre>| rest /services/alerts/fired_alerts
+| table title, app, alert_type, severity</pre></div></li>
+<li>From the Alerts page, try: Edit, Disable, Clone, and Delete options</li></ol></div></div>
+
+<div class="lab-card"><div class="lab-head"><div class="lab-num" style="background:var(--rose-d);color:var(--rose);">8.6</div><div class="lab-head-text"><h3>🔥 Challenge: Complete Alerting System</h3><p>Build a multi-level alert strategy</p></div></div><div class="lab-body">
+<div class="scenario"><div class="scenario-label">🎯 Scenario</div><p>Your SOC needs three alert levels for error monitoring. Build all three:</p></div>
+<ol><li><strong>Level 1 — Scheduled Check:</strong> Every hour, alert if total errors &gt; 100 (Severity: Medium)</li>
+<li><strong>Level 2 — Real-Time Pattern:</strong> Alert if &gt; 30 errors in 5 minutes (Severity: High)</li>
+<li><strong>Level 3 — Critical Event:</strong> Per-result alert for any "FATAL" event, throttled to once per hour (Severity: Critical)</li></ol>
+<div class="challenge"><div class="ch-label">🏆 Bonus</div><p>After creating all three alerts, go to Activity → Triggered Alerts and verify which ones have fired. Click View Results on one and document your investigation findings.</p></div></div></div>
+</main></div>
+
+<footer class="ft">
+  <p>🧪 <strong>Splunk Lab Portal</strong> — Lessons 200.1–200.8: 48 Hands-On Exercises</p>
+  <p style="margin-top:6px">Per Scholas Greater Boston · Security with AI Program</p>
+  <p style="margin-top:4px">Created and Designed by: Solomon Seifu</p>
+</footer>
+
+<script>
+function sw(id,btn){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.ltab').forEach(e=>e.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+
+<nav class="slh-nav slh-bottom" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_7_8.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lessons 7 & 8</b></span></a><span class="slh-link slh-next slh-disabled"><span class="slh-tt"><small>Next</small><b>&mdash;</b></span><span class="slh-ar">&rarr;</span></span></div></nav>
+</body>
+</html>

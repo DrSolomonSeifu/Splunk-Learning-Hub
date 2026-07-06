@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 200.6 — Creating Reports & Dashboards | Student Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg-dark:#0a0e17;--bg-card:#111827;--bg-card-alt:#1a2332;--bg-code:#0d1117;--accent-green:#00d084;--accent-green-dim:#00d08433;--accent-blue:#3b82f6;--accent-blue-dim:#3b82f620;--accent-orange:#f59e0b;--accent-orange-dim:#f59e0b20;--accent-red:#ef4444;--accent-red-dim:#ef444420;--accent-cyan:#22d3ee;--accent-teal:#14b8a6;--accent-teal-dim:#14b8a620;--accent-purple:#a78bfa;--accent-purple-dim:#a78bfa20;--text-primary:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#1e293b;--border-light:#334155}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.7;font-size:16px}
+.hero{position:relative;padding:60px 40px 50px;background:linear-gradient(135deg,#0a0e17 0%,#111d2e 40%,#0f2027 100%);border-bottom:1px solid var(--border);overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;background:radial-gradient(circle,var(--accent-green-dim) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-green-dim);border:1px solid var(--accent-green);color:var(--accent-green);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:12px;background:linear-gradient(135deg,#e2e8f0 0%,var(--accent-green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .subtitle{font-size:1.05rem;color:var(--text-secondary);max-width:700px}
+.hero-credits{margin-top:18px;font-size:13px;color:var(--text-muted)}
+.hero-credits strong{color:var(--text-secondary)}
+.guide-label{display:inline-block;background:var(--accent-blue);color:#fff;padding:4px 14px;border-radius:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.nav-bar{position:sticky;top:0;z-index:200;background:rgba(10,14,23,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;overflow-x:auto}
+.nav-bar::-webkit-scrollbar{height:0}
+.nav-inner{display:flex;gap:4px;max-width:1200px;margin:0 auto}
+.nav-inner a{color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;padding:12px 16px;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.2s}
+.nav-inner a:hover{color:var(--accent-green);border-bottom-color:var(--accent-green)}
+.objectives-strip{background:var(--bg-card);border-bottom:1px solid var(--border);padding:32px 40px}
+.obj-title{font-size:14px;font-weight:700;color:var(--accent-green);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.objectives-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.obj-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg-card-alt);font-size:14px;font-weight:500}
+.obj-num{background:var(--accent-green-dim);color:var(--accent-green);font-size:11px;font-weight:700;border-radius:6px;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.main{max-width:1200px;margin:0 auto;padding:40px}
+.section{margin-bottom:56px;scroll-margin-top:70px}
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.section-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.section-header h2{font-size:1.45rem;font-weight:800;line-height:1.3}
+.section-header .sec-tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}
+.content-block{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px}
+.content-block h3{font-size:1.1rem;font-weight:700;margin-bottom:10px}
+.content-block p{color:var(--text-secondary);margin-bottom:10px}.content-block p:last-child{margin-bottom:0}
+.content-block ul,.content-block ol{padding-left:20px;color:var(--text-secondary)}.content-block li{margin-bottom:5px}
+.key-concept{background:var(--accent-blue-dim);border-left:4px solid var(--accent-blue);border-radius:0 12px 12px 0;padding:18px 22px;margin:16px 0}
+.key-concept .kc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent-blue);margin-bottom:6px}
+.remember-box{background:#1a1028;border-left:4px solid #a78bfa;border-radius:0 12px 12px 0;padding:18px 22px;margin:16px 0}
+.remember-box .rb-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#a78bfa;margin-bottom:6px}
+.lab-exercise{background:linear-gradient(135deg,#071a12 0%,#0d1f18 100%);border:1px solid #1a3d2a;border-radius:14px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.lab-exercise::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,var(--accent-green-dim) 0%,transparent 70%);pointer-events:none}
+.lab-tag{display:inline-flex;align-items:center;gap:6px;background:var(--accent-green-dim);border:1px solid var(--accent-green);color:var(--accent-green);padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.lab-exercise h4{font-size:1.05rem;font-weight:700;margin-bottom:12px}
+.lab-exercise ol,.lab-exercise ul{padding-left:20px;color:var(--text-secondary)}.lab-exercise li{margin-bottom:6px}
+.code-block{background:var(--bg-code);border:1px solid var(--border);border-radius:10px;padding:4px;margin:12px 0;overflow-x:auto}
+.code-bar{display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.code-bar .lang-dot{width:8px;height:8px;border-radius:50%;background:var(--accent-green);display:inline-block;margin-right:6px}
+pre{padding:14px;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6;color:var(--accent-green);overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+.comp-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+.comp-table th{background:var(--bg-card-alt);color:var(--accent-green);padding:10px 14px;text-align:left;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--accent-green)}
+.comp-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-secondary)}.comp-table tr:hover td{background:var(--bg-card-alt)}
+.summary-box{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-card-alt) 100%);border:1px solid var(--border-light);border-radius:14px;padding:24px;margin:20px 0}
+.summary-box h4{font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--accent-cyan)}.summary-box ul{padding-left:18px;color:var(--text-secondary)}.summary-box li{margin-bottom:5px}
+.collapsible{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.collapsible-header{padding:14px 18px;background:var(--bg-card);cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:14px;transition:background 0.2s;user-select:none}
+.collapsible-header:hover{background:var(--bg-card-alt)}
+.collapsible-header .arrow{transition:transform 0.3s;font-size:12px;color:var(--text-muted)}
+.collapsible-header.open .arrow{transform:rotate(180deg)}
+.collapsible-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;background:var(--bg-dark)}
+.collapsible-body-inner{padding:16px;color:var(--text-secondary);font-size:14px}
+.step-flow{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;align-items:center}
+.step-flow .step{background:var(--bg-card-alt);border:1px solid var(--border);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:600;color:var(--text-secondary)}
+.step-flow .arrow-r{color:var(--accent-green);font-size:18px;font-weight:700}
+.notes-area{background:var(--bg-card);border:1px dashed var(--border-light);border-radius:12px;padding:16px;margin:16px 0;min-height:60px}
+.notes-area .notes-label{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.notes-area textarea{width:100%;min-height:50px;background:transparent;border:none;color:var(--text-secondary);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;resize:vertical;outline:none;line-height:1.6}
+.lesson-footer{text-align:center;padding:40px;border-top:1px solid var(--border);color:var(--text-muted);font-size:14px}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent-green);z-index:9999;transition:width 0.1s}
+@media(max-width:768px){.hero,.main,.nav-bar,.objectives-strip{padding-left:20px;padding-right:20px}.objectives-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<style id="slh-nav-style">
+.slh-nav{font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 24px;
+  background:#0b1220;box-sizing:border-box;}
+.slh-nav *{box-sizing:border-box;}
+.slh-nav.slh-top{border-bottom:1px solid #223052;}
+.slh-nav.slh-bottom{border-top:1px solid #223052;margin-top:48px;}
+.slh-dash{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:11px;
+  background:linear-gradient(100deg,#F6296B,#FF7A18);color:#fff;font-weight:700;font-size:14px;
+  text-decoration:none;border:none;cursor:pointer;box-shadow:0 8px 20px -12px rgba(246,41,107,.7);
+  line-height:1;transition:filter .15s,transform .12s;white-space:nowrap;}
+.slh-dash:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.slh-dash svg{width:16px;height:16px;flex:none;}
+.slh-side{display:flex;gap:8px;align-items:stretch;margin-left:auto;flex-wrap:wrap;}
+.slh-link{display:flex;align-items:center;gap:10px;padding:9px 15px;border:1px solid #2a3855;
+  border-radius:11px;color:#e2e8f0;text-decoration:none;background:#141c2e;line-height:1.2;
+  transition:border-color .15s,transform .12s,background .15s;min-width:0;}
+.slh-link:hover{border-color:#F6296B;transform:translateY(-1px);background:#172136;}
+.slh-link .slh-ar{font-size:17px;color:#8894ab;flex:none;}
+.slh-link:hover .slh-ar{color:#F6296B;}
+.slh-tt{display:flex;flex-direction:column;min-width:0;}
+.slh-tt small{color:#8894ab;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.slh-tt b{font-size:13px;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.slh-next{text-align:right;}
+.slh-disabled{opacity:.3;pointer-events:none;}
+@media (max-width:640px){
+  .slh-nav{padding:10px 14px;gap:8px;}
+  .slh-side{width:100%;margin-left:0;}
+  .slh-link{flex:1;}
+  .slh-next{justify-content:flex-end;}
+  .slh-dash{width:100%;justify-content:center;}
+  .slh-tt b{white-space:normal;}
+}
+</style>
+
+<nav class="slh-nav slh-top" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_4_5.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lessons 4 & 5</b></span></a><a class="slh-link slh-next" href="student_guide_200_7_8.html"><span class="slh-tt"><small>Next</small><b>Lessons 7 & 8</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<header class="hero">
+  <div class="guide-label">📘 Student Guide</div>
+  <div class="hero-badge">📡 Per Scholas Security with AI Program</div>
+  <h1>Lesson 200.6<br>Creating Reports &amp; Dashboards</h1>
+  <p class="subtitle">Learn to save searches as reusable reports, build visualizations with charts, and organize everything into interactive dashboards for stakeholder communication.</p>
+  <div class="hero-credits">Lead Instructor &amp; Designer: <strong>Dr. Solomon Seifu</strong> &nbsp;|&nbsp; Co-Instructor: <strong>Naly Rosario</strong></div>
+</header>
+
+<nav class="nav-bar"><div class="nav-inner">
+  <a href="#S6-reports">6.1 Reports</a>
+  <a href="#S6-edit">6.2 Edit Reports</a>
+  <a href="#S6-schedule">6.3 Schedule Reports</a>
+  <a href="#S6-tables">6.4 Table Reports</a>
+  <a href="#S6-charts">6.5 Chart Reports</a>
+  <a href="#S6-dashboards">6.6 Dashboards</a>
+  <a href="#S6-panels">6.7 Panels</a>
+  <a href="#S6-editdash">6.8 Edit Dashboards</a>
+  <a href="#S6-review">Review</a>
+</div></nav>
+
+<section class="objectives-strip">
+  <div class="obj-title">🎯 Lesson 200.6 Learning Objectives</div>
+  <div class="objectives-grid">
+    <div class="obj-item"><span class="obj-num">1</span> Save a search as a report</div>
+    <div class="obj-item"><span class="obj-num">2</span> Edit and manage report settings</div>
+    <div class="obj-item"><span class="obj-num">3</span> Schedule reports with automated actions</div>
+    <div class="obj-item"><span class="obj-num">4</span> Create reports with tables</div>
+    <div class="obj-item"><span class="obj-num">5</span> Create reports with charts</div>
+    <div class="obj-item"><span class="obj-num">6</span> Create and manage dashboards</div>
+    <div class="obj-item"><span class="obj-num">7</span> Add reports to dashboards and edit panels</div>
+  </div>
+</section>
+
+<main class="main">
+
+<!-- 6.1 REPORTS -->
+<section class="section" id="S6-reports">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-blue-dim);color:var(--accent-blue);">📄</div>
+    <div><div class="sec-tag">Section 6.1</div><h2>Saving Searches as Reports</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Is a Report?</h3>
+    <p>A report in Splunk is a <strong>saved search</strong> that can include statistics or visualizations. Once saved, it can be re-run anytime to get the latest results, shared with teammates, and added to dashboards.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Four Ways to Create a Report</h3>
+    <table class="comp-table">
+      <thead><tr><th>Method</th><th>How</th></tr></thead>
+      <tbody>
+        <tr><td><strong>From Search</strong></td><td>Run a search → <strong>Save As → Report</strong></td></tr>
+        <tr><td><strong>From Pivot</strong></td><td>Use the Pivot drag-and-drop tool → Save as report</td></tr>
+        <tr><td><strong>From Settings</strong></td><td>Settings → Searches, Reports, and Alerts → New Report</td></tr>
+        <tr><td><strong>From Dashboard Panel</strong></td><td>Convert an inline search panel into a report</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Saving a Report — Required Fields</h3>
+    <ul>
+      <li><strong>Title</strong> (required) — Use letters, numbers, underscores, or dashes</li>
+      <li><strong>Description</strong> (optional) — Explains the purpose</li>
+      <li><strong>Time Range Picker</strong> (optional) — Lets viewers re-run with different time ranges</li>
+    </ul>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 1</div>
+    <h4>Save Your First Report</h4>
+    <ol>
+      <li>Run this search: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd | stats count by log_level</pre></div></li>
+      <li>Click <strong>Save As → Report</strong></li>
+      <li>Title: <code>Log_Level_Summary</code></li>
+      <li>Add a description: "Counts events by log level"</li>
+      <li>Check "Time Range Picker" and click <strong>Save</strong></li>
+      <li>Explore the Report Viewing Page — note the Edit, Add to Dashboard, and Export options</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6.2 EDIT REPORTS -->
+<section class="section" id="S6-edit">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">✏️</div>
+    <div><div class="sec-tag">Section 6.2</div><h2>Editing Reports &amp; Permissions</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Post-Save Settings</h3>
+    <table class="comp-table">
+      <thead><tr><th>Setting</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Permissions</strong></td><td>Control who can view (Read) or modify (Write)</td></tr>
+        <tr><td><strong>Schedule</strong></td><td>Run automatically at set intervals</td></tr>
+        <tr><td><strong>Acceleration</strong></td><td>Pre-process data for faster results on large datasets</td></tr>
+        <tr><td><strong>Embed</strong></td><td>Generate HTML to embed the report externally</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Permissions Model</h3>
+    <table class="comp-table">
+      <thead><tr><th>Scope</th><th>Who Can See It</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Private</strong> (default)</td><td>Only the creator</td></tr>
+        <tr><td><strong>App</strong></td><td>Users within the same Splunk app</td></tr>
+        <tr><td><strong>All Apps</strong></td><td>Everyone across the entire Splunk instance</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Run As:</strong> Choose whether the report runs using the <strong>Owner's permissions</strong> (viewers see data they may not normally access) or the <strong>User's permissions</strong> (safer, enforces role-based restrictions).</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 2</div>
+    <h4>Edit Permissions on Your Report</h4>
+    <ol>
+      <li>Navigate to <strong>Reports</strong> from the top menu</li>
+      <li>Find your <code>Log_Level_Summary</code> report</li>
+      <li>Click <strong>Edit → Edit Permissions</strong></li>
+      <li>Change from Private to <strong>App</strong> visibility</li>
+      <li>Set Read access for the <code>user</code> role</li>
+      <li>Click <strong>Save</strong></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6.3 SCHEDULE REPORTS -->
+<section class="section" id="S6-schedule">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">⏰</div>
+    <div><div class="sec-tag">Section 6.3</div><h2>Scheduling Reports</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Is a Scheduled Report?</h3>
+    <p>A scheduled report runs <strong>automatically at set times</strong> (hourly, daily, weekly, or custom Cron). Each run can trigger up to four actions.</p>
+    <table class="comp-table">
+      <thead><tr><th>Action</th><th>What It Does</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Send Email</strong></td><td>Email results to recipients</td></tr>
+        <tr><td><strong>Output to Lookup</strong></td><td>Save results as a CSV file</td></tr>
+        <tr><td><strong>Webhook</strong></td><td>Notify external systems (Slack, Teams, ServiceNow)</td></tr>
+        <tr><td><strong>Log &amp; Index</strong></td><td>Index the results for future searches</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Cron Schedule Format</h3>
+    <p>For custom timing, use a <strong>Cron expression</strong> with 5 positions:</p>
+    <table class="comp-table">
+      <thead><tr><th>Position</th><th>Field</th><th>Range</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Minute</td><td>0–59</td></tr>
+        <tr><td>2</td><td>Hour</td><td>0–23</td></tr>
+        <tr><td>3</td><td>Day of Month</td><td>1–31</td></tr>
+        <tr><td>4</td><td>Month</td><td>1–12</td></tr>
+        <tr><td>5</td><td>Day of Week</td><td>0–6 (0 = Sunday)</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Example:</strong> <code>0 8 * * 1</code> = Run at 8:00 AM every Monday</p>
+  </div>
+
+  <div class="remember-box">
+    <div class="rb-label">⚠️ Important</div>
+    <p>Once a report is scheduled, the <strong>time range picker is removed</strong> from the report view. The report always uses the time range set in the schedule.</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 3</div>
+    <h4>Schedule a Report</h4>
+    <ol>
+      <li>Open your <code>Log_Level_Summary</code> report</li>
+      <li>Click <strong>Edit → Edit Schedule</strong></li>
+      <li>Check <strong>Schedule Report</strong></li>
+      <li>Set to <strong>Run daily</strong></li>
+      <li>Set Time Range to <strong>Last 24 hours</strong></li>
+      <li>Set Schedule Window to <strong>15 minutes</strong></li>
+      <li>Explore the <strong>Add Actions</strong> dropdown (don't add one yet)</li>
+      <li>Click <strong>Save</strong></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6.4 TABLE REPORTS -->
+<section class="section" id="S6-tables">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-teal-dim);color:var(--accent-teal);">📊</div>
+    <div><div class="sec-tag">Section 6.4</div><h2>Reports with Tables</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Creating Tabular Reports</h3>
+    <p>Reports that use <strong>transforming commands</strong> (stats, top, rare, table, addcoltotals) automatically display as statistics tables. These are the structured, data-driven reports used most in professional environments.</p>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 4</div>
+    <h4>Build a Table Report</h4>
+    <ol>
+      <li>Run this search: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd
+| stats count as "Events", dc(component) as "Components", dc(host) as "Hosts" by log_level
+| sort - Events
+| addcoltotals</pre></div></li>
+      <li>Review the Statistics tab — note the total row at the bottom</li>
+      <li>Click <strong>Save As → Report</strong></li>
+      <li>Title: <code>Event_Summary_by_LogLevel</code></li>
+      <li>Save and view the Report Viewing Page</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6.5 CHART REPORTS -->
+<section class="section" id="S6-charts">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-purple-dim);color:var(--accent-purple);">📈</div>
+    <div><div class="sec-tag">Section 6.5</div><h2>Reports with Charts</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Chart Types in Splunk</h3>
+    <table class="comp-table">
+      <thead><tr><th>Chart Type</th><th>Best For</th><th>Data Series</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Pie</strong></td><td>Proportions of a whole</td><td>Single series</td></tr>
+        <tr><td><strong>Bar / Column</strong></td><td>Comparing categories</td><td>Single or multiple</td></tr>
+        <tr><td><strong>Line</strong></td><td>Trends over time</td><td>Multiple series</td></tr>
+        <tr><td><strong>Area</strong></td><td>Stacked values over time</td><td>Multiple series</td></tr>
+        <tr><td><strong>Scatter</strong></td><td>Correlation between two variables</td><td>Two series</td></tr>
+        <tr><td><strong>Bubble</strong></td><td>Three-dimensional comparison</td><td>Three series</td></tr>
+      </tbody>
+    </table>
+    <p>Advanced options: Single Value, Radial Gauge, Filler Gauge, Cluster Map</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Saving Content Types</h3>
+    <p>When saving a chart report, choose what to include:</p>
+    <ul>
+      <li><strong>Chart + Statistics Table</strong> — both the visualization and raw data</li>
+      <li><strong>Chart Only</strong> — saves just the visual</li>
+      <li><strong>Statistics Table Only</strong> — saves just the tabular data</li>
+    </ul>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 5</div>
+    <h4>Create a Chart Report</h4>
+    <ol>
+      <li>Run a timechart search: <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd | timechart count by log_level</pre></div></li>
+      <li>Click the <strong>Visualization</strong> tab</li>
+      <li>Try different chart types: Line → Column → Area → Pie</li>
+      <li>Click <strong>Format</strong> → experiment with Stack Mode, Legend position</li>
+      <li>Click <strong>Save As → Report</strong></li>
+      <li>Title: <code>LogLevel_Trend_Chart</code></li>
+      <li>Select content type: <strong>Column Chart and Statistics Table</strong></li>
+      <li>Save and review</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6.6 DASHBOARDS -->
+<section class="section" id="S6-dashboards">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-cyan);color:#0a0e17;">🖥️</div>
+    <div><div class="sec-tag">Section 6.6</div><h2>Creating Dashboards</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>What Is a Dashboard?</h3>
+    <p>A dashboard is a <strong>visual interface made up of panels</strong>. Each panel shows a chart, table, search result, or input control. Panels are usually powered by saved reports or inline searches.</p>
+  </div>
+
+  <div class="content-block">
+    <h3>Two Dashboard Frameworks</h3>
+    <table class="comp-table">
+      <thead><tr><th>Framework</th><th>Code</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Classic Dashboards</strong></td><td>Simple XML</td><td>Traditional, simpler — <strong>this lesson's focus</strong></td></tr>
+        <tr><td><strong>Dashboard Studio</strong></td><td>JSON</td><td>Modern, more flexible (not covered here)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="key-concept">
+    <div class="kc-label">Naming Convention</div>
+    <p>Splunk recommends: <strong>Group_Object_Description</strong></p>
+    <p>Example: <code>Security_Dashboard_Daily_Alerts</code></p>
+    <ul>
+      <li><strong>Group</strong> = Business unit (Security, Sales, IT)</li>
+      <li><strong>Object</strong> = Content type (Dashboard, Report)</li>
+      <li><strong>Description</strong> = Purpose (Daily_Alerts, Weekly_Traffic)</li>
+    </ul>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 6</div>
+    <h4>Create Your First Dashboard</h4>
+    <ol>
+      <li>Click <strong>Dashboards</strong> from the top menu</li>
+      <li>Click <strong>Create New Dashboard</strong></li>
+      <li>Title: <code>Training_Dashboard_System_Health</code></li>
+      <li>Description: "System health overview for CySA+ training"</li>
+      <li>Permissions: <strong>Private</strong></li>
+      <li>Type: <strong>Classic Dashboards</strong></li>
+      <li>Click <strong>Create</strong> — you'll land in the Dashboard Editor</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6.7 ADDING PANELS -->
+<section class="section" id="S6-panels">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-green-dim);color:var(--accent-green);">➕</div>
+    <div><div class="sec-tag">Section 6.7</div><h2>Adding Reports to Dashboards</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Four Ways to Add Panels</h3>
+    <table class="comp-table">
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><strong>New</strong></td><td>Build a panel from scratch with a fresh search</td></tr>
+        <tr><td><strong>New from Report</strong></td><td>Use an existing saved report</td></tr>
+        <tr><td><strong>Clone from Dashboard</strong></td><td>Copy a panel from another dashboard</td></tr>
+        <tr><td><strong>Prebuilt Panel</strong></td><td>Insert ready-made panels from Splunk apps</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Report vs Inline Search</h3>
+    <table class="comp-table">
+      <thead><tr><th>Panel Type</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Powered by Report</strong></td><td>Stays linked — changes to the report update the panel automatically</td></tr>
+        <tr><td><strong>Inline Search</strong></td><td>Copies the SPL — panel is independent, won't change if the original report changes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 7</div>
+    <h4>Build a Multi-Panel Dashboard</h4>
+    <ol>
+      <li>In your <code>Training_Dashboard_System_Health</code>, click <strong>+ Add Panel</strong></li>
+      <li><strong>Panel 1 — From Report:</strong> Click "New from Report" → select your <code>Event_Summary_by_LogLevel</code> report → Add to Dashboard</li>
+      <li><strong>Panel 2 — From Report:</strong> Click "New from Report" → select your <code>LogLevel_Trend_Chart</code> report → Add to Dashboard</li>
+      <li><strong>Panel 3 — New Inline:</strong> Click "New" → choose "Column Chart" → enter search:
+        <div class="code-block"><div class="code-bar"><span><span class="lang-dot"></span>SPL</span></div><pre>index=_internal sourcetype=splunkd | top limit=5 component</pre></div>
+      Set Time Range to "Last 24 hours", Title: "Top 5 Components" → Add to Dashboard</li>
+      <li>Click the green <strong>Save</strong> button</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 6.8 EDIT DASHBOARDS -->
+<section class="section" id="S6-editdash">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🔧</div>
+    <div><div class="sec-tag">Section 6.8</div><h2>Editing Dashboards</h2></div>
+  </div>
+
+  <div class="content-block">
+    <h3>Dashboard Editing Options</h3>
+    <table class="comp-table">
+      <thead><tr><th>Category</th><th>What You Can Do</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Layout</strong></td><td>Add, remove, rearrange (drag-and-drop), resize panels</td></tr>
+        <tr><td><strong>Panel Settings</strong></td><td>Update search query, time range, visualization type, refresh rate</td></tr>
+        <tr><td><strong>Drilldowns</strong></td><td>Make panels clickable — link to detailed searches or other dashboards</td></tr>
+        <tr><td><strong>Titles</strong></td><td>Modify dashboard title, subtitle, panel labels</td></tr>
+        <tr><td><strong>Permissions</strong></td><td>Control who can view/edit — same model as reports</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="content-block">
+    <h3>Export Options</h3>
+    <table class="comp-table">
+      <thead><tr><th>What</th><th>Formats</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Entire Dashboard</strong></td><td>PDF only</td></tr>
+        <tr><td><strong>Individual Panel Data</strong></td><td>PDF, CSV, XML, JSON</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="lab-exercise">
+    <div class="lab-tag">🧪 Lab 8</div>
+    <h4>Customize Your Dashboard</h4>
+    <ol>
+      <li>Click <strong>Edit</strong> on your dashboard</li>
+      <li><strong>Rearrange:</strong> Drag the chart panel to the top</li>
+      <li><strong>Resize:</strong> Make the chart panel wider</li>
+      <li>Click a panel's pencil icon → change the <strong>visualization type</strong> (try switching to a pie chart)</li>
+      <li>Click <strong>Save</strong></li>
+      <li>Test <strong>Export</strong> → export the dashboard as PDF</li>
+      <li>Hover over a chart panel → export its data as CSV</li>
+    </ol>
+  </div>
+</section>
+
+<!-- REVIEW -->
+<section class="section" id="S6-review">
+  <div class="section-header">
+    <div class="section-icon" style="background:var(--accent-orange-dim);color:var(--accent-orange);">🎓</div>
+    <div><div class="sec-tag">Knowledge Check</div><h2>Lesson 200.6 Review</h2></div>
+  </div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>1. What type of search can be saved as a report?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">A search with <strong>transforming commands</strong> (stats, chart, timechart, top, rare).</div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>2. What must be added to display statistical data in a report?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">A <strong>transforming command</strong> such as stats, chart, or timechart.</div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>3. What options are available after saving a report?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">Edit title, description, permissions, schedule, acceleration, and embed settings.</div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>4. What are the permission options for a report?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">Scope: App or All Apps. Run As: Owner or User. Roles: Read or Write access per role.</div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>5. What actions can a scheduled report trigger?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">Send email, output to lookup (CSV), run a webhook, log and index data.</div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>6. What is an advantage of scheduling a report?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">Runs automatically without manual intervention and can trigger actions like email notifications.</div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>7. What visualization types are available?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">Column, bar, pie, line, area, scatter, bubble, single value, radial gauge, cluster map.</div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>8. What are two ways to create a dashboard?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">From the <strong>Search & Reporting app</strong> (Save As → Dashboard) or from the <strong>Dashboard Editor</strong> (Dashboards → Create New).</div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>9. What is Splunk's recommended dashboard naming convention?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner"><strong>Group_Object_Description</strong>. Example: <code>Security_Dashboard_DailyAlerts</code></div></div></div>
+
+  <div class="collapsible"><div class="collapsible-header" onclick="toggleC(this)"><span>10. What are the panel editing options?</span><span class="arrow">▼</span></div><div class="collapsible-body"><div class="collapsible-body-inner">Add/remove panels, resize, rearrange, change search query, time range, visualization type, and refresh rate.</div></div></div>
+</section>
+
+</main>
+
+<footer class="lesson-footer">
+  <p>🎯 <strong>Lesson 200.6</strong> — Creating Reports & Dashboards</p>
+  <p style="margin-top:12px;font-size:12px;">Per Scholas Greater Boston · Security with AI Program</p>
+</footer>
+
+<script>
+function toggleC(h){h.classList.toggle('open');const b=h.nextElementSibling;if(b.style.maxHeight){b.style.maxHeight=null}else{b.style.maxHeight=b.scrollHeight+'px'}}
+window.addEventListener('scroll',()=>{const p=(document.documentElement.scrollTop/(document.documentElement.scrollHeight-document.documentElement.clientHeight))*100;document.getElementById('progressBar').style.width=p+'%'});
+</script>
+
+<nav class="slh-nav slh-bottom" aria-label="Course navigation"><a class="slh-dash" href="index.html" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg><span>Dashboard</span></a><div class="slh-side"><a class="slh-link slh-prev" href="student_guide_200_4_5.html"><span class="slh-ar">&larr;</span><span class="slh-tt"><small>Previous</small><b>Lessons 4 & 5</b></span></a><a class="slh-link slh-next" href="student_guide_200_7_8.html"><span class="slh-tt"><small>Next</small><b>Lessons 7 & 8</b></span><span class="slh-ar">&rarr;</span></a></div></nav>
+</body>
+</html>
