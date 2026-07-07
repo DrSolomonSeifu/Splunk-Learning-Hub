@@ -2,7 +2,7 @@
   "name": "Splunk Learning Hub",
   "short_name": "Splunk Hub",
   "description": "A dashboard-style learning hub for the Splunk Core User course — eight lessons plus hands-on labs, global search, and integrated web search.",
-  "id": "/",
+  "id": "/Splunk-Learning-Hub/",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
