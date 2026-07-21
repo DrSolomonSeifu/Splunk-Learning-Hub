@@ -35,4 +35,4 @@ Installing lets the hub open full-screen from your home screen or desktop, and p
 
 ---
 
-Designed & Authored by **Dr. Solomon Seifu** — Lead Technical Instructor
+Prepared by **Dr. Solomon Seifu** — Lead Technical Instructor
